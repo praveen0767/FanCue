@@ -136,7 +136,13 @@ class AppSettings:
         in ("true", "1", "yes")
     )
 
-    # Retrieval
+    # Retrieval is enabled by default locally, but may be disabled in constrained production runtimes.
+    retrieval_enabled: bool = field(
+        default_factory=lambda: os.environ.get(
+            "FANCUE_RETRIEVAL_ENABLED",
+            "false" if os.environ.get("FANCUE_ENV", "development").lower() == "production" else "true",
+        ).strip().lower() in ("1", "true", "yes", "on")
+    )
     retrieval_top_k: int = field(
         default_factory=lambda: int(os.environ.get("RETRIEVAL_TOP_K", "5"))
     )
