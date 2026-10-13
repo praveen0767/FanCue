@@ -90,6 +90,10 @@ class CricketCatchUpOrchestrator:
                         verification_status=VerificationStatus.VERIFIED,
                         fallback_reason=FallbackReason.NONE,
                     )
+                    warnings.append(
+                        f"AI explanation generated via {self.llm_provider.provider_id} "
+                        f"({self.llm_provider.model_id}) · claims verified against match data."
+                    )
                 else:
                     # Verification failed: suppress hallucinated claims and engage fallback
                     primary_rejection = (
@@ -122,13 +126,15 @@ class CricketCatchUpOrchestrator:
                     packet,
                     fallback_reason=FallbackReason.LLM_ERROR,
                 )
-                # Sanitized: only the exception TYPE is recorded. Provider error
-                # messages may embed configuration or prompt material, so the
-                # raw message never enters the response's warnings.
-                warnings.append(
-                    f"LLM call failed or provider unavailable ({type(e).__name__}); "
-                    f"deterministic fallback engaged."
-                )
+                # Surface the sanitized provider message (HTTP status + category only).
+                # LLMProviderError subclasses contain only safe, provider-sanitized text.
+                # Raw exception messages from unknown Exception types are suppressed.
+                from backend.app.ai.provider import LLMProviderError as _LLMErr
+                if isinstance(e, _LLMErr):
+                    safe_msg = str(e)
+                else:
+                    safe_msg = f"provider unavailable ({type(e).__name__})"
+                warnings.append(f"AI explanation unavailable: {safe_msg}")
 
         # 5. Assemble final canonical response
         state_before = packet.state_before

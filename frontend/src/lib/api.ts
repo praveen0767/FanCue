@@ -124,6 +124,8 @@ export interface ExplanationPayload {
   generation_mode: "llm_verified" | "deterministic_fallback";
   verification_status: "verified" | "failed_verification" | "unverified_fallback";
   fallback_reason: "none" | "timeout" | "llm_error" | "fact_mismatch" | "unsupported_claims" | "disabled";
+  provider?: string;
+  model?: string;
 }
 
 export interface CricketCatchUpResponse {

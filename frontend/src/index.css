@@ -1551,6 +1551,16 @@ body::before {
   line-height: 1.7;
 }
 
+.story-summary__fallback-notice {
+  margin-top: 12px;
+  font-size: 0.82rem;
+  color: var(--on-surface-variant);
+  border-left: 3px solid rgba(255, 180, 0, 0.35);
+  padding-left: 10px;
+  font-style: italic;
+  opacity: 0.85;
+}
+
 /* Evidence drawer */
 .evidence-toggle {
   width: 100%;

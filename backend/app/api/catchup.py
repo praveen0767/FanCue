@@ -21,7 +21,12 @@ from backend.app.match_engine.errors import (
     InningsIndexOutOfBoundsError,
     OverBoundaryNotFoundError,
 )
-from backend.app.ai.provider import DeterministicFakeProvider, OpenAILLMProvider
+from backend.app.ai.provider import (
+    DeterministicFakeProvider,
+    GroqLLMProvider,
+    OpenAILLMProvider,
+    create_llm_provider,
+)
 from backend.app.orchestration.cricket_catchup import CricketCatchUpOrchestrator
 from backend.app.schemas.cricket import CricketCatchUpRequest
 from backend.app.schemas.errors import ErrorCode, ErrorDetail, ErrorResponse
@@ -200,13 +205,7 @@ async def cricket_catchup(
         retrieval_service = None
 
     # 3. Build LLM provider (key is never logged or forwarded to client)
-    if settings.llm_live:
-        llm_provider = OpenAILLMProvider(
-            api_key=settings.openai_api_key,
-            model=settings.openai_model,
-        )
-    else:
-        llm_provider = DeterministicFakeProvider()
+    llm_provider = create_llm_provider(settings)
 
     orchestrator = CricketCatchUpOrchestrator(
         engine=engine,

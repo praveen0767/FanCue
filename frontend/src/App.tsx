@@ -1194,9 +1194,9 @@ function StoryView({
             className={`mode-badge generation-badge ${isFallback ? "mode-badge--fallback" : "mode-badge--verified"}`}
           >
             {isFallback ? (
-              <>⚠ AI unavailable · structured summary</>
+              <>MATCH-RECORD SUMMARY</>
             ) : (
-              <>✓ AI explanation · facts checked</>
+              <>AI EXPLANATION · VERIFIED</>
             )}
           </span>
 
@@ -1355,9 +1355,14 @@ function StoryView({
       <section className="story-summary" aria-label="Match story">
         <div className="story-summary__label">
           <span>📝</span>
-          {isFallback ? "Plain Record (No AI)" : "Why It Matters · Broadcast Synthesis"}
+          {isFallback ? "MATCH-RECORD SUMMARY" : "AI EXPLANATION · VERIFIED"}
         </div>
         <p className="story-summary__text">{explanation.summary}</p>
+        {isFallback && (
+          <p className="story-summary__fallback-notice">
+            AI explanation unavailable. This summary uses verified match facts.
+          </p>
+        )}
       </section>
 
       {/* Runs-per-over phase barometer (Section D) */}

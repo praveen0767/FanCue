@@ -107,11 +107,10 @@ def build_deterministic_fallback(
         )
 
     # Synthesize objective summary paragraph.
-    # The fallback is deterministically built from engine facts and must carry
-    # an explicit non-AI label (AGENTS.md §7: fallback clearly labelled).
+    # The non-AI label is carried by generation_mode=DETERMINISTIC_FALLBACK in
+    # the payload (AGENTS.md §7); the prose summary must be clean readable text.
     summary_parts = [
-        "[Deterministic non-AI summary built from match evidence]",
-        f"Catch-up summary for {packet.interval_summary}:",
+        f"Non-AI match record for {packet.interval_summary}:",
         (
             f"Score progressed from {state_before.runs}/{state_before.wickets} "
             f"to {state_after.runs}/{state_after.wickets} "
@@ -122,7 +121,7 @@ def build_deterministic_fallback(
         ),
     ]
     if event_sentences:
-        summary_parts.append("Key match events: " + " ".join(event_sentences))
+        summary_parts.append("Key events: " + " ".join(event_sentences))
     else:
         summary_parts.append("Steady play throughout the interval with no wickets fallen.")
 

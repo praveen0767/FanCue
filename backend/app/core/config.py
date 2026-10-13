@@ -78,21 +78,49 @@ class AppSettings:
         )
     )
 
-    # LLM
-    skip_llm: bool = field(
-        default_factory=lambda: os.environ.get("SKIP_LLM_IN_TESTS", "false").lower()
-        in ("true", "1", "yes")
+    # LLM Provider selection ("groq" or "openai")
+    # Defaults to groq unless LLM_PROVIDER=openai is explicitly set.
+    llm_provider: str = field(
+        default_factory=lambda: os.environ.get("LLM_PROVIDER", "").strip().lower()
     )
-    # OpenAI API key — read from env only, never hardcoded, never logged.
-    # Presence is checked at provider construction time.
+
+    # Groq settings — OpenAI-compatible endpoint (https://api.groq.com/openai/v1)
+    groq_api_key: str | None = field(
+        default_factory=lambda: os.environ.get("GROQ_API_KEY") or None
+    )
+    groq_model: str = field(
+        default_factory=lambda: os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b")
+    )
+    groq_base_url: str = field(
+        default_factory=lambda: os.environ.get(
+            "GROQ_BASE_URL", "https://api.groq.com/openai/v1"
+        )
+    )
+    groq_timeout_seconds: float = field(
+        default_factory=lambda: float(
+            os.environ.get(
+                "GROQ_TIMEOUT_SECONDS",
+                os.environ.get("LLM_TIMEOUT_SECONDS", "30.0"),
+            )
+        )
+    )
+
+    # OpenAI settings
     openai_api_key: str | None = field(
         default_factory=lambda: os.environ.get("OPENAI_API_KEY") or None
     )
     openai_model: str = field(
-        default_factory=lambda: os.environ.get("LLM_MODEL", "gpt-4o-mini")
+        default_factory=lambda: os.environ.get("OPENAI_MODEL", os.environ.get("LLM_MODEL", "gpt-4o-mini"))
+    )
+    openai_base_url: str = field(
+        default_factory=lambda: os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
     )
     openai_timeout_seconds: float = field(
         default_factory=lambda: float(os.environ.get("LLM_TIMEOUT_SECONDS", "30"))
+    )
+    skip_llm: bool = field(
+        default_factory=lambda: os.environ.get("SKIP_LLM_IN_TESTS", "false").lower()
+        in ("true", "1", "yes")
     )
 
     # Retrieval
@@ -125,13 +153,45 @@ class AppSettings:
         return self.qdrant_collection_prod if self.is_production else self.qdrant_collection_dev
 
     @property
+    def active_llm_provider(self) -> str:
+        """Return the active LLM provider name ('groq' or 'openai')."""
+        explicit = (self.llm_provider or "").strip().lower()
+        if explicit in ("groq", "openai"):
+            return explicit
+        # Auto-detect if not explicitly set: Groq if key configured, else OpenAI if key configured, else groq
+        if self.groq_api_key and not self.groq_api_key.startswith("REPLACE_"):
+            return "groq"
+        if self.openai_api_key and not self.openai_api_key.startswith("REPLACE_"):
+            return "openai"
+        return "groq"
+
+    @property
+    def active_llm_model(self) -> str:
+        """Return the active LLM model name."""
+        return self.openai_model if self.active_llm_provider == "openai" else self.groq_model
+
+    @property
+    def active_llm_base_url(self) -> str:
+        """Return the active LLM base URL."""
+        return self.openai_base_url if self.active_llm_provider == "openai" else self.groq_base_url
+
+    @property
+    def active_llm_api_key(self) -> str | None:
+        """Return the active LLM API key."""
+        return self.openai_api_key if self.active_llm_provider == "openai" else self.groq_api_key
+
+    @property
+    def active_llm_timeout_seconds(self) -> float:
+        """Return the active LLM timeout in seconds."""
+        return self.openai_timeout_seconds if self.active_llm_provider == "openai" else self.groq_timeout_seconds
+
+    @property
     def llm_live(self) -> bool:
-        """Return True when a valid (non-placeholder) OpenAI key is configured and LLM is not skipped."""
+        """Return True when a valid (non-placeholder) key is configured for the active provider and LLM is not skipped."""
         if self.skip_llm:
             return False
-        if not self.openai_api_key:
-            return False
-        if self.openai_api_key.startswith("REPLACE_"):
+        key = self.active_llm_api_key
+        if not key or key.startswith("REPLACE_"):
             return False
         return True
 

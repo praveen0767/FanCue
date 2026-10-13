@@ -192,10 +192,12 @@ class OpenAILLMProvider(LLMProvider):
         api_key: Optional[str] = None,
         model: str = "gpt-4o-mini",
         base_url: str = "https://api.openai.com/v1",
+        timeout_seconds: float = 30.0,
     ) -> None:
-        self._api_key = api_key or os.environ.get("OPENAI_API_KEY", "")
+        self._api_key = api_key if api_key is not None else os.environ.get("OPENAI_API_KEY", "")
         self._model = model
-        self._base_url = base_url
+        self._base_url = (base_url or "https://api.openai.com/v1").rstrip("/")
+        self._timeout_seconds = timeout_seconds
 
     @property
     def provider_id(self) -> str:
@@ -248,7 +250,48 @@ class OpenAILLMProvider(LLMProvider):
                 draft_dict = json.loads(content)
                 return AIExplanationDraft.model_validate(draft_dict)
         except urllib.error.HTTPError as e:
-            raise LLMProviderError(f"OpenAI HTTP error: {e.code} {e.reason}") from e
+            status = e.code
+            # Safely read a sanitized error category from the provider body.
+            # We only extract the 'type' field (not the full message or any key material).
+            safe_body_type = ""
+            try:
+                body_bytes = e.read()
+                body_json = json.loads(body_bytes.decode("utf-8", errors="replace"))
+                safe_body_type = body_json.get("error", {}).get("type", "") or ""
+            except Exception:
+                pass
+
+            if status == 401:
+                raise LLMProviderError(
+                    f"OpenAI authentication failed (HTTP 401). "
+                    f"Check that OPENAI_API_KEY is valid and not revoked."
+                ) from e
+            elif status == 403:
+                raise LLMProviderError(
+                    f"OpenAI access denied (HTTP 403). "
+                    f"The API key may lack permission for this model."
+                ) from e
+            elif status == 404:
+                raise LLMProviderError(
+                    f"OpenAI endpoint or model not found (HTTP 404). "
+                    f"Model '{self._model}' may not be accessible on this account."
+                ) from e
+            elif status == 429:
+                quota_or_rate = (
+                    "quota exhausted (insufficient_quota)"
+                    if "insufficient_quota" in safe_body_type
+                    else "rate limit exceeded"
+                )
+                raise LLMProviderError(
+                    f"OpenAI {quota_or_rate} (HTTP 429). "
+                    f"Add credits or reduce request frequency."
+                ) from e
+            elif 500 <= status < 600:
+                raise LLMUnavailableError(
+                    f"OpenAI upstream service error (HTTP {status}). Retry later."
+                ) from e
+            else:
+                raise LLMProviderError(f"OpenAI HTTP error: {status}") from e
         except urllib.error.URLError as e:
             if "timed out" in str(e).lower():
                 raise LLMTimeoutError(f"OpenAI request timed out: {e}") from e
@@ -256,4 +299,167 @@ class OpenAILLMProvider(LLMProvider):
         except json.JSONDecodeError as e:
             raise LLMInvalidOutputError(f"OpenAI returned non-JSON output: {e}") from e
         except Exception as e:
+            if isinstance(e, LLMProviderError):
+                raise
             raise LLMProviderError(f"Unexpected OpenAI error: {e}") from e
+
+
+class GroqLLMProvider(LLMProvider):
+    """Live Groq API provider adapter with structured JSON schema enforcement.
+
+    Uses Groq's OpenAI-compatible endpoint (https://api.groq.com/openai/v1)
+    via standard urllib without heavy external SDK dependencies.
+    """
+
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        model: str = "openai/gpt-oss-20b",
+        base_url: str = "https://api.groq.com/openai/v1",
+        timeout_seconds: float = 30.0,
+    ) -> None:
+        self._api_key = api_key if api_key is not None else os.environ.get("GROQ_API_KEY", "")
+        self._model = model
+        self._base_url = (base_url or "https://api.groq.com/openai/v1").rstrip("/")
+        self._timeout_seconds = timeout_seconds
+
+    @property
+    def provider_id(self) -> str:
+        return "groq"
+
+    @property
+    def model_id(self) -> str:
+        return self._model
+
+    def generate_explanation(
+        self,
+        prompt: str,
+        system_prompt: str,
+        timeout_seconds: Optional[float] = None,
+    ) -> AIExplanationDraft:
+        if not self._api_key or self._api_key.startswith("REPLACE_"):
+            raise LLMUnavailableError("Groq API key not configured or contains placeholder.")
+
+        import urllib.request
+        import urllib.error
+
+        effective_timeout = timeout_seconds if timeout_seconds is not None else self._timeout_seconds
+
+        url = f"{self._base_url}/chat/completions"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self._api_key}",
+            "User-Agent": "FanCue/0.9.0",
+        }
+
+        # Request structured JSON
+        body = {
+            "model": self._model,
+            "temperature": 0.2,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt},
+            ],
+            "response_format": {"type": "json_object"},
+        }
+
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(body).encode("utf-8"),
+            headers=headers,
+            method="POST",
+        )
+
+        try:
+            with urllib.request.urlopen(req, timeout=effective_timeout) as resp:
+                resp_data = json.loads(resp.read().decode("utf-8"))
+                content = resp_data["choices"][0]["message"]["content"]
+                draft_dict = json.loads(content)
+                return AIExplanationDraft.model_validate(draft_dict)
+        except urllib.error.HTTPError as e:
+            status = e.code
+            safe_body_type = ""
+            safe_error_code = ""
+            try:
+                body_bytes = e.read()
+                body_json = json.loads(body_bytes.decode("utf-8", errors="replace"))
+                err_obj = body_json.get("error", {})
+                safe_body_type = err_obj.get("type", "") or ""
+                safe_error_code = err_obj.get("code", "") or ""
+            except Exception:
+                pass
+
+            if status == 401:
+                raise LLMProviderError(
+                    f"Groq authentication failed (HTTP 401). "
+                    f"Check that GROQ_API_KEY is valid and not revoked."
+                ) from e
+            elif status == 403:
+                raise LLMProviderError(
+                    f"Groq access denied (HTTP 403). "
+                    f"The API key may lack permission for model '{self._model}'."
+                ) from e
+            elif status == 404:
+                raise LLMProviderError(
+                    f"Groq endpoint or model not found (HTTP 404). "
+                    f"Model '{self._model}' may not be supported on Groq."
+                ) from e
+            elif status == 429:
+                quota_or_rate = (
+                    "quota exhausted (insufficient_quota)"
+                    if "insufficient_quota" in safe_body_type or "insufficient_quota" in safe_error_code
+                    else "rate limit exceeded"
+                )
+                raise LLMProviderError(
+                    f"Groq {quota_or_rate} (HTTP 429). "
+                    f"Please wait before retrying or check account rate limits."
+                ) from e
+            elif 500 <= status < 600:
+                raise LLMUnavailableError(
+                    f"Groq upstream service error (HTTP {status}). Retry later."
+                ) from e
+            else:
+                raise LLMProviderError(f"Groq HTTP error: {status}") from e
+        except urllib.error.URLError as e:
+            if "timed out" in str(e).lower():
+                raise LLMTimeoutError(f"Groq request timed out: {e}") from e
+            raise LLMUnavailableError(f"Groq connection failed: {e}") from e
+        except json.JSONDecodeError as e:
+            raise LLMInvalidOutputError(f"Groq returned non-JSON output: {e}") from e
+        except Exception as e:
+            if isinstance(e, LLMProviderError):
+                raise
+            raise LLMProviderError(f"Unexpected Groq error: {e}") from e
+
+
+def create_llm_provider(settings: Optional[Any] = None) -> LLMProvider:
+    """Factory creating the configured LLMProvider based on application settings.
+
+    Returns GroqLLMProvider when LLM_PROVIDER=groq and configured,
+    OpenAILLMProvider when LLM_PROVIDER=openai and configured,
+    or DeterministicFakeProvider when offline, keys are missing, or in test mode.
+    """
+    if settings is None:
+        from backend.app.core.config import get_settings
+        settings = get_settings()
+
+    if not settings.llm_live:
+        return DeterministicFakeProvider()
+
+    provider_name = settings.active_llm_provider
+    if provider_name == "groq":
+        return GroqLLMProvider(
+            api_key=settings.groq_api_key,
+            model=settings.groq_model,
+            base_url=settings.groq_base_url,
+            timeout_seconds=settings.groq_timeout_seconds,
+        )
+    elif provider_name == "openai":
+        return OpenAILLMProvider(
+            api_key=settings.openai_api_key,
+            model=settings.openai_model,
+            base_url=settings.openai_base_url,
+            timeout_seconds=settings.openai_timeout_seconds,
+        )
+    return DeterministicFakeProvider()
+

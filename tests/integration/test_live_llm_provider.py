@@ -15,6 +15,7 @@ import pytest
 from backend.app.ai.models import AICandidateClaim, AIExplanationDraft
 from backend.app.ai.provider import (
     DeterministicFakeProvider,
+    GroqLLMProvider,
     LLMInvalidOutputError,
     LLMProviderError,
     LLMTimeoutError,
@@ -53,6 +54,17 @@ def test_openai_provider_offline_validation():
         provider_no_key.generate_explanation("prompt", "system")
 
     provider_placeholder = OpenAILLMProvider(api_key="REPLACE_WITH_OPENAI_KEY")
+    with pytest.raises(LLMUnavailableError):
+        provider_placeholder.generate_explanation("prompt", "system")
+
+
+def test_groq_provider_offline_validation():
+    """Verify GroqLLMProvider raises LLMUnavailableError when API key is missing/placeholder."""
+    provider_no_key = GroqLLMProvider(api_key="")
+    with pytest.raises(LLMUnavailableError):
+        provider_no_key.generate_explanation("prompt", "system")
+
+    provider_placeholder = GroqLLMProvider(api_key="REPLACE_WITH_GROQ_KEY")
     with pytest.raises(LLMUnavailableError):
         provider_placeholder.generate_explanation("prompt", "system")
 

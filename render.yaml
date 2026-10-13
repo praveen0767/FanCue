@@ -42,12 +42,18 @@ services:
         value: INFO
       - key: SKIP_LLM_IN_TESTS
         value: "false"
+      - key: LLM_PROVIDER
+        value: groq
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b
       # PORT is injected automatically by Render — do not set it here.
       # -----------------------------------------------------------------------
       # Secret vars — set these in the Render dashboard, NOT here.
       # -----------------------------------------------------------------------
+      - key: GROQ_API_KEY
+        sync: false      # Set your Groq API key in the Render dashboard
       - key: OPENAI_API_KEY
-        sync: false      # Render will prompt you to set this in the dashboard
+        sync: false      # Optional — set if using LLM_PROVIDER=openai
       - key: ALLOWED_ORIGINS
         sync: false      # Set to your Vercel frontend URL, e.g. https://fancue.vercel.app
       - key: QDRANT_URL
