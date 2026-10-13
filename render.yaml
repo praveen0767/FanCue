@@ -50,6 +50,8 @@ services:
         value: https://api.groq.com/openai/v1
       - key: GROQ_TIMEOUT_SECONDS
         value: "30"
+      - key: FANCUE_RETRIEVAL_ENABLED
+        value: "false"  # Temporary free-instance mitigation; match facts and LLM verification remain active.
       # PORT is injected automatically by Render — do not set it here.
       # -----------------------------------------------------------------------
       # Secret vars — set these in the Render dashboard, NOT here.

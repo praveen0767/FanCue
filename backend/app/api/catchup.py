@@ -10,6 +10,8 @@ No AI output is returned without passing claim verification.
 """
 
 import uuid
+import logging
+from functools import lru_cache
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -33,6 +35,34 @@ from backend.app.schemas.errors import ErrorCode, ErrorDetail, ErrorResponse
 from backend.app.schemas.explanation import CricketCatchUpResponse
 
 router = APIRouter(tags=["catchup"])
+
+logger = logging.getLogger(__name__)
+
+
+@lru_cache(maxsize=2)
+def _cached_retrieval_service(
+    collection_name: str,
+    host: str,
+    port: int,
+    url: str | None,
+    api_key: str | None,
+    is_production: bool,
+):
+    """Create one retrieval service per worker/configuration to reuse its embedder.
+
+    The cache is process-local. Secrets are used only as a cache key and are never logged.
+    """
+    from ingestion.knowledge.retrieve import RetrievalService
+    from ingestion.knowledge.qdrant_store import QdrantStore
+
+    store = QdrantStore(
+        host=host,
+        port=port,
+        url=url,
+        api_key=api_key,
+        allow_local_fallback=not is_production,
+    )
+    return RetrievalService(collection_name=collection_name, store=store)
 
 
 import time
@@ -184,25 +214,25 @@ async def cricket_catchup(
             field="interval.end_after_over",
         )
 
-    # 3. Build orchestrator (no retrieval service in fallback mode if Qdrant is absent)
+    # 3. Optional contextual retrieval. The deterministic engine remains authoritative.
+    # On constrained hosts, disable retrieval to avoid model download/initialization during requests.
     retrieval_service = None
-    try:
-        from ingestion.knowledge.retrieve import RetrievalService
-        from ingestion.knowledge.qdrant_store import QdrantStore
-
-        store = QdrantStore(
-            host=settings.qdrant_host,
-            port=settings.qdrant_port,
-            url=settings.qdrant_url,
-            api_key=settings.qdrant_api_key,
-        )
-        retrieval_service = RetrievalService(
-            collection_name=settings.qdrant_active_collection,
-            store=store,
-        )
-    except Exception:
-        # Qdrant unavailable — orchestrator proceeds without retrieval
-        retrieval_service = None
+    if settings.retrieval_enabled:
+        try:
+            retrieval_service = _cached_retrieval_service(
+                settings.qdrant_active_collection,
+                settings.qdrant_host,
+                settings.qdrant_port,
+                settings.qdrant_url,
+                settings.qdrant_api_key,
+                settings.is_production,
+            )
+        except Exception as exc:
+            # Keep the catch-up path available without exposing provider/connection details.
+            logger.warning(
+                "Retrieval initialization failed; continuing with authoritative match facts (%s)",
+                type(exc).__name__,
+            )
 
     # 3. Build LLM provider (key is never logged or forwarded to client)
     llm_provider = create_llm_provider(settings)

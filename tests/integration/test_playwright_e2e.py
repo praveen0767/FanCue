@@ -101,10 +101,10 @@ def test_browser_catchup_user_journey(run_full_stack):
         # 1. Navigate to frontend SPA
         page.goto(frontend_url, wait_until="networkidle")
 
-        # Verify page title and header
-        assert "FanCue" in page.title() or page.locator("h1.header__title").is_visible()
-        page.wait_for_selector(".header__title")
-        assert page.locator(".header__title").inner_text() == "FanCue"
+        # Verify page title and current navigation badge
+        assert "FanCue" in page.title()
+        page.wait_for_selector(".topnav__badge")
+        assert "HISTORICAL REPLAY" in page.locator(".topnav__badge").inner_text().upper()
 
         # 2. Wait for match list to load
         page.wait_for_selector("#match-1529229", timeout=10000)
@@ -142,7 +142,7 @@ def test_browser_catchup_user_journey(run_full_stack):
 
         # 9. Verify fallback / generation mode badge
         badge_text = page.locator(".generation-badge").inner_text().lower()
-        assert "deterministic fallback" in badge_text or "ai explanation" in badge_text
+        assert "match-record summary" in badge_text or "ai explanation" in badge_text
 
         # 10. Click evidence toggle and verify facts appear
         page.click("#evidence-toggle")
@@ -279,9 +279,9 @@ def test_browser_responsive_390px_viewport(run_full_stack):
 
         page.goto(frontend_url, wait_until="networkidle")
 
-        # Header title visible
-        page.wait_for_selector(".header__title")
-        assert page.locator(".header__title").is_visible()
+        # Brand logo remains visible at mobile width (the badge may be hidden responsively)
+        page.wait_for_selector(".topnav__logo")
+        assert page.locator(".topnav__logo").is_visible()
 
         # Match cards visible and interactive
         page.wait_for_selector("#match-1529229", timeout=10000)
