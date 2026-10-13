@@ -38,6 +38,13 @@ lib/
 lib64/
 MANIFEST
 
+# ---------------------------------------------------------------------------
+# Frontend source exceptions — must come AFTER the broad lib/ rule above.
+# The Python lib/ rule would otherwise shadow frontend/src/lib/*.ts.
+# ---------------------------------------------------------------------------
+!frontend/src/lib/
+!frontend/src/lib/**
+
 # Virtual environments
 .venv/
 venv/

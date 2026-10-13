@@ -26,4 +26,6 @@ COPY data/ ./data/
 
 EXPOSE 8000
 
-CMD ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Render (and most PaaS providers) inject a PORT env variable at runtime.
+# Shell-form CMD allows ${PORT:-8000} expansion; array-form cannot do this.
+CMD uvicorn backend.app.main:app --host 0.0.0.0 --port "${PORT:-8000}"

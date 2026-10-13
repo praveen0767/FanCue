@@ -42,8 +42,7 @@ services:
         value: INFO
       - key: SKIP_LLM_IN_TESTS
         value: "false"
-      - key: BACKEND_PORT
-        value: "8000"
+      # PORT is injected automatically by Render — do not set it here.
       # -----------------------------------------------------------------------
       # Secret vars — set these in the Render dashboard, NOT here.
       # -----------------------------------------------------------------------
@@ -52,6 +51,8 @@ services:
       - key: ALLOWED_ORIGINS
         sync: false      # Set to your Vercel frontend URL, e.g. https://fancue.vercel.app
       - key: QDRANT_URL
-        sync: false      # Optional — leave blank to run without Qdrant
+        sync: false      # Optional — leave blank to run without Qdrant Cloud
       - key: QDRANT_API_KEY
         sync: false      # Optional
+      - key: CRICKET_DATA_API_KEY
+        sync: false      # Optional — enables near-live match discovery tab

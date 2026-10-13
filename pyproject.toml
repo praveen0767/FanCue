@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "fancue"
 version = "0.1.0"
@@ -23,6 +27,14 @@ dev = [
     "pytest-cov>=5.0.0",
     "playwright>=1.40.0",
 ]
+
+# Restrict setuptools auto-discovery to the actual Python packages only.
+# Without this, setuptools also picks up tests/, contracts/, data/, etc.
+# which causes a "multiple top-level packages" error on `pip install -e .`.
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["backend*", "ingestion*"]
+exclude = ["tests*", "frontend*", "data*", "contracts*", "docs*"]
 
 [tool.pytest.ini_options]
 minversion = "8.0"

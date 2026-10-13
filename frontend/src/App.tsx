@@ -430,7 +430,7 @@ function MatchDiscovery({
                 <span className="chip chip--outline">
                   Verified Sports Engine
                 </span>
-                <span className="chip chip--magenta">Deterministic Truth</span>
+                <span className="chip chip--magenta">Evidence-Grounded</span>
               </div>
               <h1 className="discovery-hero__h1">
                 Missed part of the match?{" "}
@@ -1194,7 +1194,7 @@ function StoryView({
             className={`mode-badge generation-badge ${isFallback ? "mode-badge--fallback" : "mode-badge--verified"}`}
           >
             {isFallback ? (
-              <>⚠ Deterministic fallback · plain record</>
+              <>⚠ AI unavailable · structured summary</>
             ) : (
               <>✓ AI explanation · facts checked</>
             )}
@@ -1221,7 +1221,7 @@ function StoryView({
 
         <div className="headline-section__label">
           <span>📊</span>
-          Ground Truth Match Delta · Deterministic Score
+          Ground Truth Match Delta · Verified Score
         </div>
 
         <h1 className="headline-section__h1">{summaryHeadline}</h1>
