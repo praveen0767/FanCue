@@ -73,7 +73,7 @@ def readyz() -> ReadinessResponse:
 
     # 2. Qdrant connectivity check
     qdrant_status = "bypassed"
-    if not settings.skip_llm:
+    if settings.retrieval_enabled and not settings.skip_llm:
         try:
             from ingestion.knowledge.qdrant_store import QdrantStore
 
