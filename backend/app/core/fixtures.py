@@ -17,7 +17,7 @@ from backend.app.schemas.provenance import PermittedUse, SourceProvenance
 # ---------------------------------------------------------------------------
 # Authoritative fixture metadata — sourced from data/sources.yml and file hashes
 # ---------------------------------------------------------------------------
-_REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+_REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
 
 def _data_root() -> str:

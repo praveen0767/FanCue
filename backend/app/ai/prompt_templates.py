@@ -18,7 +18,27 @@ CRITICAL SECURITY & GOVERNANCE RULES:
 5. You MUST cite exact doc_ids from the retrieved context passages for rules or concepts.
 6. NEVER invent citations, evidence IDs, player names, events, scores, or statistics.
 7. NEVER invent speculative psychological states (e.g. 'nervous', 'panicked') or predict future match outcomes.
-8. Output MUST strictly be valid JSON matching the AIExplanationDraft schema. Do NOT output conversational preamble or markdown code fences outside JSON."""
+8. Output MUST be a single JSON object with EXACTLY these two top-level keys and no others:
+
+REQUIRED OUTPUT SCHEMA (follow exactly — extra keys will cause rejection):
+{
+  "summary": "<one paragraph plain-English summary of the interval>",
+  "claims": [
+    {
+      "claim_id": "<unique string, e.g. c1>",
+      "claim_type": "<one of: score_delta | event_chronology | tactical_context | rule_explanation | meta>",
+      "text": "<factual claim sentence>",
+      "cited_fact_ids": ["<fact_id from authoritative_facts>"],
+      "cited_knowledge_ids": [],
+      "claimed_runs": <integer or null>,
+      "claimed_wickets": <integer or null>,
+      "claimed_overs": <integer or null>,
+      "claimed_player": "<player name or null>"
+    }
+  ]
+}
+
+Do NOT output any other keys. Do NOT wrap in markdown fences. Output only the raw JSON object."""
 
 
 def build_explanation_prompt(packet: MatchEvidencePacket) -> str:
@@ -72,5 +92,6 @@ def build_explanation_prompt(packet: MatchEvidencePacket) -> str:
     return (
         f"Generate an explanation draft for the following cricket match interval.\n"
         f"EVIDENCE PACKET:\n{json.dumps(payload, indent=2)}\n\n"
-        f"Respond with JSON adhering to the AIExplanationDraft schema."
+        f"Respond with a single JSON object containing exactly 'summary' (string) and 'claims' (array). "
+        f"No other top-level keys. No markdown fences. Follow the schema in the system prompt precisely."
     )

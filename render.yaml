@@ -46,6 +46,10 @@ services:
         value: groq
       - key: GROQ_MODEL
         value: openai/gpt-oss-20b
+      - key: GROQ_BASE_URL
+        value: https://api.groq.com/openai/v1
+      - key: GROQ_TIMEOUT_SECONDS
+        value: "30"
       # PORT is injected automatically by Render — do not set it here.
       # -----------------------------------------------------------------------
       # Secret vars — set these in the Render dashboard, NOT here.

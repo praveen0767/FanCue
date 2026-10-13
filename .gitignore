@@ -160,7 +160,11 @@ docs/_build/
 # ---------------------------------------------------------------------------
 # Licensed match data must not be committed; record source and provenance
 # in data/README.md only. Ingest scripts and provenance manifests ARE tracked.
-data/raw/
+data/raw/*
+!data/raw/1529229.json
+!data/raw/1552779.json
+!data/raw/LICENSE.txt
+!data/raw/README.txt
 data/processed/
 data/downloads/
 *.yaml.secret
