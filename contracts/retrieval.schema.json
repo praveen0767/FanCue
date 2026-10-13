@@ -1,0 +1,351 @@
+{
+  "$id": "https://fancue.org/schemas/v1/retrieval.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FanCue Retrieval Contracts",
+  "version": "1.0.0",
+  "$defs": {
+    "RetrievalQuery": {
+      "$defs": {
+        "LanguageCode": {
+          "description": "Supported output languages.\n\nEnglish ('en') is the normative baseline.\nTamil ('ta') is evaluated under AC-10 quality gates.",
+          "enum": [
+            "en",
+            "ta"
+          ],
+          "title": "LanguageCode",
+          "type": "string"
+        },
+        "SportType": {
+          "description": "Supported sport domain identifiers.",
+          "enum": [
+            "cricket",
+            "football"
+          ],
+          "title": "SportType",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Typed semantic search query sent to the Qdrant retrieval layer.",
+      "properties": {
+        "query_text": {
+          "description": "Natural language semantic search query.",
+          "maxLength": 512,
+          "minLength": 3,
+          "title": "Query Text",
+          "type": "string"
+        },
+        "sport": {
+          "$ref": "#/$defs/SportType",
+          "description": "Mandatory sport filter."
+        },
+        "language": {
+          "$ref": "#/$defs/LanguageCode",
+          "description": "Mandatory language filter."
+        },
+        "target_topics": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional metadata topic filters (e.g. ['batting_technique', 'rules']).",
+          "title": "Target Topics"
+        },
+        "limit": {
+          "default": 3,
+          "description": "Maximum number of context chunks to retrieve.",
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query_text",
+        "sport",
+        "language"
+      ],
+      "title": "RetrievalQuery",
+      "type": "object"
+    },
+    "RetrievedPassage": {
+      "$defs": {
+        "LanguageCode": {
+          "description": "Supported output languages.\n\nEnglish ('en') is the normative baseline.\nTamil ('ta') is evaluated under AC-10 quality gates.",
+          "enum": [
+            "en",
+            "ta"
+          ],
+          "title": "LanguageCode",
+          "type": "string"
+        },
+        "SportType": {
+          "description": "Supported sport domain identifiers.",
+          "enum": [
+            "cricket",
+            "football"
+          ],
+          "title": "SportType",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Contextual knowledge chunk retrieved from Qdrant with full provenance metadata.",
+      "properties": {
+        "doc_id": {
+          "description": "Deterministic content-addressed identifier of the knowledge document.",
+          "minLength": 1,
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "sport": {
+          "$ref": "#/$defs/SportType"
+        },
+        "language": {
+          "$ref": "#/$defs/LanguageCode"
+        },
+        "topic": {
+          "minLength": 1,
+          "title": "Topic",
+          "type": "string"
+        },
+        "content": {
+          "description": "Retrieved markdown passage content.",
+          "minLength": 10,
+          "title": "Content",
+          "type": "string"
+        },
+        "source_name": {
+          "description": "Originating publication or rulebook.",
+          "minLength": 1,
+          "title": "Source Name",
+          "type": "string"
+        },
+        "source_url": {
+          "description": "Canonical source URL.",
+          "title": "Source Url",
+          "type": "string"
+        },
+        "license": {
+          "description": "SPDX or license name.",
+          "title": "License",
+          "type": "string"
+        },
+        "score": {
+          "description": "Vector cosine similarity score. (NOTE: Does NOT represent factual probability).",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "doc_id",
+        "sport",
+        "language",
+        "topic",
+        "content",
+        "source_name",
+        "source_url",
+        "license",
+        "score"
+      ],
+      "title": "RetrievedPassage",
+      "type": "object"
+    },
+    "RetrievalResult": {
+      "$defs": {
+        "LanguageCode": {
+          "description": "Supported output languages.\n\nEnglish ('en') is the normative baseline.\nTamil ('ta') is evaluated under AC-10 quality gates.",
+          "enum": [
+            "en",
+            "ta"
+          ],
+          "title": "LanguageCode",
+          "type": "string"
+        },
+        "RetrievalQuery": {
+          "additionalProperties": false,
+          "description": "Typed semantic search query sent to the Qdrant retrieval layer.",
+          "properties": {
+            "query_text": {
+              "description": "Natural language semantic search query.",
+              "maxLength": 512,
+              "minLength": 3,
+              "title": "Query Text",
+              "type": "string"
+            },
+            "sport": {
+              "$ref": "#/$defs/SportType",
+              "description": "Mandatory sport filter."
+            },
+            "language": {
+              "$ref": "#/$defs/LanguageCode",
+              "description": "Mandatory language filter."
+            },
+            "target_topics": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Optional metadata topic filters (e.g. ['batting_technique', 'rules']).",
+              "title": "Target Topics"
+            },
+            "limit": {
+              "default": 3,
+              "description": "Maximum number of context chunks to retrieve.",
+              "maximum": 10,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "query_text",
+            "sport",
+            "language"
+          ],
+          "title": "RetrievalQuery",
+          "type": "object"
+        },
+        "RetrievalStatus": {
+          "description": "Execution status of contextual knowledge retrieval.",
+          "enum": [
+            "success",
+            "empty_result",
+            "filter_empty",
+            "failed"
+          ],
+          "title": "RetrievalStatus",
+          "type": "string"
+        },
+        "RetrievedPassage": {
+          "additionalProperties": false,
+          "description": "Contextual knowledge chunk retrieved from Qdrant with full provenance metadata.",
+          "properties": {
+            "doc_id": {
+              "description": "Deterministic content-addressed identifier of the knowledge document.",
+              "minLength": 1,
+              "title": "Doc Id",
+              "type": "string"
+            },
+            "sport": {
+              "$ref": "#/$defs/SportType"
+            },
+            "language": {
+              "$ref": "#/$defs/LanguageCode"
+            },
+            "topic": {
+              "minLength": 1,
+              "title": "Topic",
+              "type": "string"
+            },
+            "content": {
+              "description": "Retrieved markdown passage content.",
+              "minLength": 10,
+              "title": "Content",
+              "type": "string"
+            },
+            "source_name": {
+              "description": "Originating publication or rulebook.",
+              "minLength": 1,
+              "title": "Source Name",
+              "type": "string"
+            },
+            "source_url": {
+              "description": "Canonical source URL.",
+              "title": "Source Url",
+              "type": "string"
+            },
+            "license": {
+              "description": "SPDX or license name.",
+              "title": "License",
+              "type": "string"
+            },
+            "score": {
+              "description": "Vector cosine similarity score. (NOTE: Does NOT represent factual probability).",
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "title": "Score",
+              "type": "number"
+            }
+          },
+          "required": [
+            "doc_id",
+            "sport",
+            "language",
+            "topic",
+            "content",
+            "source_name",
+            "source_url",
+            "license",
+            "score"
+          ],
+          "title": "RetrievedPassage",
+          "type": "object"
+        },
+        "SportType": {
+          "description": "Supported sport domain identifiers.",
+          "enum": [
+            "cricket",
+            "football"
+          ],
+          "title": "SportType",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Aggregate result from the retrieval layer.",
+      "properties": {
+        "query": {
+          "$ref": "#/$defs/RetrievalQuery"
+        },
+        "passages": {
+          "items": {
+            "$ref": "#/$defs/RetrievedPassage"
+          },
+          "title": "Passages",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/RetrievalStatus"
+        },
+        "error_detail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Diagnostic error message if status is FAILED.",
+          "title": "Error Detail"
+        }
+      },
+      "required": [
+        "query",
+        "status"
+      ],
+      "title": "RetrievalResult",
+      "type": "object"
+    }
+  }
+}

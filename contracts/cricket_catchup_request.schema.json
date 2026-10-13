@@ -1,0 +1,132 @@
+{
+  "$defs": {
+    "CricketInterval": {
+      "additionalProperties": false,
+      "description": "Formal whole-over interval boundary specification for a single cricket innings.\n\nAdheres strictly to docs/product/interval-model.md and ADR-008:\n- after_over = -1 represents the innings start (before any ball bowled).\n- after_over = N represents the state after all deliveries of the Nth over (0-indexed).\n- start_after_over is exclusive; end_after_over is inclusive.",
+      "properties": {
+        "innings": {
+          "default": 0,
+          "description": "0-based innings index (0 = 1st innings, 1 = 2nd innings).",
+          "minimum": 0,
+          "title": "Innings",
+          "type": "integer"
+        },
+        "start_after_over": {
+          "description": "Start boundary (exclusive). -1 denotes innings start; 12 denotes after over 13 completed.",
+          "minimum": -1,
+          "title": "Start After Over",
+          "type": "integer"
+        },
+        "end_after_over": {
+          "description": "End boundary (inclusive). 18 denotes end of over 19 (0-indexed).",
+          "minimum": 0,
+          "title": "End After Over",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_after_over",
+        "end_after_over"
+      ],
+      "title": "CricketInterval",
+      "type": "object"
+    },
+    "ExplanationDepth": {
+      "description": "Detail level for narrative catch-up.",
+      "enum": [
+        "brief",
+        "standard",
+        "deep"
+      ],
+      "title": "ExplanationDepth",
+      "type": "string"
+    },
+    "LanguageCode": {
+      "description": "Supported output languages.\n\nEnglish ('en') is the normative baseline.\nTamil ('ta') is evaluated under AC-10 quality gates.",
+      "enum": [
+        "en",
+        "ta"
+      ],
+      "title": "LanguageCode",
+      "type": "string"
+    },
+    "PerspectiveLens": {
+      "description": "Viewing perspective lens.",
+      "enum": [
+        "match",
+        "team",
+        "player"
+      ],
+      "title": "PerspectiveLens",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Fan catch-up request for a specified cricket match interval.",
+  "properties": {
+    "match_id": {
+      "description": "Target match identifier.",
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Match Id",
+      "type": "string"
+    },
+    "interval": {
+      "$ref": "#/$defs/CricketInterval",
+      "description": "Requested innings and whole-over boundary interval."
+    },
+    "lens": {
+      "$ref": "#/$defs/PerspectiveLens",
+      "default": "match",
+      "description": "Presentation perspective lens."
+    },
+    "target_entity": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Target team name or player name when lens is 'team' or 'player'.",
+      "title": "Target Entity"
+    },
+    "language": {
+      "$ref": "#/$defs/LanguageCode",
+      "default": "en",
+      "description": "Requested explanation language ('en' baseline or 'ta' evaluated)."
+    },
+    "explanation_depth": {
+      "$ref": "#/$defs/ExplanationDepth",
+      "default": "standard",
+      "description": "Detail level of generated explanation."
+    },
+    "correlation_id": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "minLength": 8,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional client-provided correlation tracking ID.",
+      "title": "Correlation Id"
+    }
+  },
+  "required": [
+    "match_id",
+    "interval"
+  ],
+  "title": "CricketCatchUpRequest",
+  "type": "object",
+  "$id": "https://fancue.org/schemas/v1/cricket_catchup_request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0"
+}

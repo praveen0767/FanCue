@@ -1,0 +1,325 @@
+{
+  "$id": "https://fancue.org/schemas/v1/cricket_event_state.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FanCue Cricket Events and State",
+  "version": "1.0.0",
+  "$defs": {
+    "CricketScoreSnapshot": {
+      "additionalProperties": false,
+      "description": "Deterministic score state at an exact boundary point.",
+      "properties": {
+        "runs": {
+          "description": "Total team runs scored at boundary.",
+          "minimum": 0,
+          "title": "Runs",
+          "type": "integer"
+        },
+        "wickets": {
+          "description": "Total wickets lost (0 to 10).",
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Wickets",
+          "type": "integer"
+        },
+        "overs_completed": {
+          "description": "Number of fully completed overs.",
+          "minimum": 0,
+          "title": "Overs Completed",
+          "type": "integer"
+        },
+        "legal_balls_in_over": {
+          "default": 0,
+          "description": "Legal balls bowled in current over (0 for whole-over boundaries).",
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Legal Balls In Over",
+          "type": "integer"
+        },
+        "extras_total": {
+          "default": 0,
+          "description": "Cumulative extras conceded.",
+          "minimum": 0,
+          "title": "Extras Total",
+          "type": "integer"
+        },
+        "run_rate": {
+          "default": 0.0,
+          "description": "Current runs per over.",
+          "minimum": 0.0,
+          "title": "Run Rate",
+          "type": "number"
+        }
+      },
+      "required": [
+        "runs",
+        "wickets",
+        "overs_completed"
+      ],
+      "title": "CricketScoreSnapshot",
+      "type": "object"
+    },
+    "CricketStateDelta": {
+      "additionalProperties": false,
+      "description": "Deterministic difference calculated between start and end boundaries.",
+      "properties": {
+        "runs_added": {
+          "description": "Runs scored during interval.",
+          "minimum": 0,
+          "title": "Runs Added",
+          "type": "integer"
+        },
+        "wickets_lost": {
+          "description": "Wickets fell during interval.",
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Wickets Lost",
+          "type": "integer"
+        },
+        "completed_overs_delta": {
+          "description": "Full overs completed during interval.",
+          "minimum": 0,
+          "title": "Completed Overs Delta",
+          "type": "integer"
+        },
+        "legal_balls_added": {
+          "description": "Total legal deliveries in interval.",
+          "minimum": 0,
+          "title": "Legal Balls Added",
+          "type": "integer"
+        },
+        "extras_added": {
+          "default": 0,
+          "description": "Total extras conceded in interval.",
+          "minimum": 0,
+          "title": "Extras Added",
+          "type": "integer"
+        },
+        "interval_run_rate": {
+          "default": 0.0,
+          "description": "Run rate across interval.",
+          "minimum": 0.0,
+          "title": "Interval Run Rate",
+          "type": "number"
+        }
+      },
+      "required": [
+        "runs_added",
+        "wickets_lost",
+        "completed_overs_delta",
+        "legal_balls_added"
+      ],
+      "title": "CricketStateDelta",
+      "type": "object"
+    },
+    "CricketDeliveryEvent": {
+      "$defs": {
+        "CricketDeliveryExtras": {
+          "additionalProperties": false,
+          "description": "Detailed extras breakdown on a delivery.",
+          "properties": {
+            "wides": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Wides",
+              "type": "integer"
+            },
+            "noballs": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Noballs",
+              "type": "integer"
+            },
+            "byes": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Byes",
+              "type": "integer"
+            },
+            "legbyes": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Legbyes",
+              "type": "integer"
+            },
+            "penalty": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Penalty",
+              "type": "integer"
+            }
+          },
+          "title": "CricketDeliveryExtras",
+          "type": "object"
+        },
+        "CricketDeliveryRuns": {
+          "additionalProperties": false,
+          "description": "Run attribution on a single delivery.",
+          "properties": {
+            "batter": {
+              "description": "Runs off the bat.",
+              "minimum": 0,
+              "title": "Batter",
+              "type": "integer"
+            },
+            "extras": {
+              "description": "Extras runs awarded.",
+              "minimum": 0,
+              "title": "Extras",
+              "type": "integer"
+            },
+            "total": {
+              "description": "Total runs resulting from delivery.",
+              "minimum": 0,
+              "title": "Total",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "batter",
+            "extras",
+            "total"
+          ],
+          "title": "CricketDeliveryRuns",
+          "type": "object"
+        },
+        "CricketWicket": {
+          "additionalProperties": false,
+          "description": "Dismissal record on a delivery.",
+          "properties": {
+            "player_out": {
+              "description": "Dismissed batter name.",
+              "minLength": 1,
+              "title": "Player Out",
+              "type": "string"
+            },
+            "kind": {
+              "description": "Dismissal method (bowled, caught, lbw, etc.).",
+              "minLength": 1,
+              "title": "Kind",
+              "type": "string"
+            },
+            "fielders": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Names of assisting fielders.",
+              "title": "Fielders"
+            }
+          },
+          "required": [
+            "player_out",
+            "kind"
+          ],
+          "title": "CricketWicket",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Normalized delivery event emitted by the cricket engine.",
+      "properties": {
+        "event_id": {
+          "description": "Deterministic unique ball ID.",
+          "minLength": 1,
+          "title": "Event Id",
+          "type": "string"
+        },
+        "match_id": {
+          "minLength": 1,
+          "title": "Match Id",
+          "type": "string"
+        },
+        "innings": {
+          "minimum": 0,
+          "title": "Innings",
+          "type": "integer"
+        },
+        "over": {
+          "description": "0-indexed completed over.",
+          "minimum": 0,
+          "title": "Over",
+          "type": "integer"
+        },
+        "delivery_in_over": {
+          "description": "Delivery sequence within over.",
+          "minimum": 1,
+          "title": "Delivery In Over",
+          "type": "integer"
+        },
+        "legal_ball_number": {
+          "description": "Legal ball index (1 to 6), or 0 if illegal (wide/no-ball).",
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Legal Ball Number",
+          "type": "integer"
+        },
+        "batter": {
+          "minLength": 1,
+          "title": "Batter",
+          "type": "string"
+        },
+        "bowler": {
+          "minLength": 1,
+          "title": "Bowler",
+          "type": "string"
+        },
+        "non_striker": {
+          "minLength": 1,
+          "title": "Non Striker",
+          "type": "string"
+        },
+        "runs": {
+          "$ref": "#/$defs/CricketDeliveryRuns"
+        },
+        "extras": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CricketDeliveryExtras"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "wickets": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CricketWicket"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wickets"
+        }
+      },
+      "required": [
+        "event_id",
+        "match_id",
+        "innings",
+        "over",
+        "delivery_in_over",
+        "legal_ball_number",
+        "batter",
+        "bowler",
+        "non_striker",
+        "runs"
+      ],
+      "title": "CricketDeliveryEvent",
+      "type": "object"
+    }
+  }
+}

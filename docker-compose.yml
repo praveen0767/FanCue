@@ -1,0 +1,101 @@
+# =============================================================================
+# FanCue — Local Development Infrastructure
+# =============================================================================
+# This file defines local development services only.
+# Do NOT use this configuration for production deployments.
+#
+# Image versions are pinned. Review release notes before upgrading.
+# Credentials are read from .env (never committed to version control).
+#
+# Startup:
+#   cp .env.example .env   # edit with local values
+#   docker compose up -d
+#   docker compose ps      # verify all services healthy
+#
+# Shutdown:
+#   docker compose down          # stop services, preserve volumes
+#   docker compose down -v       # stop services AND delete volumes (data loss)
+#
+# Logs:
+#   docker compose logs -f qdrant
+#   docker compose logs -f postgres
+#
+# Services included:
+#   - qdrant    : Semantic knowledge retrieval (required)
+#   - postgres  : Durable application store (planned, documented in ADR-007)
+#
+# Services NOT included (conditional — see AGENTS.md section 12):
+#   - Redis              (no documented current requirement)
+#   - Background workers (no documented current requirement)
+#   - MCP server         (not required on fan-facing path)
+# =============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Qdrant — Semantic vector search
+  # Role: Retrieve contextual knowledge relevant to match intervals.
+  # Authoritative use: Knowledge retrieval only. NOT a score store.
+  # Version: 1.13.1 (pinned — check https://github.com/qdrant/qdrant/releases)
+  # ---------------------------------------------------------------------------
+  qdrant:
+    image: qdrant/qdrant:v1.13.1
+    container_name: fancue_qdrant
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6333:6333"   # HTTP REST API
+      - "127.0.0.1:6334:6334"   # gRPC API
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      # Local development: no API key required.
+      # For managed deployments, set QDRANT__SERVICE__API_KEY.
+      QDRANT__SERVICE__HTTP_PORT: "6333"
+      QDRANT__SERVICE__GRPC_PORT: "6334"
+      QDRANT__LOG_LEVEL: "INFO"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL — Durable application store
+  # Role: Durable match metadata, dataset revisions, evaluation records,
+  #       and async job state (when required in Phase 07).
+  # Rationale: Documented in ADR-007. Application code does not use this yet.
+  # Version: 16.9 (pinned — check https://hub.docker.com/_/postgres/tags)
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16.9-alpine
+    container_name: fancue_postgres
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-fancue}
+      POSTGRES_USER: ${POSTGRES_USER:-fancue_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-CHANGE_ME_SET_IN_DOT_ENV}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-fancue_user} -d ${POSTGRES_DB:-fancue}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+# =============================================================================
+# Named volumes — development persistence
+# These are managed by Docker and are NOT committed to version control.
+# To inspect: docker volume inspect fancue_qdrant_data
+# To remove: docker compose down -v  (WARNING: deletes all local data)
+# =============================================================================
+volumes:
+  qdrant_data:
+    name: fancue_qdrant_data
+  postgres_data:
+    name: fancue_postgres_data
+

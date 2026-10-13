@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-fixed": "#6ff6ff", "secondary-fixed-dim": "#b4c5ff", "on-secondary-fixed": "#00174b", "inverse-surface": "#dde2f5", "surface-container-lowest": "#080e1b", "secondary": "#b4c5ff", "error": "#ffb4ab", "surface-container": "#1a1f2d", "on-primary": "#00373a", "surface-bright": "#333948", "surface-container-low": "#161b29", "tertiary-container": "#ffcfd8", "tertiary-fixed": "#ffd9e0", "on-background": "#dde2f5", "on-secondary": "#002a78", "on-surface": "#dde2f5", "on-primary-container": "#006a70", "inverse-primary": "#00696f", "surface-container-highest": "#2f3543", "surface": "#0d1320", "outline": "#849495", "secondary-fixed": "#dbe1ff", "tertiary": "#fff5f6", "on-error-container": "#ffdad6", "primary-fixed-dim": "#00dce6", "on-primary-fixed-variant": "#004f53", "error-container": "#93000a", "on-primary-fixed": "#002022", "primary": "#e0fdff", "on-secondary-container": "#cdd7ff", "inverse-on-surface": "#2a303f", "on-tertiary-fixed-variant": "#8f0040", "surface-dim": "#0d1320", "on-tertiary": "#66002b", "on-tertiary-fixed": "#3f0018", "secondary-container": "#0053db", "on-tertiary-container": "#be0057", "surface-container-high": "#242a38", "on-surface-variant": "#b9cacb", "on-error": "#690005", "outline-variant": "#3a494b", "tertiary-fixed-dim": "#ffb1c2", "primary-container": "#00f2fe", "on-secondary-fixed-variant": "#003ea8", "background": "#0d1320", "surface-tint": "#00dce6", "surface-variant": "#2f3543" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-sm": "0.5rem", "space-md": "1rem", "space-xl": "2.5rem", "space-xs": "0.25rem", "gutter-desktop": "1.5rem", "margin-tablet": "1.5rem", "margin": "1rem", "margin-desktop": "2.5rem", "space-lg": "1.5rem", "gutter": "1rem" }, "fontFamily": { "score-lead-mobile": [ "Outfit" ], "body-sm": [ "Inter" ], "body-md": [ "Inter" ], "headline-lg": [ "Outfit" ], "data-tabular": [ "Space Grotesk" ], "body-lg": [ "Inter" ], "display-hero-mobile": [ "Outfit" ], "score-lead": [ "Outfit" ], "headline-sm": [ "Outfit" ], "label-telemetry": [ "Space Grotesk" ], "display-hero": [ "Outfit" ], "headline-md": [ "Outfit" ], "label-tag": [ "Space Grotesk" ] }, "fontSize": { "score-lead-mobile": [ "32px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "body-sm": [ "12px", { "lineHeight": "16px", "fontWeight": "400" } ], "body-md": [ "14px", { "lineHeight": "20px", "fontWeight": "400" } ], "headline-lg": [ "32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "data-tabular": [ "15px", { "lineHeight": "18px", "letterSpacing": "-0.01em", "fontWeight": "500" } ], "body-lg": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ], "display-hero-mobile": [ "36px", { "lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "800" } ], "score-lead": [ "44px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "700" } ], "headline-sm": [ "20px", { "lineHeight": "28px", "fontWeight": "600" } ], "label-telemetry": [ "13px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600" } ], "display-hero": [ "56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "800" } ], "headline-md": [ "24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "label-tag": [ "11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "700" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 max-w-[1440px] mx-auto px-margin-desktop flex items-center justify-between gap-space-lg"><div class="flex items-center gap-space-md shrink-0"><img alt="Logo.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UeURBmSPH83w9emzgv1CZX57hPLsx6gN5dSKvuyQqraK2j16fuOfx_RuIoTPLoogSHqArsWvtYgtYOw6k7v8xr7Kp2y9WE4RHmbHeSsrWyr5kJ_F3wl00R5zzNOXN3FLAr0VpwDKK0dRmHBAKc1D6vzlb3fx9tj6QMYDZSoESh_7jnhIh8EioOOjF7virbUoMYAFUUuq48UKKHRivbZSnvsZB99VbREoe9qZayoDOozKrx3Rq6zALYRJVczV-WxqhlChGesZZotg"/><div class="flex flex-col"><div class="flex items-center gap-space-sm"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">FanCue</span><span class="hidden xl:inline-flex items-center px-space-xs py-0.5 rounded-full bg-surface-container-highest text-primary-container font-label-tag text-label-tag uppercase tracking-wider">HISTORICAL REPLAY · CRICSHEET ARCHIVE</span></div><span class="hidden lg:block font-body-sm text-body-sm text-on-surface-variant">Catch the moment. Understand the game.</span></div></div><nav class="hidden md:flex items-center gap-space-xs bg-surface-container-low px-space-xs py-1 rounded-xl" data-active-classes="bg-primary-container text-on-primary-container font-semibold"><a aria-current="page" class="px-space-md py-space-sm rounded-lg transition-colors bg-primary-container text-on-primary-container font-semibold" data-path="matches" href="#">Matches</a><a class="px-space-md py-space-sm rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="active-recap" href="#">Active Recap</a><a class="px-space-md py-space-sm rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="archive" href="#">Archive</a><a class="px-space-md py-space-sm rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="how-verification-works" href="#">How Verification Works</a></nav><div class="flex items-center gap-space-sm shrink-0"><button class="hidden sm:flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-telemetry text-label-telemetry transition-colors" type="button"><span class="material-symbols-outlined text-[18px]">search</span><span>Search Archive</span></button><button class="hidden xl:flex items-center gap-space-xs px-space-sm py-space-sm rounded-lg text-on-surface-variant hover:text-on-surface font-label-telemetry text-label-telemetry" type="button"><span class="material-symbols-outlined text-primary-container text-[18px]">verified</span><span class="font-label-tag text-label-tag uppercase">Verified Data</span></button><div class="flex items-center bg-surface-container-low p-1 rounded-full gap-1"><button class="px-space-sm py-0.5 rounded-full font-label-tag text-label-tag text-on-surface-variant hover:text-on-surface" type="button">Plain</button><button class="px-space-sm py-0.5 rounded-full font-label-tag text-label-tag bg-primary-container text-on-primary-container font-bold" type="button">Verified</button></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background max-w-[1440px] mx-auto px-margin-desktop"><div class="flex flex-col w-full pb-20">
+<!-- Top Ambient Glow Aura -->
+<div class="relative w-full overflow-hidden pointer-events-none">
+<div class="absolute -top-32 left-1/4 w-[600px] h-[240px] bg-primary-container/10 blur-[130px] rounded-full"></div>
+<div class="absolute -top-28 right-1/4 w-[480px] h-[220px] bg-error-container/20 blur-[140px] rounded-full"></div>
+</div>
+<!-- Interactive State Bar & Diagnostic Switcher (For prototype audit) -->
+<div class="w-full mb-space-lg">
+<div class="bg-surface-container-lowest/80 backdrop-blur-md rounded-xl p-space-sm sm:p-space-md flex flex-wrap items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-tag text-label-tag tracking-wider uppercase">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+          Telemetry Engine v2.4
+        </span>
+<span class="text-outline-variant font-data-tabular text-body-sm hidden md:inline">|</span>
+<span class="font-label-telemetry text-label-telemetry text-on-surface-variant uppercase hidden sm:inline">Simulation Preview States:</span>
+<div class="inline-flex p-1 bg-surface-container-low rounded-lg gap-1">
+<button class="px-space-sm py-1 rounded font-label-tag text-label-tag bg-primary-container text-on-primary-container transition-all" id="btn-state-default" type="button">Default View</button>
+<button class="px-space-sm py-1 rounded font-label-tag text-label-tag text-on-surface-variant hover:text-on-surface transition-all" id="btn-state-skeleton" type="button">Loading State</button>
+<button class="px-space-sm py-1 rounded font-label-tag text-label-tag text-on-surface-variant hover:text-on-surface transition-all" id="btn-state-empty" type="button">Empty Archive</button>
+<button class="px-space-sm py-1 rounded font-label-tag text-label-tag text-on-surface-variant hover:text-on-surface transition-all" id="btn-state-network" type="button">Network Retry</button>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="inline-flex items-center gap-1 px-space-sm py-1 rounded-lg bg-surface-container text-primary font-data-tabular text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-primary-container">database</span>
+<span>4,812 Cricsheet Logs Synced</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Editorial Masthead Section -->
+<section class="relative w-full mb-space-xl">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-end">
+<div class="lg:col-span-8 flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="inline-flex items-center gap-1.5 px-space-sm py-0.5 rounded-full bg-surface-container-highest text-primary-container font-label-tag text-label-tag uppercase tracking-widest">
+<span class="material-symbols-outlined text-[14px]">history_toggle_off</span>
+            Historical Replay · Cricsheet Archive
+          </span>
+<span class="px-space-xs py-0.5 rounded bg-tertiary-fixed-dim/20 text-tertiary-fixed font-label-tag text-label-tag uppercase tracking-wider">
+            Verified Ball Ledger
+          </span>
+</div>
+<h1 class="font-display-hero text-display-hero text-on-surface tracking-tight leading-[1.08] max-w-4xl">
+          Missed part of the match? <span class="bg-gradient-to-r from-primary-fixed to-secondary-fixed-dim bg-clip-text text-transparent">Get the story.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mt-1 leading-relaxed">
+          Select a recorded historical encounter. Pick the exact interval you stepped away for. Discover what shifted, why momentum cracked, and inspect verified ball-by-ball evidence.
+        </p>
+</div>
+<!-- Quick Telemetry Micro-Stat Widget -->
+<div class="lg:col-span-4 bg-surface-container-low/90 backdrop-blur-md rounded-xl p-space-md shadow-lg flex flex-col justify-between gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]">troubleshoot</span>
+<span class="font-label-telemetry text-label-telemetry text-on-surface uppercase tracking-wider">Cricsheet Replay Engine</span>
+</div>
+<span class="font-data-tabular text-body-sm text-primary-fixed">99.98% Fidelity</span>
+</div>
+<div class="grid grid-cols-3 gap-2 pt-2 text-center">
+<div class="bg-surface-container rounded-lg p-2 flex flex-col">
+<span class="font-score-lead text-headline-sm text-primary">240</span>
+<span class="font-label-tag text-label-tag text-on-surface-variant uppercase mt-1">Balls/T20 Match</span>
+</div>
+<div class="bg-surface-container rounded-lg p-2 flex flex-col">
+<span class="font-score-lead text-headline-sm text-secondary-fixed">0.12s</span>
+<span class="font-label-tag text-label-tag text-on-surface-variant uppercase mt-1">Recap Latency</span>
+</div>
+<div class="bg-surface-container rounded-lg p-2 flex flex-col">
+<span class="font-score-lead text-headline-sm text-primary-fixed-dim">100%</span>
+<span class="font-label-tag text-label-tag text-on-surface-variant uppercase mt-1">Audit Trace</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Filter & Discovery Control Hub -->
+<section class="w-full mb-space-lg">
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<!-- Search Field -->
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full bg-surface-container-lowest text-on-surface font-body-md text-body-md pl-11 pr-4 py-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-container placeholder:text-outline transition-all" id="archive-search-input" placeholder="Filter by team, tournament or venue (e.g. India, Barbados, 2024)..." type="text"/>
+<button class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface" id="search-clear-btn">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Format & Narrative Filter Tabs -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1 lg:pb-0 scrollbar-none">
+<button class="filter-tab px-space-md py-2 rounded-lg bg-secondary-container text-on-secondary-container font-label-telemetry text-label-telemetry uppercase whitespace-nowrap transition-all shadow-sm" data-filter="all">
+          All Formats
+        </button>
+<button class="filter-tab px-space-md py-2 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-telemetry text-label-telemetry uppercase whitespace-nowrap transition-all" data-filter="t20">
+          T20 International
+        </button>
+<button class="filter-tab px-space-md py-2 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-telemetry text-label-telemetry uppercase whitespace-nowrap transition-all" data-filter="odi">
+          ODI World Cup
+        </button>
+<button class="filter-tab px-space-md py-2 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-telemetry text-label-telemetry uppercase whitespace-nowrap transition-all" data-filter="chase">
+          Thrilling Chases
+        </button>
+<button class="filter-tab px-space-md py-2 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-telemetry text-label-telemetry uppercase whitespace-nowrap transition-all" data-filter="death">
+          Death Over Clashes
+        </button>
+</div>
+<!-- Sort Selection -->
+<div class="flex items-center gap-2 shrink-0">
+<span class="material-symbols-outlined text-outline text-[18px]">sort</span>
+<select class="bg-surface-container text-on-surface font-label-telemetry text-label-telemetry rounded-lg px-space-sm py-2 focus:outline-none cursor-pointer">
+<option>Chronological: Most Recent</option>
+<option>High Impact Momentum</option>
+<option>Tightest Margin Result</option>
+</select>
+</div>
+</div>
+</section>
+<!-- VIEW CONTAINER 1: DEFAULT MATCH DISCOVERY GRID -->
+<main class="w-full flex flex-col gap-space-lg" id="view-default">
+<!-- Featured Headline Card (2024 T20 World Cup Final) -->
+<article class="group relative bg-surface-container-low hover:bg-surface-container transition-all duration-300 rounded-xl overflow-hidden shadow-xl">
+<!-- Glow edge accent on hover -->
+<div class="absolute inset-0 bg-gradient-to-r from-primary-container/10 via-transparent to-error-container/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-0 relative">
+<!-- Visual Presentation Left / Backdrop image -->
+<div class="lg:col-span-5 relative min-h-[260px] lg:min-h-full overflow-hidden bg-surface-container-lowest">
+<div class="bg-cover bg-center w-full h-full transform group-hover:scale-105 transition-transform duration-700 opacity-70" data-alt="Cinematic atmospheric floodlit Kensington Oval cricket stadium in Bridgetown Barbados at dusk during ICC T20 World Cup final. Intense azure and deep indigo lights beaming over the turf with subtle misty sea air, electric cyan energy pulses glowing around the pitch boundary." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDEnS1HjhBrKZpT8fsRJadDFQTvWD-GW6IafQW2p4IvDzpQ4cbv9vqN8pJc-MUA-o6FEQ7NLi1Vbqcq1wOwuVpyyHZEuCOETB3MR9putegm4YmaTJ-zRBg4lsz_BM9zfMJuCNjaSiIfbC86_BY9h-2SHEdoEu_LYAsqfiCASm1QZOo4v8C4XLUsF9jZ6HHXZ88bsu63nx4Z_63vuTz5zLc7tBR7nnTGLWxUmJvAHkSB_6OLyhHLlCrY')">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-surface-container-lowest/40 via-surface-container-lowest/80 to-surface-container-low"></div>
+<!-- Overlay match banner & status -->
+<div class="absolute inset-0 p-space-md flex flex-col justify-between">
+<div class="flex items-center justify-between gap-space-sm">
+<span class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-md text-primary font-label-tag text-label-tag uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-ping"></span>
+                Archived Final · 2024
+              </span>
+<span class="px-space-sm py-1 rounded bg-error-container/80 backdrop-blur-md text-on-error font-label-tag text-label-tag uppercase font-bold tracking-wider">
+                Historic 7-Run Finish
+              </span>
+</div>
+<div>
+<span class="font-label-telemetry text-label-telemetry text-on-surface-variant block uppercase tracking-wider mb-1">ICC Men's T20 World Cup 2024 · Final</span>
+<p class="font-headline-sm text-headline-sm text-primary font-bold">Kensington Oval, Bridgetown, Barbados</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-[16px] text-primary-container">event</span> 29 June 2024
+                <span class="text-outline-variant">·</span>
+<span class="material-symbols-outlined text-[16px] text-primary-container">speed</span> 240 Verified Deliveries
+              </p>
+</div>
+</div>
+</div>
+<!-- Match Intelligence Details Right -->
+<div class="lg:col-span-7 p-space-md lg:p-space-xl flex flex-col justify-between gap-space-md">
+<!-- Innings Comparative Telemetry Board -->
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between flex-wrap gap-2">
+<div class="flex items-center gap-space-xs">
+<span class="px-space-sm py-0.5 rounded bg-surface-container-highest text-primary-container font-label-tag text-label-tag uppercase">T20 International</span>
+<span class="px-space-sm py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-tag text-label-tag uppercase">20 Overs</span>
+</div>
+<div class="inline-flex items-center gap-1.5 text-on-surface-variant font-data-tabular text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-primary-container">verified</span>
+                Ball Evidence Ledger #CS-2024-T20F
+              </div>
+</div>
+<!-- Teams & Scores -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md py-space-sm">
+<!-- Team A: India -->
+<div class="bg-surface-container p-space-md rounded-xl flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-11 h-11 rounded-full bg-[#0047AB]/30 flex items-center justify-center font-label-tag text-label-tag text-primary-fixed uppercase tracking-wider font-bold shadow-inner">
+                    IND
+                  </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">India</span>
+<span class="font-label-tag text-label-tag text-on-surface-variant">1st Innings · 20.0 Overs</span>
+</div>
+</div>
+<div class="text-right">
+<div class="font-score-lead text-headline-lg text-primary">176<span class="text-outline text-headline-sm">/7</span></div>
+<span class="font-data-tabular text-body-sm text-secondary-fixed">CRR 8.80</span>
+</div>
+</div>
+<!-- Team B: South Africa -->
+<div class="bg-surface-container p-space-md rounded-xl flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-11 h-11 rounded-full bg-[#007A3D]/30 flex items-center justify-center font-label-tag text-label-tag text-primary-fixed uppercase tracking-wider font-bold shadow-inner">
+                    SA
+                  </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">South Africa</span>
+<span class="font-label-tag text-label-tag text-on-surface-variant">Target 177 · 20.0 Overs</span>
+</div>
+</div>
+<div class="text-right">
+<div class="font-score-lead text-headline-lg text-on-surface">169<span class="text-outline text-headline-sm">/8</span></div>
+<span class="font-data-tabular text-body-sm text-error">Req was 30 off 30</span>
+</div>
+</div>
+</div>
+<!-- Narrative Hotspot Capsule -->
+<div class="bg-surface-container-high/90 rounded-lg p-space-sm sm:px-space-md sm:py-space-sm flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-[20px] animate-pulse">crisis_alert</span>
+<span class="font-label-telemetry text-label-telemetry text-tertiary-container uppercase font-bold tracking-wider">Crucial Momentum Phase:</span>
+<span class="font-body-md text-body-md text-on-surface">Death Overs Turnaround · 3 Wickets in 12 balls (Overs 16–20)</span>
+</div>
+<span class="font-data-tabular text-body-sm text-primary-fixed shrink-0">WPA Shift: +84%</span>
+</div>
+</div>
+<!-- Bottom Action Deck -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md pt-space-xs">
+<div class="flex items-center gap-space-sm text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary-container"></span> Kohli 76(59)</span>
+<span>·</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-error"></span> Klaasen 52(27)</span>
+<span>·</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary-fixed"></span> Bumrah 2/18</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="px-space-md py-space-sm rounded-lg bg-surface-container hover:bg-surface-container-highest text-on-surface font-label-telemetry text-label-telemetry uppercase transition-colors" type="button">
+                Inspect Ledger
+              </button>
+<a class="group/btn inline-flex items-center gap-space-sm px-space-lg py-space-sm rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-bold shadow-[0_0_20px_rgba(0,242,254,0.35)] hover:shadow-[0_0_30px_rgba(0,242,254,0.6)] transition-all" data-path="active-recap" href="#">
+<span>Catch up</span>
+<span class="material-symbols-outlined text-[20px] group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</article>
+<!-- Secondary Matches Grid (3 Bespoke Historical Matches) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+<!-- Card 2: 2023 ODI World Cup Final (AUS vs IND) -->
+<article class="bg-surface-container-low hover:bg-surface-container transition-all duration-300 rounded-xl p-space-md flex flex-col justify-between shadow-lg relative group overflow-hidden">
+<div class="flex flex-col gap-space-sm">
+<!-- Header Meta -->
+<div class="flex items-center justify-between gap-2">
+<span class="px-space-sm py-0.5 rounded bg-surface-container-highest text-primary-container font-label-tag text-label-tag uppercase">ODI · 50 Overs</span>
+<span class="font-data-tabular text-body-sm text-on-surface-variant">19 Nov 2023</span>
+</div>
+<!-- Tournament & Venue -->
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">2023 ICC World Cup Final</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+              Narendra Modi Stadium, Ahmedabad
+            </p>
+</div>
+<!-- Match Photo Context Thumbnail -->
+<div class="relative w-full h-36 rounded-lg overflow-hidden bg-surface-container-lowest my-1">
+<div class="w-full h-full bg-cover bg-center opacity-60 group-hover:scale-105 transition-transform duration-500" data-alt="Massive roar of 130000 cricket spectators at Narendra Modi Stadium Ahmedabad under golden tungsten floodlights, dusk atmospheric haze, championship trophy on a podium in the distance." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDLYUwmDAY6N3eJdctpHzWyTwg-3H5krieQWMhg371DV_bwlxTjqbMcJtmia7APw2r9swyiMUnR8YpeEWlQNGzSCAxOXx4gIlk6PyzFH6rtV1OpqbAZm6IPrXL3_0MHBTXa7iHiEtWqxu-zSxx7yUagsSbbKg4KIPwERkmqu_9x57T11wgtQcibNhqyEXhRmzWpgGoV-PzrO6V4m-MqO5BQabFwnG1Q9woXMu_FwGZ-3XF2lZ5ZpBM1')">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+<div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-surface-container-lowest/90 font-label-tag text-label-tag text-primary-fixed uppercase">
+              462 Balls Logged
+            </div>
+</div>
+<!-- Innings Recap -->
+<div class="space-y-2 py-1">
+<div class="flex items-center justify-between bg-surface-container p-2 rounded-lg">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-[#0047AB]/40 text-primary-fixed font-label-tag text-[10px] flex items-center justify-center font-bold">IND</span>
+<span class="font-body-md text-body-md text-on-surface">India</span>
+</div>
+<div class="font-data-tabular text-headline-sm text-on-surface">240 <span class="text-outline text-body-sm">(50.0)</span></div>
+</div>
+<div class="flex items-center justify-between bg-surface-container p-2 rounded-lg">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-[#FFD700]/30 text-primary-fixed font-label-tag text-[10px] flex items-center justify-center font-bold">AUS</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold">Australia</span>
+</div>
+<div class="font-data-tabular text-headline-sm text-primary font-bold">241/4 <span class="text-outline text-body-sm">(43.0)</span></div>
+</div>
+</div>
+<!-- Turning Point Narrative -->
+<div class="bg-surface-container-high rounded-lg p-2.5 flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary-fixed text-[18px] shrink-0 mt-0.5">insights</span>
+<div>
+<span class="font-label-tag text-label-tag text-secondary-fixed uppercase block">Turning Point Interval:</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Head 137 &amp; Labuschagne 58* recover from 47/3 after Cummins spell</span>
+</div>
+</div>
+</div>
+<!-- Action CTA -->
+<div class="pt-space-md mt-space-sm flex items-center justify-between">
+<span class="font-data-tabular text-body-sm text-outline">Won by 6 wkts</span>
+<a class="inline-flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-primary-container text-on-primary-container font-label-telemetry text-label-telemetry font-bold hover:shadow-[0_0_15px_rgba(0,242,254,0.4)] transition-all" data-path="active-recap" href="#">
+<span>Catch up</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</article>
+<!-- Card 3: 2022 T20 World Cup Final (ENG vs PAK) -->
+<article class="bg-surface-container-low hover:bg-surface-container transition-all duration-300 rounded-xl p-space-md flex flex-col justify-between shadow-lg relative group overflow-hidden">
+<div class="flex flex-col gap-space-sm">
+<!-- Header Meta -->
+<div class="flex items-center justify-between gap-2">
+<span class="px-space-sm py-0.5 rounded bg-surface-container-highest text-primary-container font-label-tag text-label-tag uppercase">T20 International</span>
+<span class="font-data-tabular text-body-sm text-on-surface-variant">13 Nov 2022</span>
+</div>
+<!-- Tournament & Venue -->
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">2022 ICC T20 World Cup Final</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+              Melbourne Cricket Ground, MCG
+            </p>
+</div>
+<!-- Match Photo Context Thumbnail -->
+<div class="relative w-full h-36 rounded-lg overflow-hidden bg-surface-container-lowest my-1">
+<div class="w-full h-full bg-cover bg-center opacity-60 group-hover:scale-105 transition-transform duration-500" data-alt="The Melbourne Cricket Ground MCG towering light towers in dark Victorian twilight rainclouds with electric cyan and magenta spotlights reflecting off the lush wet green outfield, cinematic sports telecast vibe." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBzXdjO1yPWyq88VDHF8Ia_mENLePG-z8HvHDJcyNGP-TAQnozdwFsxZnhakf1powsgceKkIcvtS2LDo_l3faHlujW53jBYo2jDbBaI48I7dc7wu8W54Zwvnk_xNAXG0aF5wQOPkQ6mpbL2CY3LjCiffG50dMgn1_cfTpcYd-dtrUsccr2Jv50eASmaaY5tg9qqB1tX8kK_nMbWr_VJlGyHAdZGf77H6tmeRvR0M5Jc1nu1zYFxn1io')">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+<div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-surface-container-lowest/90 font-label-tag text-label-tag text-primary-fixed uppercase">
+              234 Balls Logged
+            </div>
+</div>
+<!-- Innings Recap -->
+<div class="space-y-2 py-1">
+<div class="flex items-center justify-between bg-surface-container p-2 rounded-lg">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-[#006629]/40 text-primary-fixed font-label-tag text-[10px] flex items-center justify-center font-bold">PAK</span>
+<span class="font-body-md text-body-md text-on-surface">Pakistan</span>
+</div>
+<div class="font-data-tabular text-headline-sm text-on-surface">137/8 <span class="text-outline text-body-sm">(20.0)</span></div>
+</div>
+<div class="flex items-center justify-between bg-surface-container p-2 rounded-lg">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-[#C8102E]/30 text-primary-fixed font-label-tag text-[10px] flex items-center justify-center font-bold">ENG</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold">England</span>
+</div>
+<div class="font-data-tabular text-headline-sm text-primary font-bold">138/5 <span class="text-outline text-body-sm">(19.0)</span></div>
+</div>
+</div>
+<!-- Turning Point Narrative -->
+<div class="bg-surface-container-high rounded-lg p-2.5 flex items-start gap-2">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-[18px] shrink-0 mt-0.5">emergency</span>
+<div>
+<span class="font-label-tag text-label-tag text-tertiary-fixed-dim uppercase block">Crucial Turning Point:</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Shaheen Afridi knee injury on over 15.1; Stokes 52* closes the chase</span>
+</div>
+</div>
+</div>
+<!-- Action CTA -->
+<div class="pt-space-md mt-space-sm flex items-center justify-between">
+<span class="font-data-tabular text-body-sm text-outline">Won by 5 wkts</span>
+<a class="inline-flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-primary-container text-on-primary-container font-label-telemetry text-label-telemetry font-bold hover:shadow-[0_0_15px_rgba(0,242,254,0.4)] transition-all" data-path="active-recap" href="#">
+<span>Catch up</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</article>
+<!-- Card 4: 2021 T20 World Cup Final (AUS vs NZ) -->
+<article class="bg-surface-container-low hover:bg-surface-container transition-all duration-300 rounded-xl p-space-md flex flex-col justify-between shadow-lg relative group overflow-hidden">
+<div class="flex flex-col gap-space-sm">
+<!-- Header Meta -->
+<div class="flex items-center justify-between gap-2">
+<span class="px-space-sm py-0.5 rounded bg-surface-container-highest text-primary-container font-label-tag text-label-tag uppercase">T20 International</span>
+<span class="font-data-tabular text-body-sm text-on-surface-variant">14 Nov 2021</span>
+</div>
+<!-- Tournament & Venue -->
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">2021 ICC T20 World Cup Final</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[15px] text-primary-container">location_on</span>
+              Dubai International Cricket Stadium
+            </p>
+</div>
+<!-- Match Photo Context Thumbnail -->
+<div class="relative w-full h-36 rounded-lg overflow-hidden bg-surface-container-lowest my-1">
+<div class="w-full h-full bg-cover bg-center opacity-60 group-hover:scale-105 transition-transform duration-500" data-alt="Ring of Fire stadium lights at Dubai International Cricket Stadium illuminated against a velvet Arabian night sky with glowing neon cyan boundary boards and pitch telemetry overlays." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBKMmWFDQYCVsarpogqbw9a1WmZCbSr16qgQlyb33IpjiHMFpJTYmFLn89wy22lWqZvergF9ASLbW--GnbzEgP8l_G2RRpURUUq8b0bUDgbzaouaRNnpxvXOtNXWOH-wEWBVtKwcxjOlin6IbzCAbbqNog-miO1Lhvsv1dj9vxBri6iMpNI7OgCgDljqIUNGDI1egq2_iDt1ChDaZZX-t66IRxzhMz9w0B1GN_ekIxorqvPyOxv9Old')">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+<div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-surface-container-lowest/90 font-label-tag text-label-tag text-primary-fixed uppercase">
+              233 Balls Logged
+            </div>
+</div>
+<!-- Innings Recap -->
+<div class="space-y-2 py-1">
+<div class="flex items-center justify-between bg-surface-container p-2 rounded-lg">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-[#111111] text-primary-fixed font-label-tag text-[10px] flex items-center justify-center font-bold">NZ</span>
+<span class="font-body-md text-body-md text-on-surface">New Zealand</span>
+</div>
+<div class="font-data-tabular text-headline-sm text-on-surface">172/4 <span class="text-outline text-body-sm">(20.0)</span></div>
+</div>
+<div class="flex items-center justify-between bg-surface-container p-2 rounded-lg">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-[#FFD700]/30 text-primary-fixed font-label-tag text-[10px] flex items-center justify-center font-bold">AUS</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold">Australia</span>
+</div>
+<div class="font-data-tabular text-headline-sm text-primary font-bold">173/2 <span class="text-outline text-body-sm">(18.5)</span></div>
+</div>
+</div>
+<!-- Turning Point Narrative -->
+<div class="bg-surface-container-high rounded-lg p-2.5 flex items-start gap-2">
+<span class="material-symbols-outlined text-primary-container text-[18px] shrink-0 mt-0.5">bolt</span>
+<div>
+<span class="font-label-tag text-label-tag text-primary-container uppercase block">Powerplay &amp; Middle Assault:</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Marsh 77*(50) &amp; Warner 53 dismantle spin overs 9–14</span>
+</div>
+</div>
+</div>
+<!-- Action CTA -->
+<div class="pt-space-md mt-space-sm flex items-center justify-between">
+<span class="font-data-tabular text-body-sm text-outline">Won by 8 wkts</span>
+<a class="inline-flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-primary-container text-on-primary-container font-label-telemetry text-label-telemetry font-bold hover:shadow-[0_0_15px_rgba(0,242,254,0.4)] transition-all" data-path="active-recap" href="#">
+<span>Catch up</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</article>
+</div>
+<!-- Verified Cricsheet Engine Narrative Guarantee Banner -->
+<div class="w-full bg-gradient-to-r from-surface-container via-surface-container-high to-surface-container rounded-xl p-space-md lg:p-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md shadow-md mt-space-sm">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-primary-container/20 text-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[28px]">fact_check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary">Every Ball is Audited Before We Construct Your Story</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-2xl mt-0.5">
+            FanCue never invents commentary. Our algorithms analyze official Cricsheet event logs, strike-rate spikes, win-probability deltas, and Hawk-Eye trajectory markers to surface only what actually changed the game.
+          </p>
+</div>
+</div>
+<a class="px-space-md py-2.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container-low text-primary-fixed font-label-telemetry text-label-telemetry uppercase tracking-wider whitespace-nowrap transition-colors" data-path="how-verification-works" href="#">
+        Read Verification Protocol →
+      </a>
+</div>
+</main>
+<!-- VIEW CONTAINER 2: LOADING SKELETON STATE (Hidden by default, triggered via prototype switcher) -->
+<section class="hidden w-full flex-col gap-space-lg animate-pulse" id="view-skeleton">
+<!-- Hero Skeleton -->
+<div class="bg-surface-container-low rounded-xl h-80 w-full p-space-lg flex flex-col justify-between">
+<div class="flex justify-between items-center">
+<div class="h-6 w-48 bg-surface-container rounded"></div>
+<div class="h-6 w-32 bg-surface-container rounded"></div>
+</div>
+<div class="space-y-3">
+<div class="h-10 w-96 bg-surface-container rounded"></div>
+<div class="h-4 w-64 bg-surface-container rounded"></div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="h-16 bg-surface-container rounded"></div>
+<div class="h-16 bg-surface-container rounded"></div>
+</div>
+</div>
+<!-- 3 Cards Skeleton -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+<div class="bg-surface-container-low rounded-xl h-96 p-space-md flex flex-col justify-between">
+<div class="h-5 w-24 bg-surface-container rounded"></div>
+<div class="h-32 bg-surface-container rounded"></div>
+<div class="space-y-2">
+<div class="h-10 bg-surface-container rounded"></div>
+<div class="h-10 bg-surface-container rounded"></div>
+</div>
+<div class="h-8 bg-surface-container rounded"></div>
+</div>
+<div class="bg-surface-container-low rounded-xl h-96 p-space-md flex flex-col justify-between">
+<div class="h-5 w-24 bg-surface-container rounded"></div>
+<div class="h-32 bg-surface-container rounded"></div>
+<div class="space-y-2">
+<div class="h-10 bg-surface-container rounded"></div>
+<div class="h-10 bg-surface-container rounded"></div>
+</div>
+<div class="h-8 bg-surface-container rounded"></div>
+</div>
+<div class="bg-surface-container-low rounded-xl h-96 p-space-md flex flex-col justify-between">
+<div class="h-5 w-24 bg-surface-container rounded"></div>
+<div class="h-32 bg-surface-container rounded"></div>
+<div class="space-y-2">
+<div class="h-10 bg-surface-container rounded"></div>
+<div class="h-10 bg-surface-container rounded"></div>
+</div>
+<div class="h-8 bg-surface-container rounded"></div>
+</div>
+</div>
+</section>
+<!-- VIEW CONTAINER 3: EMPTY ARCHIVE STATE -->
+<section class="hidden w-full flex-col items-center justify-center text-center py-20 px-4 bg-surface-container-low rounded-xl" id="view-empty">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant mb-space-md">
+<span class="material-symbols-outlined text-[36px]">travel_explore</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">No Archived Matches Found</span>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md mt-2 mb-space-lg">
+      No historical Cricsheet logs matched your current query or tournament filters. Try clearing your search keyword.
+    </p>
+<button class="px-space-lg py-2.5 rounded-lg bg-primary-container text-on-primary-container font-label-telemetry text-label-telemetry uppercase font-bold shadow-md" id="btn-reset-filters" type="button">
+      Reset All Filters
+    </button>
+</section>
+<!-- VIEW CONTAINER 4: RECOVERABLE NETWORK ERROR STATE -->
+<section class="hidden w-full flex-col items-center justify-center text-center py-20 px-4 bg-surface-container-low rounded-xl" id="view-network">
+<div class="w-16 h-16 rounded-full bg-error-container/40 flex items-center justify-center text-error mb-space-md">
+<span class="material-symbols-outlined text-[36px]">wifi_off</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-error font-bold">Cricsheet Stream Interrupted</span>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md mt-2 mb-space-lg">
+      Unable to establish secure telemetry connection with the archive ledger node. Local cached match headers are preserved.
+    </p>
+<div class="flex items-center gap-space-sm">
+<button class="px-space-lg py-2.5 rounded-lg bg-primary-container text-on-primary-container font-label-telemetry text-label-telemetry uppercase font-bold flex items-center gap-2 shadow-md" id="btn-retry-network" type="button">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+        Retry Connection
+      </button>
+<button class="px-space-md py-2.5 rounded-lg bg-surface-container text-on-surface font-label-telemetry text-label-telemetry uppercase" type="button">
+        Use Offline Cache
+      </button>
+</div>
+</section>
+</div>
+<script>
+  // Prototype State Switcher Logic
+  const views = {
+    default: document.getElementById('view-default'),
+    skeleton: document.getElementById('view-skeleton'),
+    empty: document.getElementById('view-empty'),
+    network: document.getElementById('view-network')
+  };
+
+  const stateBtns = {
+    default: document.getElementById('btn-state-default'),
+    skeleton: document.getElementById('btn-state-skeleton'),
+    empty: document.getElementById('btn-state-empty'),
+    network: document.getElementById('btn-state-network')
+  };
+
+  function switchState(activeKey) {
+    Object.keys(views).forEach(key => {
+      if (key === activeKey) {
+        views[key].classList.remove('hidden');
+        views[key].classList.add('flex');
+        stateBtns[key].className = "px-space-sm py-1 rounded font-label-tag text-label-tag bg-primary-container text-on-primary-container font-bold transition-all";
+      } else {
+        views[key].classList.add('hidden');
+        views[key].classList.remove('flex');
+        stateBtns[key].className = "px-space-sm py-1 rounded font-label-tag text-label-tag text-on-surface-variant hover:text-on-surface transition-all";
+      }
+    });
+  }
+
+  stateBtns.default.addEventListener('click', () => switchState('default'));
+  stateBtns.skeleton.addEventListener('click', () => switchState('skeleton'));
+  stateBtns.empty.addEventListener('click', () => switchState('empty'));
+  stateBtns.network.addEventListener('click', () => switchState('network'));
+
+  document.getElementById('btn-reset-filters')?.addEventListener('click', () => {
+    switchState('default');
+    document.getElementById('archive-search-input').value = '';
+  });
+
+  document.getElementById('btn-retry-network')?.addEventListener('click', () => {
+    switchState('default');
+  });
+
+  // Filter Chip Interactions
+  const filterTabs = document.querySelectorAll('.filter-tab');
+  filterTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      filterTabs.forEach(t => {
+        t.className = "filter-tab px-space-md py-2 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface font-label-telemetry text-label-telemetry uppercase whitespace-nowrap transition-all";
+      });
+      tab.className = "filter-tab px-space-md py-2 rounded-lg bg-secondary-container text-on-secondary-container font-label-telemetry text-label-telemetry uppercase whitespace-nowrap transition-all shadow-sm";
+    });
+  });
+
+  // Live client search simulation
+  const searchInput = document.getElementById('archive-search-input');
+  const clearBtn = document.getElementById('search-clear-btn');
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.trim().toLowerCase();
+    if (query.length > 0) {
+      clearBtn.classList.remove('hidden');
+    } else {
+      clearBtn.classList.add('hidden');
+    }
+
+    if (query.includes('xyz') || query.includes('empty')) {
+      switchState('empty');
+    } else if (views.empty.classList.contains('flex')) {
+      switchState('default');
+    }
+  });
+
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearBtn.classList.add('hidden');
+    switchState('default');
+  });
+</script></main><footer class="w-full bg-surface-container-lowest mt-space-xl py-space-xl"><div class="max-w-[1440px] mx-auto px-margin-desktop flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><img alt="Logo.png" class="h-6 w-auto object-contain opacity-80" src="https://lh3.googleusercontent.com/aida/AEtjO1UeURBmSPH83w9emzgv1CZX57hPLsx6gN5dSKvuyQqraK2j16fuOfx_RuIoTPLoogSHqArsWvtYgtYOw6k7v8xr7Kp2y9WE4RHmbHeSsrWyr5kJ_F3wl00R5zzNOXN3FLAr0VpwDKK0dRmHBAKc1D6vzlb3fx9tj6QMYDZSoESh_7jnhIh8EioOOjF7virbUoMYAFUUuq48UKKHRivbZSnvsZB99VbREoe9qZayoDOozKrx3Rq6zALYRJVczV-WxqhlChGesZZotg"/><span class="font-label-telemetry text-label-telemetry text-on-surface-variant">FanCue Engine · CricSheet Ground-Truth Replay Telemetry</span></div><div class="flex items-center gap-space-lg font-body-sm text-body-sm text-on-surface-variant"><a class="hover:text-primary transition-colors" data-path="how-verification-works" href="#">Verification Standard</a><a class="hover:text-primary transition-colors" data-path="archive" href="#">Historical Match Logs</a><span class="font-label-tag text-label-tag text-outline">v2.4-PROD</span></div></div></footer></body></html>

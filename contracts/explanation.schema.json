@@ -1,0 +1,197 @@
+{
+  "$id": "https://fancue.org/schemas/v1/explanation.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FanCue Explanation Contracts",
+  "version": "1.0.0",
+  "$defs": {
+    "StructuredClaim": {
+      "$defs": {
+        "ClaimType": {
+          "description": "Semantic category of an individual explanatory statement.",
+          "enum": [
+            "score_delta",
+            "event_chronology",
+            "tactical_context",
+            "historical_rule",
+            "meta"
+          ],
+          "title": "ClaimType",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "An individual assertion in an explanation with explicit citation linkage.",
+      "properties": {
+        "claim_id": {
+          "description": "Unique claim identifier.",
+          "minLength": 1,
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "claim_type": {
+          "$ref": "#/$defs/ClaimType",
+          "description": "Classification of assertion."
+        },
+        "text": {
+          "description": "Natural language assertion.",
+          "minLength": 3,
+          "title": "Text",
+          "type": "string"
+        },
+        "cited_fact_ids": {
+          "description": "IDs of atomic EvidenceFacts cited to substantiate this claim.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Cited Fact Ids",
+          "type": "array"
+        },
+        "cited_knowledge_ids": {
+          "description": "IDs of Qdrant RetrievedPassages cited for background context.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Cited Knowledge Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "claim_id",
+        "claim_type",
+        "text"
+      ],
+      "title": "StructuredClaim",
+      "type": "object"
+    },
+    "ExplanationPayload": {
+      "$defs": {
+        "ClaimType": {
+          "description": "Semantic category of an individual explanatory statement.",
+          "enum": [
+            "score_delta",
+            "event_chronology",
+            "tactical_context",
+            "historical_rule",
+            "meta"
+          ],
+          "title": "ClaimType",
+          "type": "string"
+        },
+        "FallbackReason": {
+          "description": "Diagnostic justification for invoking the deterministic fallback.",
+          "enum": [
+            "none",
+            "timeout",
+            "llm_error",
+            "fact_mismatch",
+            "unsupported_claims",
+            "disabled"
+          ],
+          "title": "FallbackReason",
+          "type": "string"
+        },
+        "GenerationMode": {
+          "description": "Origin of generated response.",
+          "enum": [
+            "llm_verified",
+            "deterministic_fallback"
+          ],
+          "title": "GenerationMode",
+          "type": "string"
+        },
+        "StructuredClaim": {
+          "additionalProperties": false,
+          "description": "An individual assertion in an explanation with explicit citation linkage.",
+          "properties": {
+            "claim_id": {
+              "description": "Unique claim identifier.",
+              "minLength": 1,
+              "title": "Claim Id",
+              "type": "string"
+            },
+            "claim_type": {
+              "$ref": "#/$defs/ClaimType",
+              "description": "Classification of assertion."
+            },
+            "text": {
+              "description": "Natural language assertion.",
+              "minLength": 3,
+              "title": "Text",
+              "type": "string"
+            },
+            "cited_fact_ids": {
+              "description": "IDs of atomic EvidenceFacts cited to substantiate this claim.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Cited Fact Ids",
+              "type": "array"
+            },
+            "cited_knowledge_ids": {
+              "description": "IDs of Qdrant RetrievedPassages cited for background context.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Cited Knowledge Ids",
+              "type": "array"
+            }
+          },
+          "required": [
+            "claim_id",
+            "claim_type",
+            "text"
+          ],
+          "title": "StructuredClaim",
+          "type": "object"
+        },
+        "VerificationStatus": {
+          "description": "Fact verification outcome.",
+          "enum": [
+            "verified",
+            "failed_verification",
+            "unverified_fallback"
+          ],
+          "title": "VerificationStatus",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Structured explanation and verification envelope.",
+      "properties": {
+        "summary": {
+          "description": "Synthesized narrative explanation.",
+          "minLength": 10,
+          "title": "Summary",
+          "type": "string"
+        },
+        "claims": {
+          "description": "Granular assertions with evidence citations.",
+          "items": {
+            "$ref": "#/$defs/StructuredClaim"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "generation_mode": {
+          "$ref": "#/$defs/GenerationMode",
+          "description": "LLM generated or deterministic fallback."
+        },
+        "verification_status": {
+          "$ref": "#/$defs/VerificationStatus"
+        },
+        "fallback_reason": {
+          "$ref": "#/$defs/FallbackReason",
+          "default": "none",
+          "description": "Reason fallback was engaged, or NONE if LLM output verified."
+        }
+      },
+      "required": [
+        "summary",
+        "generation_mode",
+        "verification_status"
+      ],
+      "title": "ExplanationPayload",
+      "type": "object"
+    }
+  }
+}

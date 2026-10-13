@@ -1,0 +1,668 @@
+{
+  "$id": "https://fancue.org/schemas/v1/evidence_packet.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FanCue Match Evidence Packet",
+  "version": "1.0.0",
+  "$defs": {
+    "EvidenceFact": {
+      "$defs": {
+        "FactType": {
+          "description": "Categorization of verified match evidence facts.",
+          "enum": [
+            "wicket",
+            "boundary",
+            "partnership",
+            "over_summary",
+            "state_milestone",
+            "match_result"
+          ],
+          "title": "FactType",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "A deterministic, verifiable atomic match fact linked directly to source events.",
+      "properties": {
+        "fact_id": {
+          "description": "Reproducible identifier for the fact (e.g. 'fact_1529229_ov2_w1').",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Fact Id",
+          "type": "string"
+        },
+        "fact_type": {
+          "$ref": "#/$defs/FactType",
+          "description": "Category of fact."
+        },
+        "match_id": {
+          "minLength": 1,
+          "title": "Match Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "referenced_event_ids": {
+          "description": "List of source event IDs that substantiate this fact.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Referenced Event Ids",
+          "type": "array"
+        },
+        "description": {
+          "description": "Canonical human-readable fact statement.",
+          "maxLength": 256,
+          "minLength": 5,
+          "title": "Description",
+          "type": "string"
+        },
+        "structured_payload": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "description": "Typed scalar attributes supporting programmatic verification.",
+          "title": "Structured Payload",
+          "type": "object"
+        }
+      },
+      "required": [
+        "fact_id",
+        "fact_type",
+        "match_id",
+        "source_revision",
+        "referenced_event_ids",
+        "description"
+      ],
+      "title": "EvidenceFact",
+      "type": "object"
+    },
+    "MatchEvidencePacket": {
+      "$defs": {
+        "CricketScoreSnapshot": {
+          "additionalProperties": false,
+          "description": "Deterministic score state at an exact boundary point.",
+          "properties": {
+            "runs": {
+              "description": "Total team runs scored at boundary.",
+              "minimum": 0,
+              "title": "Runs",
+              "type": "integer"
+            },
+            "wickets": {
+              "description": "Total wickets lost (0 to 10).",
+              "maximum": 10,
+              "minimum": 0,
+              "title": "Wickets",
+              "type": "integer"
+            },
+            "overs_completed": {
+              "description": "Number of fully completed overs.",
+              "minimum": 0,
+              "title": "Overs Completed",
+              "type": "integer"
+            },
+            "legal_balls_in_over": {
+              "default": 0,
+              "description": "Legal balls bowled in current over (0 for whole-over boundaries).",
+              "maximum": 6,
+              "minimum": 0,
+              "title": "Legal Balls In Over",
+              "type": "integer"
+            },
+            "extras_total": {
+              "default": 0,
+              "description": "Cumulative extras conceded.",
+              "minimum": 0,
+              "title": "Extras Total",
+              "type": "integer"
+            },
+            "run_rate": {
+              "default": 0.0,
+              "description": "Current runs per over.",
+              "minimum": 0.0,
+              "title": "Run Rate",
+              "type": "number"
+            }
+          },
+          "required": [
+            "runs",
+            "wickets",
+            "overs_completed"
+          ],
+          "title": "CricketScoreSnapshot",
+          "type": "object"
+        },
+        "CricketStateDelta": {
+          "additionalProperties": false,
+          "description": "Deterministic difference calculated between start and end boundaries.",
+          "properties": {
+            "runs_added": {
+              "description": "Runs scored during interval.",
+              "minimum": 0,
+              "title": "Runs Added",
+              "type": "integer"
+            },
+            "wickets_lost": {
+              "description": "Wickets fell during interval.",
+              "maximum": 10,
+              "minimum": 0,
+              "title": "Wickets Lost",
+              "type": "integer"
+            },
+            "completed_overs_delta": {
+              "description": "Full overs completed during interval.",
+              "minimum": 0,
+              "title": "Completed Overs Delta",
+              "type": "integer"
+            },
+            "legal_balls_added": {
+              "description": "Total legal deliveries in interval.",
+              "minimum": 0,
+              "title": "Legal Balls Added",
+              "type": "integer"
+            },
+            "extras_added": {
+              "default": 0,
+              "description": "Total extras conceded in interval.",
+              "minimum": 0,
+              "title": "Extras Added",
+              "type": "integer"
+            },
+            "interval_run_rate": {
+              "default": 0.0,
+              "description": "Run rate across interval.",
+              "minimum": 0.0,
+              "title": "Interval Run Rate",
+              "type": "number"
+            }
+          },
+          "required": [
+            "runs_added",
+            "wickets_lost",
+            "completed_overs_delta",
+            "legal_balls_added"
+          ],
+          "title": "CricketStateDelta",
+          "type": "object"
+        },
+        "EvidenceFact": {
+          "additionalProperties": false,
+          "description": "A deterministic, verifiable atomic match fact linked directly to source events.",
+          "properties": {
+            "fact_id": {
+              "description": "Reproducible identifier for the fact (e.g. 'fact_1529229_ov2_w1').",
+              "maxLength": 64,
+              "minLength": 1,
+              "title": "Fact Id",
+              "type": "string"
+            },
+            "fact_type": {
+              "$ref": "#/$defs/FactType",
+              "description": "Category of fact."
+            },
+            "match_id": {
+              "minLength": 1,
+              "title": "Match Id",
+              "type": "string"
+            },
+            "source_revision": {
+              "minLength": 1,
+              "title": "Source Revision",
+              "type": "string"
+            },
+            "referenced_event_ids": {
+              "description": "List of source event IDs that substantiate this fact.",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "title": "Referenced Event Ids",
+              "type": "array"
+            },
+            "description": {
+              "description": "Canonical human-readable fact statement.",
+              "maxLength": 256,
+              "minLength": 5,
+              "title": "Description",
+              "type": "string"
+            },
+            "structured_payload": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ]
+              },
+              "description": "Typed scalar attributes supporting programmatic verification.",
+              "title": "Structured Payload",
+              "type": "object"
+            }
+          },
+          "required": [
+            "fact_id",
+            "fact_type",
+            "match_id",
+            "source_revision",
+            "referenced_event_ids",
+            "description"
+          ],
+          "title": "EvidenceFact",
+          "type": "object"
+        },
+        "FactType": {
+          "description": "Categorization of verified match evidence facts.",
+          "enum": [
+            "wicket",
+            "boundary",
+            "partnership",
+            "over_summary",
+            "state_milestone",
+            "match_result"
+          ],
+          "title": "FactType",
+          "type": "string"
+        },
+        "FootballPeriod": {
+          "description": "Match period divisions in football.",
+          "enum": [
+            "first_half",
+            "second_half",
+            "extra_time_1",
+            "extra_time_2",
+            "penalties"
+          ],
+          "title": "FootballPeriod",
+          "type": "string"
+        },
+        "FootballScoreSnapshot": {
+          "additionalProperties": false,
+          "description": "Provisional score state for a football match.",
+          "properties": {
+            "home_score": {
+              "minimum": 0,
+              "title": "Home Score",
+              "type": "integer"
+            },
+            "away_score": {
+              "minimum": 0,
+              "title": "Away Score",
+              "type": "integer"
+            },
+            "period": {
+              "$ref": "#/$defs/FootballPeriod"
+            },
+            "minute": {
+              "minimum": 0,
+              "title": "Minute",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "home_score",
+            "away_score",
+            "period",
+            "minute"
+          ],
+          "title": "FootballScoreSnapshot",
+          "type": "object"
+        },
+        "FootballStateDelta": {
+          "additionalProperties": false,
+          "description": "Provisional state difference for football.",
+          "properties": {
+            "home_goals": {
+              "minimum": 0,
+              "title": "Home Goals",
+              "type": "integer"
+            },
+            "away_goals": {
+              "minimum": 0,
+              "title": "Away Goals",
+              "type": "integer"
+            },
+            "yellow_cards": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Yellow Cards",
+              "type": "integer"
+            },
+            "red_cards": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Red Cards",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "home_goals",
+            "away_goals"
+          ],
+          "title": "FootballStateDelta",
+          "type": "object"
+        },
+        "LanguageCode": {
+          "description": "Supported output languages.\n\nEnglish ('en') is the normative baseline.\nTamil ('ta') is evaluated under AC-10 quality gates.",
+          "enum": [
+            "en",
+            "ta"
+          ],
+          "title": "LanguageCode",
+          "type": "string"
+        },
+        "PermittedUse": {
+          "description": "Permitted usage tier for dataset.",
+          "enum": [
+            "open_attribution",
+            "non_commercial",
+            "evaluation_only",
+            "commercial"
+          ],
+          "title": "PermittedUse",
+          "type": "string"
+        },
+        "RetrievedPassage": {
+          "additionalProperties": false,
+          "description": "Contextual knowledge chunk retrieved from Qdrant with full provenance metadata.",
+          "properties": {
+            "doc_id": {
+              "description": "Deterministic content-addressed identifier of the knowledge document.",
+              "minLength": 1,
+              "title": "Doc Id",
+              "type": "string"
+            },
+            "sport": {
+              "$ref": "#/$defs/SportType"
+            },
+            "language": {
+              "$ref": "#/$defs/LanguageCode"
+            },
+            "topic": {
+              "minLength": 1,
+              "title": "Topic",
+              "type": "string"
+            },
+            "content": {
+              "description": "Retrieved markdown passage content.",
+              "minLength": 10,
+              "title": "Content",
+              "type": "string"
+            },
+            "source_name": {
+              "description": "Originating publication or rulebook.",
+              "minLength": 1,
+              "title": "Source Name",
+              "type": "string"
+            },
+            "source_url": {
+              "description": "Canonical source URL.",
+              "title": "Source Url",
+              "type": "string"
+            },
+            "license": {
+              "description": "SPDX or license name.",
+              "title": "License",
+              "type": "string"
+            },
+            "score": {
+              "description": "Vector cosine similarity score. (NOTE: Does NOT represent factual probability).",
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "title": "Score",
+              "type": "number"
+            }
+          },
+          "required": [
+            "doc_id",
+            "sport",
+            "language",
+            "topic",
+            "content",
+            "source_name",
+            "source_url",
+            "license",
+            "score"
+          ],
+          "title": "RetrievedPassage",
+          "type": "object"
+        },
+        "SourceProvenance": {
+          "additionalProperties": false,
+          "description": "Auditable provenance record for an authoritative data source or fixture.",
+          "properties": {
+            "source_id": {
+              "description": "Unique identifier of data source in registry.",
+              "maxLength": 64,
+              "minLength": 1,
+              "title": "Source Id",
+              "type": "string"
+            },
+            "source_name": {
+              "description": "Human-readable provider name (e.g. 'Cricsheet').",
+              "maxLength": 128,
+              "minLength": 1,
+              "title": "Source Name",
+              "type": "string"
+            },
+            "source_url": {
+              "description": "Canonical URL of dataset provider.",
+              "title": "Source Url",
+              "type": "string"
+            },
+            "retrieved_at": {
+              "description": "Timezone-aware UTC timestamp when dataset was retrieved.",
+              "format": "date-time",
+              "title": "Retrieved At",
+              "type": "string"
+            },
+            "dataset_revision": {
+              "description": "Version, revision number, or git commit hash of dataset.",
+              "maxLength": 64,
+              "minLength": 1,
+              "title": "Dataset Revision",
+              "type": "string"
+            },
+            "source_format": {
+              "description": "Source serialization format (e.g. 'json', 'yaml').",
+              "maxLength": 32,
+              "minLength": 1,
+              "title": "Source Format",
+              "type": "string"
+            },
+            "source_format_version": {
+              "description": "Format specification version (e.g. '1.3.0').",
+              "maxLength": 32,
+              "minLength": 1,
+              "title": "Source Format Version",
+              "type": "string"
+            },
+            "file_sha256": {
+              "description": "Cryptographic SHA-256 hash (64 hex characters) of source file.",
+              "pattern": "^[a-f0-9]{64}$",
+              "title": "File Sha256",
+              "type": "string"
+            },
+            "license_name": {
+              "description": "Full license name or SPDX identifier (e.g. 'ODC-By-1.0').",
+              "maxLength": 128,
+              "minLength": 1,
+              "title": "License Name",
+              "type": "string"
+            },
+            "license_url": {
+              "description": "Canonical URL to full legal license text.",
+              "title": "License Url",
+              "type": "string"
+            },
+            "attribution_text": {
+              "description": "Mandatory legal attribution notice as required by license.",
+              "maxLength": 512,
+              "minLength": 10,
+              "title": "Attribution Text",
+              "type": "string"
+            },
+            "permitted_use": {
+              "$ref": "#/$defs/PermittedUse",
+              "description": "Authorized usage category."
+            },
+            "modifications": {
+              "default": "None",
+              "description": "Summary of any transformations applied to raw data.",
+              "maxLength": 256,
+              "title": "Modifications",
+              "type": "string"
+            }
+          },
+          "required": [
+            "source_id",
+            "source_name",
+            "source_url",
+            "retrieved_at",
+            "dataset_revision",
+            "source_format",
+            "source_format_version",
+            "file_sha256",
+            "license_name",
+            "license_url",
+            "attribution_text",
+            "permitted_use"
+          ],
+          "title": "SourceProvenance",
+          "type": "object"
+        },
+        "SportType": {
+          "description": "Supported sport domain identifiers.",
+          "enum": [
+            "cricket",
+            "football"
+          ],
+          "title": "SportType",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Complete bundle of deterministic facts and provenance assembled for AI explanation.",
+      "properties": {
+        "packet_id": {
+          "description": "Deterministic packet identifier.",
+          "minLength": 1,
+          "title": "Packet Id",
+          "type": "string"
+        },
+        "match_id": {
+          "minLength": 1,
+          "title": "Match Id",
+          "type": "string"
+        },
+        "sport": {
+          "$ref": "#/$defs/SportType"
+        },
+        "interval_summary": {
+          "description": "E.g. 'Innings 0, Overs 13-18'.",
+          "minLength": 1,
+          "title": "Interval Summary",
+          "type": "string"
+        },
+        "state_before": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CricketScoreSnapshot"
+            },
+            {
+              "$ref": "#/$defs/FootballScoreSnapshot"
+            }
+          ],
+          "title": "State Before"
+        },
+        "state_after": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CricketScoreSnapshot"
+            },
+            {
+              "$ref": "#/$defs/FootballScoreSnapshot"
+            }
+          ],
+          "title": "State After"
+        },
+        "state_delta": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CricketStateDelta"
+            },
+            {
+              "$ref": "#/$defs/FootballStateDelta"
+            }
+          ],
+          "title": "State Delta"
+        },
+        "key_facts": {
+          "description": "Chronologically ordered consequential facts selected for interval.",
+          "items": {
+            "$ref": "#/$defs/EvidenceFact"
+          },
+          "title": "Key Facts",
+          "type": "array"
+        },
+        "retrieved_knowledge_ids": {
+          "description": "IDs of semantic knowledge documents retrieved from Qdrant.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Retrieved Knowledge Ids",
+          "type": "array"
+        },
+        "retrieved_passages": {
+          "description": "Full retrieved context passages with source URLs and locators.",
+          "items": {
+            "$ref": "#/$defs/RetrievedPassage"
+          },
+          "title": "Retrieved Passages",
+          "type": "array"
+        },
+        "provenance": {
+          "$ref": "#/$defs/SourceProvenance",
+          "description": "Authoritative dataset provenance record."
+        }
+      },
+      "required": [
+        "packet_id",
+        "match_id",
+        "sport",
+        "interval_summary",
+        "state_before",
+        "state_after",
+        "state_delta",
+        "provenance"
+      ],
+      "title": "MatchEvidencePacket",
+      "type": "object"
+    }
+  }
+}

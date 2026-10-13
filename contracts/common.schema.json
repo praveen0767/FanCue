@@ -1,0 +1,152 @@
+{
+  "$id": "https://fancue.org/schemas/v1/common.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FanCue Common Contracts",
+  "version": "1.0.0",
+  "$defs": {
+    "MatchDescriptor": {
+      "$defs": {
+        "MatchMode": {
+          "description": "Data freshness and presentation mode.",
+          "enum": [
+            "replay",
+            "live"
+          ],
+          "title": "MatchMode",
+          "type": "string"
+        },
+        "SportType": {
+          "description": "Supported sport domain identifiers.",
+          "enum": [
+            "cricket",
+            "football"
+          ],
+          "title": "SportType",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Metadata describing a supported match fixture.",
+      "properties": {
+        "match_id": {
+          "description": "Stable internal match identifier (e.g. '1529229').",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Match Id",
+          "type": "string"
+        },
+        "sport": {
+          "$ref": "#/$defs/SportType",
+          "description": "Sport category."
+        },
+        "name": {
+          "description": "Human-readable match title (e.g. 'India vs West Indies').",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "format": {
+          "description": "Match format (e.g. 'ODI', 'T20', 'Test', 'EPL').",
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Format",
+          "type": "string"
+        },
+        "teams": {
+          "description": "Participating teams in order [team1, team2].",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Teams",
+          "type": "array"
+        },
+        "date": {
+          "description": "Match start date in ISO YYYY-MM-DD format.",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "title": "Date",
+          "type": "string"
+        },
+        "venue": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Venue or stadium name.",
+          "title": "Venue"
+        },
+        "mode": {
+          "$ref": "#/$defs/MatchMode",
+          "default": "replay",
+          "description": "Classification: V1 strictly operates in replay mode."
+        },
+        "source_id": {
+          "description": "Identifier of originating dataset source (e.g. 'cricsheet_historical_odi').",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "description": "Source format revision or snapshot hash.",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "supported_innings": {
+          "description": "Available innings or period indexes (0-based).",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Supported Innings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "match_id",
+        "sport",
+        "name",
+        "format",
+        "teams",
+        "date",
+        "source_id",
+        "source_revision"
+      ],
+      "title": "MatchDescriptor",
+      "type": "object"
+    },
+    "RequestCorrelation": {
+      "additionalProperties": false,
+      "description": "Correlation and tracing metadata for request envelopes.",
+      "properties": {
+        "correlation_id": {
+          "description": "Unique request correlation ID for tracing and audit.",
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Correlation Id",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "Timezone-aware UTC timestamp when request was initiated.",
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "correlation_id"
+      ],
+      "title": "RequestCorrelation",
+      "type": "object"
+    }
+  }
+}

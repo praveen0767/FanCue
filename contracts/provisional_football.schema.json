@@ -1,0 +1,305 @@
+{
+  "$id": "https://fancue.org/schemas/v1/provisional_football.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FanCue Provisional Football Contracts",
+  "version": "1.0.0",
+  "$defs": {
+    "FootballCatchUpRequest": {
+      "$defs": {
+        "ExplanationDepth": {
+          "description": "Detail level for narrative catch-up.",
+          "enum": [
+            "brief",
+            "standard",
+            "deep"
+          ],
+          "title": "ExplanationDepth",
+          "type": "string"
+        },
+        "FootballInterval": {
+          "additionalProperties": false,
+          "description": "Provisional minute-based interval boundary for football.",
+          "properties": {
+            "period": {
+              "$ref": "#/$defs/FootballPeriod",
+              "default": "first_half",
+              "description": "Target match period."
+            },
+            "start_minute": {
+              "description": "Minute mark when fan left (inclusive of preceding action).",
+              "minimum": 0,
+              "title": "Start Minute",
+              "type": "integer"
+            },
+            "end_minute": {
+              "description": "Minute mark when fan returned.",
+              "minimum": 1,
+              "title": "End Minute",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "start_minute",
+            "end_minute"
+          ],
+          "title": "FootballInterval",
+          "type": "object"
+        },
+        "FootballPeriod": {
+          "description": "Match period divisions in football.",
+          "enum": [
+            "first_half",
+            "second_half",
+            "extra_time_1",
+            "extra_time_2",
+            "penalties"
+          ],
+          "title": "FootballPeriod",
+          "type": "string"
+        },
+        "LanguageCode": {
+          "description": "Supported output languages.\n\nEnglish ('en') is the normative baseline.\nTamil ('ta') is evaluated under AC-10 quality gates.",
+          "enum": [
+            "en",
+            "ta"
+          ],
+          "title": "LanguageCode",
+          "type": "string"
+        },
+        "PerspectiveLens": {
+          "description": "Viewing perspective lens.",
+          "enum": [
+            "match",
+            "team",
+            "player"
+          ],
+          "title": "PerspectiveLens",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Provisional football catch-up request.",
+      "properties": {
+        "match_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Match Id",
+          "type": "string"
+        },
+        "interval": {
+          "$ref": "#/$defs/FootballInterval"
+        },
+        "lens": {
+          "$ref": "#/$defs/PerspectiveLens",
+          "default": "match"
+        },
+        "target_entity": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Entity"
+        },
+        "language": {
+          "$ref": "#/$defs/LanguageCode",
+          "default": "en"
+        },
+        "explanation_depth": {
+          "$ref": "#/$defs/ExplanationDepth",
+          "default": "standard"
+        },
+        "correlation_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 8,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Correlation Id"
+        }
+      },
+      "required": [
+        "match_id",
+        "interval"
+      ],
+      "title": "FootballCatchUpRequest",
+      "type": "object"
+    },
+    "FootballScoreSnapshot": {
+      "$defs": {
+        "FootballPeriod": {
+          "description": "Match period divisions in football.",
+          "enum": [
+            "first_half",
+            "second_half",
+            "extra_time_1",
+            "extra_time_2",
+            "penalties"
+          ],
+          "title": "FootballPeriod",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Provisional score state for a football match.",
+      "properties": {
+        "home_score": {
+          "minimum": 0,
+          "title": "Home Score",
+          "type": "integer"
+        },
+        "away_score": {
+          "minimum": 0,
+          "title": "Away Score",
+          "type": "integer"
+        },
+        "period": {
+          "$ref": "#/$defs/FootballPeriod"
+        },
+        "minute": {
+          "minimum": 0,
+          "title": "Minute",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "home_score",
+        "away_score",
+        "period",
+        "minute"
+      ],
+      "title": "FootballScoreSnapshot",
+      "type": "object"
+    },
+    "FootballStateDelta": {
+      "additionalProperties": false,
+      "description": "Provisional state difference for football.",
+      "properties": {
+        "home_goals": {
+          "minimum": 0,
+          "title": "Home Goals",
+          "type": "integer"
+        },
+        "away_goals": {
+          "minimum": 0,
+          "title": "Away Goals",
+          "type": "integer"
+        },
+        "yellow_cards": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Yellow Cards",
+          "type": "integer"
+        },
+        "red_cards": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Red Cards",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "home_goals",
+        "away_goals"
+      ],
+      "title": "FootballStateDelta",
+      "type": "object"
+    },
+    "FootballMatchEvent": {
+      "$defs": {
+        "FootballPeriod": {
+          "description": "Match period divisions in football.",
+          "enum": [
+            "first_half",
+            "second_half",
+            "extra_time_1",
+            "extra_time_2",
+            "penalties"
+          ],
+          "title": "FootballPeriod",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Provisional event representation for football.",
+      "properties": {
+        "event_id": {
+          "minLength": 1,
+          "title": "Event Id",
+          "type": "string"
+        },
+        "match_id": {
+          "minLength": 1,
+          "title": "Match Id",
+          "type": "string"
+        },
+        "period": {
+          "$ref": "#/$defs/FootballPeriod"
+        },
+        "minute": {
+          "minimum": 0,
+          "title": "Minute",
+          "type": "integer"
+        },
+        "second": {
+          "anyOf": [
+            {
+              "maximum": 59,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Second"
+        },
+        "event_type": {
+          "description": "Goal, foul, card, sub, etc.",
+          "minLength": 1,
+          "title": "Event Type",
+          "type": "string"
+        },
+        "team": {
+          "minLength": 1,
+          "title": "Team",
+          "type": "string"
+        },
+        "player": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Player"
+        }
+      },
+      "required": [
+        "event_id",
+        "match_id",
+        "period",
+        "minute",
+        "event_type",
+        "team"
+      ],
+      "title": "FootballMatchEvent",
+      "type": "object"
+    }
+  }
+}

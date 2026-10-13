@@ -1,0 +1,64 @@
+# =============================================================================
+# FanCue — Production / Staging Deployment Infrastructure
+# =============================================================================
+services:
+
+  qdrant:
+    build:
+      context: ./qdrant
+    container_name: fancue_qdrant_prod
+    restart: always
+    ports:
+      - "127.0.0.1:6333:6333"
+    volumes:
+      - qdrant_prod_data:/qdrant/storage
+    environment:
+      QDRANT__SERVICE__HTTP_PORT: "6333"
+      QDRANT__LOG_LEVEL: "INFO"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: fancue_backend_prod
+    restart: always
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      FANCUE_ENV: production
+      LOG_LEVEL: INFO
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost,http://localhost:80,http://localhost:5173,http://127.0.0.1,http://127.0.0.1:80,http://127.0.0.1:5173}
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: "6333"
+      SKIP_LLM_IN_TESTS: "false"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fancue_frontend_prod
+    restart: always
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8080:80"
+
+volumes:
+  qdrant_prod_data:
+    name: fancue_qdrant_prod_data

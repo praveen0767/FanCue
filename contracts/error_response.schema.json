@@ -1,0 +1,89 @@
+{
+  "$defs": {
+    "ErrorCode": {
+      "description": "Machine-readable application error codes.",
+      "enum": [
+        "MALFORMED_REQUEST",
+        "INVALID_INTERVAL",
+        "MATCH_NOT_FOUND",
+        "UNSUPPORTED_DATA_FORMAT",
+        "DATA_VALIDATION_FAILURE",
+        "REVISION_MISMATCH",
+        "UNSUPPORTED_LANGUAGE",
+        "RETRIEVAL_FAILURE",
+        "INTERNAL_ERROR"
+      ],
+      "title": "ErrorCode",
+      "type": "string"
+    },
+    "ErrorDetail": {
+      "additionalProperties": false,
+      "description": "Detailed error diagnostics for clients and logs.",
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/ErrorCode",
+          "description": "Canonical error code."
+        },
+        "message": {
+          "description": "Human-readable explanation of failure.",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path of invalid request field if applicable (e.g. 'interval.start_after_over').",
+          "title": "Field"
+        },
+        "context": {
+          "additionalProperties": true,
+          "description": "Additional contextual diagnostic parameters.",
+          "title": "Context",
+          "type": "object"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "ErrorDetail",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Structured error payload returned on API failures.",
+  "properties": {
+    "error": {
+      "$ref": "#/$defs/ErrorDetail"
+    },
+    "correlation_id": {
+      "description": "Correlation ID for tracing error in logs.",
+      "minLength": 8,
+      "title": "Correlation Id",
+      "type": "string"
+    },
+    "timestamp": {
+      "description": "Timezone-aware UTC timestamp of failure.",
+      "format": "date-time",
+      "title": "Timestamp",
+      "type": "string"
+    }
+  },
+  "required": [
+    "error",
+    "correlation_id"
+  ],
+  "title": "ErrorResponse",
+  "type": "object",
+  "$id": "https://fancue.org/schemas/v1/error_response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0"
+}

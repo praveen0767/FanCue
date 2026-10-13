@@ -1,0 +1,198 @@
+# =============================================================================
+# FanCue .gitignore
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# Secrets and environment files
+# ---------------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+.installed.cfg
+lib/
+lib64/
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.python-version
+
+# Package managers
+uv.lock
+pip-tools/
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+nosetests.xml
+test-results/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+
+# Linting
+.ruff_cache/
+
+# ---------------------------------------------------------------------------
+# Node.js / Next.js
+# ---------------------------------------------------------------------------
+node_modules/
+.npm
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+
+# Cache
+.cache/
+.parcel-cache/
+.turbo/
+
+# ---------------------------------------------------------------------------
+# Databases and vector stores
+# ---------------------------------------------------------------------------
+# Local PostgreSQL data volumes (managed by Docker named volumes)
+postgres-data/
+pg-data/
+
+# Local Qdrant persistence
+qdrant-data/
+qdrant_storage/
+storage/
+
+# SQLite (development / testing only)
+*.db
+*.sqlite
+*.sqlite3
+
+# ---------------------------------------------------------------------------
+# Docker
+# ---------------------------------------------------------------------------
+# Do not ignore docker-compose.yml or docker-compose.override.yml
+# (override files with secrets should be added to .env, not committed)
+docker-compose.override.yml
+
+# ---------------------------------------------------------------------------
+# Logs
+# ---------------------------------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+pip-log.txt
+
+# ---------------------------------------------------------------------------
+# Temporary and generated files
+# ---------------------------------------------------------------------------
+tmp/
+temp/
+.tmp/
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Generated documentation
+site/
+docs/_build/
+.docusaurus/
+
+# ---------------------------------------------------------------------------
+# Data — DO NOT commit raw datasets
+# ---------------------------------------------------------------------------
+# Licensed match data must not be committed; record source and provenance
+# in data/README.md only. Ingest scripts and provenance manifests ARE tracked.
+data/raw/
+data/processed/
+data/downloads/
+*.yaml.secret
+ingestion/cache/
+
+# ---------------------------------------------------------------------------
+# IDE and editor
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/settings.json
+.vscode/launch.json
+*.suo
+*.user
+*.userosscache
+*.sln.docview
+
+# ---------------------------------------------------------------------------
+# OS
+# ---------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ---------------------------------------------------------------------------
+# IMPORTANT: do NOT ignore these
+# ---------------------------------------------------------------------------
+# !.gitignore
+# !.env.example
+# !docker-compose.yml
+# !AGENTS.md
+# !README.md
+# !docs/
+# !contracts/
+# !tests/
+# !backend/
+# !frontend/
+# !ingestion/

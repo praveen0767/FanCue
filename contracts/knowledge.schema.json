@@ -1,0 +1,814 @@
+{
+  "$id": "https://fancue.org/schemas/v1/knowledge.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FanCue Knowledge and Chunk Metadata Contracts",
+  "version": "1.0.0",
+  "$defs": {
+    "KnowledgeDocumentFrontmatter": {
+      "$defs": {
+        "KnowledgeSourceType": {
+          "description": "Origin classification of the content.",
+          "enum": [
+            "fancue_authored",
+            "official_reference",
+            "data_specification"
+          ],
+          "title": "KnowledgeSourceType",
+          "type": "string"
+        },
+        "KnowledgeType": {
+          "description": "Semantic category of knowledge note.",
+          "enum": [
+            "terminology",
+            "interval_interpretation",
+            "format_context",
+            "rules"
+          ],
+          "title": "KnowledgeType",
+          "type": "string"
+        },
+        "LanguageCode": {
+          "description": "Supported output languages.\n\nEnglish ('en') is the normative baseline.\nTamil ('ta') is evaluated under AC-10 quality gates.",
+          "enum": [
+            "en",
+            "ta"
+          ],
+          "title": "LanguageCode",
+          "type": "string"
+        },
+        "PermittedUse": {
+          "description": "Permitted usage tier for dataset.",
+          "enum": [
+            "open_attribution",
+            "non_commercial",
+            "evaluation_only",
+            "commercial"
+          ],
+          "title": "PermittedUse",
+          "type": "string"
+        },
+        "ReviewStatus": {
+          "description": "Editorial and legal review status of knowledge documents.",
+          "enum": [
+            "draft",
+            "approved",
+            "rejected"
+          ],
+          "title": "ReviewStatus",
+          "type": "string"
+        },
+        "SourceCheckStatus": {
+          "description": "Verification status of upstream references and citations.",
+          "enum": [
+            "verified",
+            "unverified",
+            "pending"
+          ],
+          "title": "SourceCheckStatus",
+          "type": "string"
+        },
+        "SportType": {
+          "description": "Supported sport domain identifiers.",
+          "enum": [
+            "cricket",
+            "football"
+          ],
+          "title": "SportType",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Schema for Markdown YAML frontmatter in ingestion/knowledge/.",
+      "properties": {
+        "id": {
+          "description": "Logical document identifier stable across revisions.",
+          "maxLength": 64,
+          "minLength": 3,
+          "pattern": "^[a-z0-9_]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "description": "Concise human-readable title.",
+          "maxLength": 128,
+          "minLength": 3,
+          "title": "Title",
+          "type": "string"
+        },
+        "sport": {
+          "$ref": "#/$defs/SportType",
+          "description": "Sport category."
+        },
+        "language": {
+          "$ref": "#/$defs/LanguageCode",
+          "default": "en",
+          "description": "Language code."
+        },
+        "topic": {
+          "description": "Domain topic grouping.",
+          "maxLength": 64,
+          "minLength": 3,
+          "pattern": "^[a-z0-9_]+$",
+          "title": "Topic",
+          "type": "string"
+        },
+        "knowledge_type": {
+          "$ref": "#/$defs/KnowledgeType",
+          "description": "Knowledge classification."
+        },
+        "review_status": {
+          "$ref": "#/$defs/ReviewStatus",
+          "default": "draft",
+          "description": "Review gate status: only 'approved' may enter production collections."
+        },
+        "source_type": {
+          "$ref": "#/$defs/KnowledgeSourceType",
+          "default": "fancue_authored",
+          "description": "Source material origin."
+        },
+        "source_name": {
+          "maxLength": 128,
+          "minLength": 2,
+          "title": "Source Name",
+          "type": "string"
+        },
+        "source_url": {
+          "minLength": 8,
+          "title": "Source Url",
+          "type": "string"
+        },
+        "source_revision": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "citation_locator": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact Law, Clause, or Section locator.",
+          "title": "Citation Locator"
+        },
+        "license": {
+          "default": "CC-BY-4.0",
+          "description": "License of the authored text passage.",
+          "maxLength": 128,
+          "minLength": 2,
+          "title": "License",
+          "type": "string"
+        },
+        "permitted_use": {
+          "$ref": "#/$defs/PermittedUse",
+          "default": "open_attribution",
+          "description": "Permitted usage tier."
+        },
+        "source_check_status": {
+          "$ref": "#/$defs/SourceCheckStatus",
+          "default": "verified",
+          "description": "Verification state of source claims."
+        },
+        "document_revision": {
+          "default": "1.0.0",
+          "description": "Revision number of this specific note.",
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Document Revision",
+          "type": "string"
+        },
+        "effective_from": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Effective start date in ISO YYYY-MM-DD format.",
+          "title": "Effective From"
+        },
+        "effective_to": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Effective expiry date in ISO YYYY-MM-DD format.",
+          "title": "Effective To"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "sport",
+        "topic",
+        "knowledge_type",
+        "source_name",
+        "source_url",
+        "source_revision"
+      ],
+      "title": "KnowledgeDocumentFrontmatter",
+      "type": "object"
+    },
+    "KnowledgeChunkPayload": {
+      "$defs": {
+        "KnowledgeSourceType": {
+          "description": "Origin classification of the content.",
+          "enum": [
+            "fancue_authored",
+            "official_reference",
+            "data_specification"
+          ],
+          "title": "KnowledgeSourceType",
+          "type": "string"
+        },
+        "KnowledgeType": {
+          "description": "Semantic category of knowledge note.",
+          "enum": [
+            "terminology",
+            "interval_interpretation",
+            "format_context",
+            "rules"
+          ],
+          "title": "KnowledgeType",
+          "type": "string"
+        },
+        "LanguageCode": {
+          "description": "Supported output languages.\n\nEnglish ('en') is the normative baseline.\nTamil ('ta') is evaluated under AC-10 quality gates.",
+          "enum": [
+            "en",
+            "ta"
+          ],
+          "title": "LanguageCode",
+          "type": "string"
+        },
+        "PermittedUse": {
+          "description": "Permitted usage tier for dataset.",
+          "enum": [
+            "open_attribution",
+            "non_commercial",
+            "evaluation_only",
+            "commercial"
+          ],
+          "title": "PermittedUse",
+          "type": "string"
+        },
+        "ReviewStatus": {
+          "description": "Editorial and legal review status of knowledge documents.",
+          "enum": [
+            "draft",
+            "approved",
+            "rejected"
+          ],
+          "title": "ReviewStatus",
+          "type": "string"
+        },
+        "SourceCheckStatus": {
+          "description": "Verification status of upstream references and citations.",
+          "enum": [
+            "verified",
+            "unverified",
+            "pending"
+          ],
+          "title": "SourceCheckStatus",
+          "type": "string"
+        },
+        "SportType": {
+          "description": "Supported sport domain identifiers.",
+          "enum": [
+            "cricket",
+            "football"
+          ],
+          "title": "SportType",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Complete typed Qdrant payload schema stored with each vector point.",
+      "properties": {
+        "doc_id": {
+          "description": "Deterministic content-addressed document identity.",
+          "minLength": 8,
+          "title": "Doc Id",
+          "type": "string"
+        },
+        "source_name": {
+          "maxLength": 128,
+          "minLength": 2,
+          "title": "Source Name",
+          "type": "string"
+        },
+        "source_url": {
+          "minLength": 8,
+          "title": "Source Url",
+          "type": "string"
+        },
+        "license": {
+          "maxLength": 128,
+          "minLength": 2,
+          "title": "License",
+          "type": "string"
+        },
+        "language": {
+          "$ref": "#/$defs/LanguageCode"
+        },
+        "sport": {
+          "$ref": "#/$defs/SportType"
+        },
+        "topic": {
+          "maxLength": 64,
+          "minLength": 3,
+          "title": "Topic",
+          "type": "string"
+        },
+        "chunk_index": {
+          "description": "0-based index of chunk within document.",
+          "minimum": 0,
+          "title": "Chunk Index",
+          "type": "integer"
+        },
+        "ingestion_date": {
+          "description": "ISO 8601 UTC ingestion timestamp.",
+          "title": "Ingestion Date",
+          "type": "string"
+        },
+        "permitted_use": {
+          "$ref": "#/$defs/PermittedUse"
+        },
+        "logical_doc_id": {
+          "maxLength": 64,
+          "minLength": 3,
+          "title": "Logical Doc Id",
+          "type": "string"
+        },
+        "document_revision": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Document Revision",
+          "type": "string"
+        },
+        "source_revision": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "chunk_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Chunk Sha256",
+          "type": "string"
+        },
+        "chunker_version": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Chunker Version",
+          "type": "string"
+        },
+        "embedding_model": {
+          "maxLength": 128,
+          "minLength": 3,
+          "title": "Embedding Model",
+          "type": "string"
+        },
+        "embedding_model_revision": {
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Embedding Model Revision",
+          "type": "string"
+        },
+        "embedding_dimensions": {
+          "default": 384,
+          "minimum": 1,
+          "title": "Embedding Dimensions",
+          "type": "integer"
+        },
+        "source_type": {
+          "$ref": "#/$defs/KnowledgeSourceType"
+        },
+        "knowledge_type": {
+          "$ref": "#/$defs/KnowledgeType"
+        },
+        "section_title": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Section Title",
+          "type": "string"
+        },
+        "citation_locator": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Citation Locator"
+        },
+        "effective_from": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Effective From"
+        },
+        "effective_to": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Effective To"
+        },
+        "review_status": {
+          "$ref": "#/$defs/ReviewStatus"
+        },
+        "source_check_status": {
+          "$ref": "#/$defs/SourceCheckStatus"
+        },
+        "active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        },
+        "text": {
+          "description": "Exact normalized text passage.",
+          "minLength": 10,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "doc_id",
+        "source_name",
+        "source_url",
+        "license",
+        "language",
+        "sport",
+        "topic",
+        "chunk_index",
+        "ingestion_date",
+        "permitted_use",
+        "logical_doc_id",
+        "document_revision",
+        "source_revision",
+        "content_sha256",
+        "chunk_sha256",
+        "chunker_version",
+        "embedding_model",
+        "embedding_model_revision",
+        "source_type",
+        "knowledge_type",
+        "section_title",
+        "review_status",
+        "source_check_status",
+        "text"
+      ],
+      "title": "KnowledgeChunkPayload",
+      "type": "object"
+    },
+    "KnowledgeChunk": {
+      "$defs": {
+        "KnowledgeChunkPayload": {
+          "additionalProperties": false,
+          "description": "Complete typed Qdrant payload schema stored with each vector point.",
+          "properties": {
+            "doc_id": {
+              "description": "Deterministic content-addressed document identity.",
+              "minLength": 8,
+              "title": "Doc Id",
+              "type": "string"
+            },
+            "source_name": {
+              "maxLength": 128,
+              "minLength": 2,
+              "title": "Source Name",
+              "type": "string"
+            },
+            "source_url": {
+              "minLength": 8,
+              "title": "Source Url",
+              "type": "string"
+            },
+            "license": {
+              "maxLength": 128,
+              "minLength": 2,
+              "title": "License",
+              "type": "string"
+            },
+            "language": {
+              "$ref": "#/$defs/LanguageCode"
+            },
+            "sport": {
+              "$ref": "#/$defs/SportType"
+            },
+            "topic": {
+              "maxLength": 64,
+              "minLength": 3,
+              "title": "Topic",
+              "type": "string"
+            },
+            "chunk_index": {
+              "description": "0-based index of chunk within document.",
+              "minimum": 0,
+              "title": "Chunk Index",
+              "type": "integer"
+            },
+            "ingestion_date": {
+              "description": "ISO 8601 UTC ingestion timestamp.",
+              "title": "Ingestion Date",
+              "type": "string"
+            },
+            "permitted_use": {
+              "$ref": "#/$defs/PermittedUse"
+            },
+            "logical_doc_id": {
+              "maxLength": 64,
+              "minLength": 3,
+              "title": "Logical Doc Id",
+              "type": "string"
+            },
+            "document_revision": {
+              "maxLength": 32,
+              "minLength": 1,
+              "title": "Document Revision",
+              "type": "string"
+            },
+            "source_revision": {
+              "maxLength": 64,
+              "minLength": 1,
+              "title": "Source Revision",
+              "type": "string"
+            },
+            "content_sha256": {
+              "pattern": "^[a-f0-9]{64}$",
+              "title": "Content Sha256",
+              "type": "string"
+            },
+            "chunk_sha256": {
+              "pattern": "^[a-f0-9]{64}$",
+              "title": "Chunk Sha256",
+              "type": "string"
+            },
+            "chunker_version": {
+              "maxLength": 32,
+              "minLength": 1,
+              "title": "Chunker Version",
+              "type": "string"
+            },
+            "embedding_model": {
+              "maxLength": 128,
+              "minLength": 3,
+              "title": "Embedding Model",
+              "type": "string"
+            },
+            "embedding_model_revision": {
+              "maxLength": 64,
+              "minLength": 8,
+              "title": "Embedding Model Revision",
+              "type": "string"
+            },
+            "embedding_dimensions": {
+              "default": 384,
+              "minimum": 1,
+              "title": "Embedding Dimensions",
+              "type": "integer"
+            },
+            "source_type": {
+              "$ref": "#/$defs/KnowledgeSourceType"
+            },
+            "knowledge_type": {
+              "$ref": "#/$defs/KnowledgeType"
+            },
+            "section_title": {
+              "maxLength": 128,
+              "minLength": 1,
+              "title": "Section Title",
+              "type": "string"
+            },
+            "citation_locator": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Citation Locator"
+            },
+            "effective_from": {
+              "anyOf": [
+                {
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Effective From"
+            },
+            "effective_to": {
+              "anyOf": [
+                {
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Effective To"
+            },
+            "review_status": {
+              "$ref": "#/$defs/ReviewStatus"
+            },
+            "source_check_status": {
+              "$ref": "#/$defs/SourceCheckStatus"
+            },
+            "active": {
+              "default": true,
+              "title": "Active",
+              "type": "boolean"
+            },
+            "text": {
+              "description": "Exact normalized text passage.",
+              "minLength": 10,
+              "title": "Text",
+              "type": "string"
+            }
+          },
+          "required": [
+            "doc_id",
+            "source_name",
+            "source_url",
+            "license",
+            "language",
+            "sport",
+            "topic",
+            "chunk_index",
+            "ingestion_date",
+            "permitted_use",
+            "logical_doc_id",
+            "document_revision",
+            "source_revision",
+            "content_sha256",
+            "chunk_sha256",
+            "chunker_version",
+            "embedding_model",
+            "embedding_model_revision",
+            "source_type",
+            "knowledge_type",
+            "section_title",
+            "review_status",
+            "source_check_status",
+            "text"
+          ],
+          "title": "KnowledgeChunkPayload",
+          "type": "object"
+        },
+        "KnowledgeSourceType": {
+          "description": "Origin classification of the content.",
+          "enum": [
+            "fancue_authored",
+            "official_reference",
+            "data_specification"
+          ],
+          "title": "KnowledgeSourceType",
+          "type": "string"
+        },
+        "KnowledgeType": {
+          "description": "Semantic category of knowledge note.",
+          "enum": [
+            "terminology",
+            "interval_interpretation",
+            "format_context",
+            "rules"
+          ],
+          "title": "KnowledgeType",
+          "type": "string"
+        },
+        "LanguageCode": {
+          "description": "Supported output languages.\n\nEnglish ('en') is the normative baseline.\nTamil ('ta') is evaluated under AC-10 quality gates.",
+          "enum": [
+            "en",
+            "ta"
+          ],
+          "title": "LanguageCode",
+          "type": "string"
+        },
+        "PermittedUse": {
+          "description": "Permitted usage tier for dataset.",
+          "enum": [
+            "open_attribution",
+            "non_commercial",
+            "evaluation_only",
+            "commercial"
+          ],
+          "title": "PermittedUse",
+          "type": "string"
+        },
+        "ReviewStatus": {
+          "description": "Editorial and legal review status of knowledge documents.",
+          "enum": [
+            "draft",
+            "approved",
+            "rejected"
+          ],
+          "title": "ReviewStatus",
+          "type": "string"
+        },
+        "SourceCheckStatus": {
+          "description": "Verification status of upstream references and citations.",
+          "enum": [
+            "verified",
+            "unverified",
+            "pending"
+          ],
+          "title": "SourceCheckStatus",
+          "type": "string"
+        },
+        "SportType": {
+          "description": "Supported sport domain identifiers.",
+          "enum": [
+            "cricket",
+            "football"
+          ],
+          "title": "SportType",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "description": "In-memory representation of an individual knowledge chunk with point ID.",
+      "properties": {
+        "chunk_id": {
+          "description": "Deterministic chunk identifier: {doc_id}_c{chunk_index}_{chunk_sha256[:8]}.",
+          "minLength": 8,
+          "title": "Chunk Id",
+          "type": "string"
+        },
+        "point_id": {
+          "description": "Deterministic UUIDv5 suitable for Qdrant point identifier.",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+          "title": "Point Id",
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/$defs/KnowledgeChunkPayload"
+        },
+        "token_count": {
+          "description": "Token count under the target embedding tokenizer.",
+          "minimum": 1,
+          "title": "Token Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "chunk_id",
+        "point_id",
+        "payload",
+        "token_count"
+      ],
+      "title": "KnowledgeChunk",
+      "type": "object"
+    }
+  }
+}

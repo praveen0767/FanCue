@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-fixed": "#6ff6ff", "secondary-fixed-dim": "#b4c5ff", "on-secondary-fixed": "#00174b", "inverse-surface": "#dde2f5", "surface-container-lowest": "#080e1b", "secondary": "#b4c5ff", "error": "#ffb4ab", "surface-container": "#1a1f2d", "on-primary": "#00373a", "surface-bright": "#333948", "surface-container-low": "#161b29", "tertiary-container": "#ffcfd8", "tertiary-fixed": "#ffd9e0", "on-background": "#dde2f5", "on-secondary": "#002a78", "on-surface": "#dde2f5", "on-primary-container": "#006a70", "inverse-primary": "#00696f", "surface-container-highest": "#2f3543", "surface": "#0d1320", "outline": "#849495", "secondary-fixed": "#dbe1ff", "tertiary": "#fff5f6", "on-error-container": "#ffdad6", "primary-fixed-dim": "#00dce6", "on-primary-fixed-variant": "#004f53", "error-container": "#93000a", "on-primary-fixed": "#002022", "primary": "#e0fdff", "on-secondary-container": "#cdd7ff", "inverse-on-surface": "#2a303f", "on-tertiary-fixed-variant": "#8f0040", "surface-dim": "#0d1320", "on-tertiary": "#66002b", "on-tertiary-fixed": "#3f0018", "secondary-container": "#0053db", "on-tertiary-container": "#be0057", "surface-container-high": "#242a38", "on-surface-variant": "#b9cacb", "on-error": "#690005", "outline-variant": "#3a494b", "tertiary-fixed-dim": "#ffb1c2", "primary-container": "#00f2fe", "on-secondary-fixed-variant": "#003ea8", "background": "#0d1320", "surface-tint": "#00dce6", "surface-variant": "#2f3543" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-sm": "0.5rem", "space-md": "1rem", "space-xl": "2.5rem", "space-xs": "0.25rem", "gutter-desktop": "1.5rem", "margin-tablet": "1.5rem", "margin": "1rem", "margin-desktop": "2.5rem", "space-lg": "1.5rem", "gutter": "1rem" }, "fontFamily": { "score-lead-mobile": [ "Outfit" ], "body-sm": [ "Inter" ], "body-md": [ "Inter" ], "headline-lg": [ "Outfit" ], "data-tabular": [ "Space Grotesk" ], "body-lg": [ "Inter" ], "display-hero-mobile": [ "Outfit" ], "score-lead": [ "Outfit" ], "headline-sm": [ "Outfit" ], "label-telemetry": [ "Space Grotesk" ], "display-hero": [ "Outfit" ], "headline-md": [ "Outfit" ], "label-tag": [ "Space Grotesk" ] }, "fontSize": { "score-lead-mobile": [ "32px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "body-sm": [ "12px", { "lineHeight": "16px", "fontWeight": "400" } ], "body-md": [ "14px", { "lineHeight": "20px", "fontWeight": "400" } ], "headline-lg": [ "32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "data-tabular": [ "15px", { "lineHeight": "18px", "letterSpacing": "-0.01em", "fontWeight": "500" } ], "body-lg": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ], "display-hero-mobile": [ "36px", { "lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "800" } ], "score-lead": [ "44px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "700" } ], "headline-sm": [ "20px", { "lineHeight": "28px", "fontWeight": "600" } ], "label-telemetry": [ "13px", { "lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "600" } ], "display-hero": [ "56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "800" } ], "headline-md": [ "24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "label-tag": [ "11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "700" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 max-w-[1440px] mx-auto px-margin-desktop flex items-center justify-between gap-space-lg"><div class="flex items-center gap-space-md shrink-0"><img alt="Logo.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UeURBmSPH83w9emzgv1CZX57hPLsx6gN5dSKvuyQqraK2j16fuOfx_RuIoTPLoogSHqArsWvtYgtYOw6k7v8xr7Kp2y9WE4RHmbHeSsrWyr5kJ_F3wl00R5zzNOXN3FLAr0VpwDKK0dRmHBAKc1D6vzlb3fx9tj6QMYDZSoESh_7jnhIh8EioOOjF7virbUoMYAFUUuq48UKKHRivbZSnvsZB99VbREoe9qZayoDOozKrx3Rq6zALYRJVczV-WxqhlChGesZZotg"/><div class="flex flex-col"><div class="flex items-center gap-space-sm"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">FanCue</span><span class="hidden xl:inline-flex items-center px-space-xs py-0.5 rounded-full bg-surface-container-highest text-primary-container font-label-tag text-label-tag uppercase tracking-wider">HISTORICAL REPLAY · CRICSHEET ARCHIVE</span></div><span class="hidden lg:block font-body-sm text-body-sm text-on-surface-variant">Catch the moment. Understand the game.</span></div></div><nav class="hidden md:flex items-center gap-space-xs bg-surface-container-low px-space-xs py-1 rounded-xl" data-active-classes="bg-primary-container text-on-primary-container font-semibold"><a class="px-space-md py-space-sm rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="matches" href="#">Matches</a><a aria-current="page" class="px-space-md py-space-sm rounded-lg transition-colors bg-primary-container text-on-primary-container font-semibold" data-path="active-recap" href="#">Active Recap</a><a class="px-space-md py-space-sm rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="archive" href="#">Archive</a><a class="px-space-md py-space-sm rounded-lg font-body-md text-body-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="how-verification-works" href="#">How Verification Works</a></nav><div class="flex items-center gap-space-sm shrink-0"><button class="hidden sm:flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-telemetry text-label-telemetry transition-colors" type="button"><span class="material-symbols-outlined text-[18px]">search</span><span>Search Archive</span></button><button class="hidden xl:flex items-center gap-space-xs px-space-sm py-space-sm rounded-lg text-on-surface-variant hover:text-on-surface font-label-telemetry text-label-telemetry" type="button"><span class="material-symbols-outlined text-primary-container text-[18px]">verified</span><span class="font-label-tag text-label-tag uppercase">Verified Data</span></button><div class="flex items-center bg-surface-container-low p-1 rounded-full gap-1"><button class="px-space-sm py-0.5 rounded-full font-label-tag text-label-tag text-on-surface-variant hover:text-on-surface" type="button">Plain</button><button class="px-space-sm py-0.5 rounded-full font-label-tag text-label-tag bg-primary-container text-on-primary-container font-bold" type="button">Verified</button></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background max-w-[1440px] mx-auto px-margin-desktop"><div class="flex flex-col w-full relative">
+<!-- Interactive Toast Notification -->
+<div class="fixed top-24 right-6 z-50 transform translate-y-[-120%] opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-space-sm px-space-md py-space-sm rounded-xl bg-surface-container-highest shadow-2xl" id="toastNotification">
+<span class="material-symbols-outlined text-primary-container text-[20px]" id="toastIcon">check_circle</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-[14px] leading-tight text-on-surface" id="toastTitle">Recap Link Copied!</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant" id="toastDesc">Interval 15.0 → 20.0 copied to clipboard with verification hash.</span>
+</div>
+</div>
+<!-- SECTION A: QUIET CONTEXT HEADER -->
+<section class="w-full pb-space-lg">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md bg-surface-container-low p-space-md rounded-xl">
+<div class="flex flex-col gap-space-xs">
+<div class="flex flex-wrap items-center gap-space-sm">
+<span class="px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-tag text-label-tag uppercase tracking-wider flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-ping"></span>
+            HISTORICAL REPLAY · CRICSHEET ARCHIVE
+          </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">·</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-medium">ICC T20 World Cup 2024 Final · 2nd Innings</span>
+</div>
+<div class="flex flex-wrap items-baseline gap-space-md">
+<h2 class="font-headline-md text-headline-md text-on-surface tracking-tight">South Africa Chase</h2>
+<div class="flex items-center gap-space-xs text-primary font-data-tabular text-data-tabular">
+<span class="material-symbols-outlined text-[16px] text-primary-fixed-dim">timer</span>
+<span>Selected Phase: Overs 15.0 → 20.0 (Death Overs Phase)</span>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- Honest Response-Mode Toggle -->
+<div class="flex items-center bg-surface-container-highest p-1 rounded-xl">
+<button class="px-space-md py-1.5 rounded-lg font-label-tag text-label-tag flex items-center gap-1.5 transition-all bg-primary-container text-on-primary-container font-bold shadow-[0_0_12px_rgba(0,242,254,0.3)]" id="btnAiMode" onclick="toggleExplanationMode('ai')">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span>AI EXPLANATION · VERIFIED</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-tag text-label-tag flex items-center gap-1.5 transition-all text-on-surface-variant hover:text-on-surface" id="btnPlainMode" onclick="toggleExplanationMode('plain')">
+<span class="material-symbols-outlined text-[16px]">dataset</span>
+<span>PLAIN RECORD ONLY</span>
+</button>
+</div>
+<button class="flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface transition-colors font-label-telemetry text-label-telemetry" onclick="triggerToast('share')">
+<span class="material-symbols-outlined text-[16px] text-primary">share</span>
+<span>Share Recap</span>
+</button>
+<a class="flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface-variant hover:text-on-surface transition-colors font-label-telemetry text-label-telemetry" data-path="matches" href="#">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span>Change Interval</span>
+</a>
+</div>
+</div>
+</section>
+<!-- SECTION B: THE VERIFIED HEADLINE -->
+<section class="w-full pb-space-xl">
+<div class="relative overflow-hidden bg-surface-container rounded-2xl p-space-lg lg:p-space-xl shadow-xl">
+<div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-primary-container/10 blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-tertiary-container/10 blur-3xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col gap-space-md max-w-5xl">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary-container text-[20px]">format_image_left</span>
+<span class="font-label-tag text-label-tag uppercase tracking-widest text-primary-fixed-dim">GROUND TRUTH MATCH DELTA · DETERMINISTIC SCORE PROJECTION</span>
+</div>
+<!-- AI Verified Mode Headline -->
+<h1 class="font-headline-lg lg:font-display-hero text-headline-lg lg:text-display-hero text-on-surface tracking-tight leading-[1.1]" id="editorialHeadline">
+          South Africa needed <span class="text-primary-container underline decoration-primary-container/40 decoration-4 underline-offset-8">30 runs from 30 balls</span>. 4 wickets fell and India conceded just <span class="text-tertiary underline decoration-error/40 decoration-4 underline-offset-8">22 runs to win</span>.
+        </h1>
+<div class="flex flex-wrap items-center gap-x-space-md gap-y-space-xs font-data-tabular text-body-md text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span>Delta: <strong class="text-on-surface font-bold">+22 runs</strong> across 30 legal deliveries</span>
+</div>
+<span>•</span>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span>Dismissals: <strong class="text-on-surface font-bold">4 wickets</strong></span>
+</div>
+<span>•</span>
+<div class="flex items-center gap-1.5">
+<span>Suffocated Rate: <strong class="text-primary-fixed font-bold">4.40 RPO</strong> (Required was 6.00 RPO)</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION C: THE SCORE ARC ("WHEN YOU LEFT → NOW") -->
+<section class="w-full pb-space-xl">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md items-stretch">
+<!-- Left Node: When You Left -->
+<div class="lg:col-span-4 bg-surface-container-low rounded-xl p-space-lg flex flex-col justify-between shadow-md">
+<div>
+<div class="flex items-center justify-between pb-space-sm">
+<span class="font-label-tag text-label-tag text-outline uppercase tracking-wider">T-MINUS 30 BALLS</span>
+<span class="px-space-xs py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-telemetry text-label-telemetry">INTERVAL START</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-secondary-fixed pt-1">WHEN YOU LEFT</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">End of Over 15.0 · SA dominant</div>
+</div>
+<div class="py-space-lg flex flex-col gap-space-xs">
+<div class="flex items-baseline gap-space-sm">
+<span class="font-score-lead text-score-lead text-on-surface">151</span>
+<span class="font-headline-md text-headline-md text-on-surface-variant">/ 4</span>
+<span class="font-data-tabular text-data-tabular text-primary-fixed-dim px-2 py-0.5 rounded bg-surface-container-high">(15.0 ov)</span>
+</div>
+<div class="font-body-md text-body-md text-primary font-medium">
+            Heinrich Klaasen 52* <span class="text-on-surface-variant font-normal">(27b · 5x6 2x4)</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-sm pt-space-md bg-surface-container rounded-lg p-space-sm">
+<div>
+<div class="font-label-tag text-label-tag text-on-surface-variant uppercase">Current RR</div>
+<div class="font-data-tabular text-headline-sm text-on-surface">10.07</div>
+</div>
+<div>
+<div class="font-label-tag text-label-tag text-on-surface-variant uppercase">Required RR</div>
+<div class="font-data-tabular text-headline-sm text-primary-container">6.00</div>
+</div>
+</div>
+</div>
+<!-- Center Connecting Delta Element -->
+<div class="lg:col-span-4 bg-surface-container rounded-xl p-space-lg flex flex-col justify-center items-center text-center relative overflow-hidden shadow-lg">
+<div class="absolute inset-0 bg-gradient-to-r from-primary-container/5 via-secondary-container/10 to-error-container/10 pointer-events-none"></div>
+<div class="relative z-10 flex flex-col items-center gap-space-md w-full">
+<div class="px-space-md py-1 rounded-full bg-surface-container-highest text-primary font-label-tag text-label-tag tracking-wider uppercase">
+            30-BALL MATCH TRAJECTORY
+          </div>
+<!-- Dynamic SVG Arc Visualization -->
+<div class="w-full max-w-[280px] h-20 relative flex items-center justify-center">
+<svg class="w-full h-full overflow-visible" fill="none" viewbox="0 0 280 80">
+<!-- Win Probability Line - SA Collapse -->
+<path class="text-error" d="M 10 20 C 80 18, 140 45, 270 72" stroke="currentColor" stroke-dasharray="4 4" stroke-linecap="round" stroke-width="3"></path>
+<!-- Run Rate Suffocation Vector -->
+<path class="text-primary-container" d="M 10 35 C 90 32, 160 55, 270 58" stroke="currentColor" stroke-linecap="round" stroke-width="4"></path>
+<!-- Event Markers -->
+<circle class="fill-primary-container" cx="10" cy="35" r="5"></circle>
+<circle class="fill-error" cx="85" cy="42" r="5"></circle>
+<circle class="fill-error" cx="140" cy="50" r="5"></circle>
+<circle class="fill-outline" cx="210" cy="55" r="4"></circle>
+<circle class="fill-primary-container" cx="270" cy="58" r="6"></circle>
+</svg>
+</div>
+<div class="flex flex-col gap-1 w-full">
+<span class="font-score-lead text-[28px] leading-tight text-primary-fixed font-bold">+22 RUNS · 4 WICKETS</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant max-w-xs mx-auto">
+              Required run-rate exploded from 6.00 to infinite as target defend rate peaked at 4.40 RPO.
+            </span>
+</div>
+<div class="flex items-center gap-space-xs text-error font-label-telemetry text-label-telemetry">
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+<span>SA Win Probability: 96.8% → 0.0%</span>
+</div>
+</div>
+</div>
+<!-- Right Node: Final Deliveries -->
+<div class="lg:col-span-4 bg-surface-container-low rounded-xl p-space-lg flex flex-col justify-between shadow-md">
+<div>
+<div class="flex items-center justify-between pb-space-sm">
+<span class="font-label-tag text-label-tag text-outline uppercase tracking-wider">MATCH RESULT</span>
+<span class="px-space-xs py-0.5 rounded bg-primary-container text-on-primary-container font-label-telemetry text-label-telemetry font-bold">CHAMPIONS</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-primary pt-1">FINAL DELIVERIES</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Over 20.0 Complete · Kensington Oval</div>
+</div>
+<div class="py-space-lg flex flex-col gap-space-xs">
+<div class="flex items-baseline gap-space-sm">
+<span class="font-score-lead text-score-lead text-on-surface">169</span>
+<span class="font-headline-md text-headline-md text-on-surface-variant">/ 8</span>
+<span class="font-data-tabular text-data-tabular text-outline px-2 py-0.5 rounded bg-surface-container-high">(20.0 ov)</span>
+</div>
+<div class="font-headline-sm text-[18px] text-primary-container font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[20px]">trophy</span>
+<span>India won by 7 runs</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-sm pt-space-md bg-surface-container rounded-lg p-space-sm">
+<div>
+<div class="font-label-tag text-label-tag text-on-surface-variant uppercase">Phase RR</div>
+<div class="font-data-tabular text-headline-sm text-error">4.40</div>
+</div>
+<div>
+<div class="font-label-tag text-label-tag text-on-surface-variant uppercase">Match Total RR</div>
+<div class="font-data-tabular text-headline-sm text-on-surface">8.45</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION D: RUNS-PER-OVER INTERACTIVE TIMELINE -->
+<section class="w-full pb-space-xl">
+<div class="bg-surface-container-low rounded-2xl p-space-lg shadow-lg">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm pb-space-lg">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary-container text-[24px]">view_timeline</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Death Overs Phase Barometer (Overs 16–20)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Click any over to inspect delivery spectrum and field pressure data.</p>
+</div>
+</div>
+<div class="flex items-center gap-space-md font-label-telemetry text-label-telemetry text-on-surface-variant">
+<div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-primary-container"></span><span>Run Metric</span></div>
+<div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-error"></span><span>Wicket Dismissal</span></div>
+</div>
+</div>
+<!-- Over Cards Strip -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-space-md" id="oversContainer">
+<!-- Over 16 -->
+<div class="cursor-pointer transition-all duration-200 bg-surface-container rounded-xl p-space-md flex flex-col justify-between hover:bg-surface-container-high relative" id="over-card-16" onclick="selectOver(16)">
+<div class="flex items-center justify-between">
+<span class="font-data-tabular text-[16px] font-bold text-on-surface">OVER 16</span>
+<span class="px-2 py-0.5 rounded-full bg-error/20 text-error font-label-tag text-label-tag font-bold">1 WKT</span>
+</div>
+<div class="py-space-md flex items-end justify-between">
+<span class="font-score-lead text-[32px] text-primary-fixed leading-none">4</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">runs conceded</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs font-body-sm text-on-surface-variant">
+<span class="truncate">J. Bumrah</span>
+<span class="font-label-tag text-label-tag text-outline">#15.1-15.6</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary-fixed-dim h-full" style="width: 25%;"></div>
+</div>
+</div>
+<!-- Over 17 (Active by default) -->
+<div class="cursor-pointer transition-all duration-200 bg-surface-container-high rounded-xl p-space-md flex flex-col justify-between shadow-[0_0_20px_rgba(0,242,254,0.25)] relative" id="over-card-17" onclick="selectOver(17)">
+<div class="absolute -top-2 left-1/2 transform -translate-x-1/2 px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-tag text-[9px] font-extrabold uppercase tracking-wider">
+            FOCUS OVER
+          </div>
+<div class="flex items-center justify-between">
+<span class="font-data-tabular text-[16px] font-bold text-primary-container">OVER 17</span>
+<span class="px-2 py-0.5 rounded-full bg-error text-on-error font-label-tag text-label-tag font-bold shadow-sm">1 WKT (KLAASEN)</span>
+</div>
+<div class="py-space-md flex items-end justify-between">
+<span class="font-score-lead text-[32px] text-primary-container leading-none">4</span>
+<span class="font-body-sm text-body-sm text-on-surface">runs conceded</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs font-body-sm text-on-surface">
+<span class="truncate font-semibold">H. Pandya</span>
+<span class="font-label-tag text-label-tag text-primary-fixed-dim">#16.1-16.6</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary-container h-full" style="width: 25%;"></div>
+</div>
+</div>
+<!-- Over 18 -->
+<div class="cursor-pointer transition-all duration-200 bg-surface-container rounded-xl p-space-md flex flex-col justify-between hover:bg-surface-container-high relative" id="over-card-18" onclick="selectOver(18)">
+<div class="flex items-center justify-between">
+<span class="font-data-tabular text-[16px] font-bold text-on-surface">OVER 18</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-tag text-label-tag">0 WKT</span>
+</div>
+<div class="py-space-md flex items-end justify-between">
+<span class="font-score-lead text-[32px] text-primary-fixed leading-none">2</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">runs conceded</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs font-body-sm text-on-surface-variant">
+<span class="truncate">J. Bumrah</span>
+<span class="font-label-tag text-label-tag text-outline">#17.1-17.6</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary-fixed-dim h-full" style="width: 12%;"></div>
+</div>
+</div>
+<!-- Over 19 -->
+<div class="cursor-pointer transition-all duration-200 bg-surface-container rounded-xl p-space-md flex flex-col justify-between hover:bg-surface-container-high relative" id="over-card-19" onclick="selectOver(19)">
+<div class="flex items-center justify-between">
+<span class="font-data-tabular text-[16px] font-bold text-on-surface">OVER 19</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-tag text-label-tag">0 WKT</span>
+</div>
+<div class="py-space-md flex items-end justify-between">
+<span class="font-score-lead text-[32px] text-primary-fixed leading-none">4</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">runs conceded</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs font-body-sm text-on-surface-variant">
+<span class="truncate">Arshdeep Singh</span>
+<span class="font-label-tag text-label-tag text-outline">#18.1-18.6</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary-fixed-dim h-full" style="width: 25%;"></div>
+</div>
+</div>
+<!-- Over 20 -->
+<div class="cursor-pointer transition-all duration-200 bg-surface-container rounded-xl p-space-md flex flex-col justify-between hover:bg-surface-container-high relative" id="over-card-20" onclick="selectOver(20)">
+<div class="flex items-center justify-between">
+<span class="font-data-tabular text-[16px] font-bold text-on-surface">OVER 20</span>
+<span class="px-2 py-0.5 rounded-full bg-error/20 text-error font-label-tag text-label-tag font-bold">2 WKTS</span>
+</div>
+<div class="py-space-md flex items-end justify-between">
+<span class="font-score-lead text-[32px] text-primary-fixed leading-none">8</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">runs conceded</span>
+</div>
+<div class="flex items-center justify-between pt-space-xs font-body-sm text-on-surface-variant">
+<span class="truncate">H. Pandya</span>
+<span class="font-label-tag text-label-tag text-outline">#19.1-19.6</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary-fixed-dim h-full" style="width: 50%;"></div>
+</div>
+</div>
+</div>
+<!-- Focused Over Delivery Breakdown Ribbon -->
+<div class="mt-space-lg p-space-md bg-surface-container rounded-xl flex flex-col md:flex-row items-center justify-between gap-space-md" id="overDetailPanel">
+<div class="flex items-center gap-space-md">
+<span class="px-space-sm py-1 rounded bg-primary-container text-on-primary-container font-label-tag text-label-tag uppercase font-bold">Over 17 Telemetry</span>
+<span class="font-body-md text-body-md text-on-surface">Hardik Pandya to Heinrich Klaasen &amp; David Miller</span>
+</div>
+<!-- Ball-by-ball micro pills -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1 md:pb-0">
+<span class="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center font-data-tabular text-body-md font-bold shadow-md cursor-pointer hover:scale-110 transition-transform" title="16.1: WICKET (Klaasen caught behind)">W</span>
+<span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="16.2: 1 Run">1</span>
+<span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="16.3: 1 Run">1</span>
+<span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="16.4: 1 Leg Bye">1b</span>
+<span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="16.5: 1 Run">1</span>
+<span class="w-8 h-8 rounded-full bg-surface-container-lowest text-outline flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="16.6: Dot Ball">0</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION E: CHRONOLOGICAL STORY-BEAT CARDS -->
+<section class="w-full pb-space-xl">
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label-tag text-label-tag uppercase tracking-wider text-primary-container">EVIDENCE SEQUENCE</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Crucial Match-Turning Moments</h2>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant hidden sm:inline-block">Ranked by leverage delta (WPA)</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Story Beat 1 -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col justify-between hover:bg-surface-container transition-all group shadow-md">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="px-space-xs py-0.5 rounded bg-error text-on-error font-label-tag text-label-tag font-bold">WICKET</span>
+<span class="font-data-tabular text-body-sm text-outline">Ball #101 · Ov 16.1</span>
+</div>
+<div class="font-headline-sm text-[18px] leading-snug text-on-surface group-hover:text-primary transition-colors">
+              Hardik Pandya strikes: Klaasen caught behind
+            </div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Full and wide cutter outside off. Heinrich Klaasen (52 off 27) edges behind to Rishabh Pant. The 45-run 24-ball rampage ends instantly.
+            </p>
+</div>
+<div class="pt-space-md">
+<button class="w-full py-1.5 px-space-sm rounded-lg bg-surface-container-highest hover:bg-primary-container hover:text-on-primary-container text-on-surface text-left font-label-telemetry text-label-telemetry flex items-center justify-between transition-colors" onclick="scrollToEvidence('16.1')">
+<span>Inspect Ball Evidence</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Story Beat 2 -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col justify-between hover:bg-surface-container transition-all group shadow-md">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="px-space-xs py-0.5 rounded bg-secondary-container text-on-secondary-container font-label-tag text-label-tag font-bold">CHOKE SPELL</span>
+<span class="font-data-tabular text-body-sm text-outline">Over 17.1–17.6</span>
+</div>
+<div class="font-headline-sm text-[18px] leading-snug text-on-surface group-hover:text-primary transition-colors">
+              Jasprit Bumrah delivers 2-run penultimate over
+            </div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Unplayable reverse-swing seam. Beats Marco Jansen's off-stump with precision yorkers. Jansen clean bowled on 17.4 for 2 runs (3b).
+            </p>
+</div>
+<div class="pt-space-md">
+<button class="w-full py-1.5 px-space-sm rounded-lg bg-surface-container-highest hover:bg-primary-container hover:text-on-primary-container text-on-surface text-left font-label-telemetry text-label-telemetry flex items-center justify-between transition-colors" onclick="scrollToEvidence('17.4')">
+<span>Inspect Ball Evidence</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Story Beat 3 -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col justify-between hover:bg-surface-container transition-all group shadow-md">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="px-space-xs py-0.5 rounded bg-tertiary-container text-on-tertiary-container font-label-tag text-label-tag font-bold">ICONIC CATCH</span>
+<span class="font-data-tabular text-body-sm text-outline">Ball #119 · Ov 19.1</span>
+</div>
+<div class="font-headline-sm text-[18px] leading-snug text-on-surface group-hover:text-primary transition-colors">
+              Suryakumar Yadav boundary catch dismisses Miller
+            </div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              David Miller launches wide full toss. Suryakumar Yadav catches, tosses ball airborne before touching rope, and re-establishes field balance.
+            </p>
+</div>
+<div class="pt-space-md">
+<button class="w-full py-1.5 px-space-sm rounded-lg bg-surface-container-highest hover:bg-primary-container hover:text-on-primary-container text-on-surface text-left font-label-telemetry text-label-telemetry flex items-center justify-between transition-colors" onclick="scrollToEvidence('19.1')">
+<span>Inspect Ball Evidence</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Story Beat 4 -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col justify-between hover:bg-surface-container transition-all group shadow-md">
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="px-space-xs py-0.5 rounded bg-primary-container text-on-primary-container font-label-tag text-label-tag font-bold">CHAMPION FINISH</span>
+<span class="font-data-tabular text-body-sm text-outline">Ball #124 · Ov 19.6</span>
+</div>
+<div class="font-headline-sm text-[18px] leading-snug text-on-surface group-hover:text-primary transition-colors">
+              India seals 7-run victory on final delivery
+            </div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Hardik bowls full and straight to Anrich Nortje. Single conceded. India secures their second ICC Men's T20 World Cup title.
+            </p>
+</div>
+<div class="pt-space-md">
+<button class="w-full py-1.5 px-space-sm rounded-lg bg-surface-container-highest hover:bg-primary-container hover:text-on-primary-container text-on-surface text-left font-label-telemetry text-label-telemetry flex items-center justify-between transition-colors" onclick="scrollToEvidence('19.6')">
+<span>Inspect Ball Evidence</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION F: "WHY IT MATTERS" BROADCAST SYNTHESIS -->
+<section class="w-full pb-space-xl">
+<div class="bg-surface-container rounded-2xl p-space-lg lg:p-space-xl flex flex-col lg:flex-row items-center gap-space-xl shadow-lg">
+<div class="w-full lg:w-2/3 flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary-container text-[20px]">psychology</span>
+<span class="font-label-tag text-label-tag uppercase tracking-wider text-primary">ANALYTIC SYNTHESIS · WHY IT MATTERS</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">The 18-Dot Ball Quarantine</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          India executed <strong class="text-on-surface font-semibold">18 dot balls and strict boundary locks</strong> across the final 30 deliveries, reducing South Africa's scoring velocity from an aggressive <strong class="text-primary-fixed font-semibold">10.07 RPO down to 4.40 RPO</strong>. Deploying high-variance cross-seam deliveries into the pitch and boundary sweepers for straight hits choked the run pipeline without relying on extras.
+        </p>
+<div class="flex flex-wrap items-center gap-space-md pt-space-xs">
+<div class="flex items-center gap-space-xs text-primary font-data-tabular text-body-md">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Ground Truth Validated</span>
+</div>
+<div class="text-outline text-body-sm font-data-tabular">Source: Cricsheet Ball Event Archive #1415755</div>
+</div>
+</div>
+<!-- Donut / Metric Chart Component -->
+<div class="w-full lg:w-1/3 flex flex-col items-center justify-center bg-surface-container-low p-space-lg rounded-xl">
+<div class="relative w-36 h-36 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<!-- Background circle -->
+<circle class="text-surface-container-highest" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="12"></circle>
+<!-- Dot balls (60% = 18/30) -->
+<circle class="text-primary-container" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="100.48" stroke-width="12"></circle>
+<!-- Wickets (13.3% = 4/30) -->
+<circle class="text-error" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="217.7" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="font-headline-lg text-[28px] font-bold text-on-surface leading-none">60%</span>
+<span class="font-label-tag text-[10px] text-on-surface-variant uppercase">Dot Balls</span>
+</div>
+</div>
+<div class="flex items-center justify-center gap-space-md mt-space-md text-center font-label-telemetry text-label-telemetry">
+<div class="text-on-surface-variant"><span class="text-primary-container font-bold">18</span> Dots</div>
+<div class="text-on-surface-variant"><span class="text-error font-bold">4</span> Wickets</div>
+<div class="text-on-surface-variant"><span class="text-secondary font-bold">8</span> Scoring</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION G: EVIDENCE DRAWER ("INSPECT THE EVIDENCE") -->
+<section class="w-full pb-space-xl" id="evidenceDrawerSection">
+<div class="bg-surface-container-low rounded-2xl p-space-lg shadow-xl">
+<div class="flex flex-col md:flex-row md:items-center justify-between pb-space-md gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary-container text-[24px]">terminal</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Inspect The Evidence (Ground-Truth Ledger)</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Deterministic replay generated from CricSheet Archive Match ID: <code class="font-data-tabular text-primary-fixed bg-surface-container px-1.5 py-0.5 rounded">cricsheet_t20_1415755</code></span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="px-space-sm py-1 rounded-full bg-surface-container-highest text-primary font-label-tag text-label-tag uppercase">Ledger Hash: 0x9bf4...e81c</span>
+</div>
+</div>
+<!-- Tab filter for Deliveries -->
+<div class="flex items-center gap-space-xs pb-space-md overflow-x-auto">
+<button class="px-space-md py-1 rounded-lg bg-primary-container text-on-primary-container font-label-telemetry text-label-telemetry font-bold" id="filter-all" onclick="filterEvidence('all')">All 30 Balls</button>
+<button class="px-space-md py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-telemetry text-label-telemetry" id="filter-wickets" onclick="filterEvidence('wickets')">Wickets Only (4)</button>
+<button class="px-space-md py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-telemetry text-label-telemetry" id="filter-boundaries" onclick="filterEvidence('boundaries')">Boundaries (0)</button>
+<button class="px-space-md py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-telemetry text-label-telemetry" id="filter-dots" onclick="filterEvidence('dots')">Dot Balls (18)</button>
+</div>
+<!-- Data Table -->
+<div class="w-full overflow-x-auto rounded-xl bg-surface-container">
+<table class="w-full text-left font-data-tabular text-body-sm">
+<thead class="bg-surface-container-highest text-on-surface-variant font-label-telemetry text-label-telemetry uppercase tracking-wider">
+<tr>
+<th class="py-space-sm px-space-md">Ball</th>
+<th class="py-space-sm px-space-md">Striker</th>
+<th class="py-space-sm px-space-md">Bowler</th>
+<th class="py-space-sm px-space-md">Runs</th>
+<th class="py-space-sm px-space-md">Event / Dismissal</th>
+<th class="py-space-sm px-space-md">Field Location</th>
+<th class="py-space-sm px-space-md text-right">Validation Hash</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-on-surface" id="evidenceTableBody">
+<tr class="bg-surface-container hover:bg-surface-container-high transition-colors" data-type="wicket" id="ball-16.1">
+<td class="py-space-sm px-space-md font-bold text-primary-fixed">16.1</td>
+<td class="py-space-sm px-space-md font-medium text-error">H. Klaasen</td>
+<td class="py-space-sm px-space-md">H. Pandya</td>
+<td class="py-space-sm px-space-md font-bold">0</td>
+<td class="py-space-sm px-space-md">
+<span class="px-2 py-0.5 rounded bg-error text-on-error font-label-tag text-label-tag uppercase font-bold">Caught Behind (c Pant b Pandya)</span>
+</td>
+<td class="py-space-sm px-space-md text-on-surface-variant">Keeper Gloves</td>
+<td class="py-space-sm px-space-md text-right font-label-tag text-outline">f7a18b4...</td>
+</tr>
+<tr class="bg-surface-container/60 hover:bg-surface-container-high transition-colors" data-type="dot" id="ball-16.6">
+<td class="py-space-sm px-space-md font-bold text-primary-fixed">16.6</td>
+<td class="py-space-sm px-space-md">D. Miller</td>
+<td class="py-space-sm px-space-md">H. Pandya</td>
+<td class="py-space-sm px-space-md">0</td>
+<td class="py-space-sm px-space-md text-on-surface-variant">Dot Ball · Beaten outside off</td>
+<td class="py-space-sm px-space-md text-on-surface-variant">Covers Dot</td>
+<td class="py-space-sm px-space-md text-right font-label-tag text-outline">cb819c2...</td>
+</tr>
+<tr class="bg-surface-container hover:bg-surface-container-high transition-colors" data-type="wicket" id="ball-17.4">
+<td class="py-space-sm px-space-md font-bold text-primary-fixed">17.4</td>
+<td class="py-space-sm px-space-md font-medium text-error">M. Jansen</td>
+<td class="py-space-sm px-space-md">J. Bumrah</td>
+<td class="py-space-sm px-space-md font-bold">0</td>
+<td class="py-space-sm px-space-md">
+<span class="px-2 py-0.5 rounded bg-error text-on-error font-label-tag text-label-tag uppercase font-bold">Bowled (b Bumrah)</span>
+</td>
+<td class="py-space-sm px-space-md text-on-surface-variant">Off-Stump Disturbed</td>
+<td class="py-space-sm px-space-md text-right font-label-tag text-outline">ee332d1...</td>
+</tr>
+<tr class="bg-surface-container/60 hover:bg-surface-container-high transition-colors" data-type="dot" id="ball-18.3">
+<td class="py-space-sm px-space-md font-bold text-primary-fixed">18.3</td>
+<td class="py-space-sm px-space-md">D. Miller</td>
+<td class="py-space-sm px-space-md">Arshdeep Singh</td>
+<td class="py-space-sm px-space-md">0</td>
+<td class="py-space-sm px-space-md text-on-surface-variant">Dot Ball · Wide Yorker block</td>
+<td class="py-space-sm px-space-md text-on-surface-variant">Point Field</td>
+<td class="py-space-sm px-space-md text-right font-label-tag text-outline">8a4421f...</td>
+</tr>
+<tr class="bg-surface-container hover:bg-surface-container-high transition-colors" data-type="wicket" id="ball-19.1">
+<td class="py-space-sm px-space-md font-bold text-primary-fixed">19.1</td>
+<td class="py-space-sm px-space-md font-medium text-error">D. Miller</td>
+<td class="py-space-sm px-space-md">H. Pandya</td>
+<td class="py-space-sm px-space-md font-bold">0</td>
+<td class="py-space-sm px-space-md">
+<span class="px-2 py-0.5 rounded bg-error text-on-error font-label-tag text-label-tag uppercase font-bold">Caught (c Suryakumar b Pandya)</span>
+</td>
+<td class="py-space-sm px-space-md text-on-surface-variant">Long-off Boundary Cushion</td>
+<td class="py-space-sm px-space-md text-right font-label-tag text-outline">98ff2a0...</td>
+</tr>
+<tr class="bg-surface-container/60 hover:bg-surface-container-high transition-colors" data-type="wicket" id="ball-19.5">
+<td class="py-space-sm px-space-md font-bold text-primary-fixed">19.5</td>
+<td class="py-space-sm px-space-md font-medium text-error">K. Rabada</td>
+<td class="py-space-sm px-space-md">H. Pandya</td>
+<td class="py-space-sm px-space-md font-bold">0</td>
+<td class="py-space-sm px-space-md">
+<span class="px-2 py-0.5 rounded bg-error text-on-error font-label-tag text-label-tag uppercase font-bold">Caught (c sub b Pandya)</span>
+</td>
+<td class="py-space-sm px-space-md text-on-surface-variant">Short Third Man</td>
+<td class="py-space-sm px-space-md text-right font-label-tag text-outline">1a87b64...</td>
+</tr>
+<tr class="bg-surface-container hover:bg-surface-container-high transition-colors" data-type="run" id="ball-19.6">
+<td class="py-space-sm px-space-md font-bold text-primary-fixed">19.6</td>
+<td class="py-space-sm px-space-md">A. Nortje</td>
+<td class="py-space-sm px-space-md">H. Pandya</td>
+<td class="py-space-sm px-space-md font-bold">1</td>
+<td class="py-space-sm px-space-md text-primary-container">Single Taken · Final Delivery (India Wins)</td>
+<td class="py-space-sm px-space-md text-on-surface-variant">Mid-wicket Deep</td>
+<td class="py-space-sm px-space-md text-right font-label-tag text-outline">5c1109a...</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-space-md p-space-sm rounded-lg bg-surface-container flex items-center justify-between text-on-surface-variant font-body-sm">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary-container">info</span>
+<span>Cricsheet archive records verified against live TV broadcast timing feeds. No match event hallucination possible.</span>
+</span>
+<span class="font-data-tabular text-outline hidden md:inline-block">SHA-256 Digest: c49b01f8101a...</span>
+</div>
+</div>
+</section>
+<!-- SECTION H: BOUNDED FOLLOW-UP DRAWER -->
+<section class="w-full pb-space-xl">
+<div class="bg-surface-container-low rounded-2xl p-space-lg shadow-md">
+<div class="flex items-center gap-space-sm pb-space-sm">
+<span class="material-symbols-outlined text-primary-container text-[22px]">quick_reference_all</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Ask About This Interval</h3>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant pb-space-md">
+        Explore precise data queries strictly bounded to Overs 15.0 through 20.0:
+      </p>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-sm">
+<button class="p-space-md rounded-xl bg-surface-container hover:bg-surface-container-high transition-all text-left flex flex-col justify-between group shadow-sm" onclick="handlePrompt('What changed during this interval?')">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors font-semibold">"What changed during this interval?"</span>
+<span class="pt-space-sm font-label-telemetry text-label-telemetry text-primary-container flex items-center gap-1">
+<span>Query delta momentum</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</span>
+</button>
+<button class="p-space-md rounded-xl bg-surface-container hover:bg-surface-container-high transition-all text-left flex flex-col justify-between group shadow-sm" onclick="handlePrompt('Which over had the lowest run concession?')">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors font-semibold">"Which over had the lowest run concession?"</span>
+<span class="pt-space-sm font-label-telemetry text-label-telemetry text-primary-container flex items-center gap-1">
+<span>Query bowler economy</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</span>
+</button>
+<button class="p-space-md rounded-xl bg-surface-container hover:bg-surface-container-high transition-all text-left flex flex-col justify-between group shadow-sm" onclick="handlePrompt('Explain the David Miller dismissal ball')">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors font-semibold">"Explain the David Miller dismissal ball"</span>
+<span class="pt-space-sm font-label-telemetry text-label-telemetry text-primary-container flex items-center gap-1">
+<span>Query ball 19.1 breakdown</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</span>
+</button>
+<button class="p-space-md rounded-xl bg-surface-container hover:bg-surface-container-high transition-all text-left flex flex-col justify-between group shadow-sm" onclick="handlePrompt('Compare scoring rate: Overs 1-15 vs 16-20')">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors font-semibold">"Compare scoring rate: Overs 1-15 vs 16-20"</span>
+<span class="pt-space-sm font-label-telemetry text-label-telemetry text-primary-container flex items-center gap-1">
+<span>Query innings trajectory</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</span>
+</button>
+</div>
+<!-- Live Prompt Answer Display (Dynamic) -->
+<div class="hidden mt-space-md p-space-md rounded-xl bg-surface-container-highest transition-all" id="boundedAnswerBox">
+<div class="flex items-center justify-between pb-space-xs">
+<span class="font-label-tag text-label-tag uppercase text-primary font-bold" id="boundedAnswerQuery">QUESTION</span>
+<button class="text-on-surface-variant hover:text-on-surface" onclick="closeAnswerBox()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed" id="boundedAnswerText"></p>
+</div>
+</div>
+</section>
+<!-- SECTION I: INTERACTIVE PROTOTYPE CONTROLS (FLOATING DOCK) -->
+<div class="fixed bottom-6 right-6 z-40 bg-surface-container/95 backdrop-blur-md p-space-xs rounded-2xl shadow-2xl flex items-center gap-1 border-0">
+<div class="px-space-xs text-outline font-label-tag text-[9px] uppercase tracking-wider hidden sm:block">Demo State</div>
+<button class="px-space-sm py-1 rounded-lg bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container font-label-tag text-label-tag transition-colors text-on-surface" onclick="toggleExplanationMode('ai')" title="AI Verified Mode">
+      AI Verified
+    </button>
+<button class="px-space-sm py-1 rounded-lg bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container font-label-tag text-label-tag transition-colors text-on-surface" onclick="toggleExplanationMode('plain')" title="Plain Fallback Mode">
+      Plain Record
+    </button>
+<button class="px-space-sm py-1 rounded-lg bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container font-label-tag text-label-tag transition-colors text-on-surface" onclick="triggerToast('share')" title="Trigger Share Toast">
+      Share Toast
+    </button>
+<button class="px-space-sm py-1 rounded-lg bg-surface-container-high hover:bg-error hover:text-on-error font-label-tag text-label-tag transition-colors text-on-surface" onclick="triggerToast('error')" title="Trigger Error Toast">
+      Error Toast
+    </button>
+</div>
+</div>
+<!-- CLIENT JAVASCRIPT LOGIC -->
+<script>
+  let currentMode = 'ai';
+
+  function toggleExplanationMode(mode) {
+    currentMode = mode;
+    const aiBtn = document.getElementById('btnAiMode');
+    const plainBtn = document.getElementById('btnPlainMode');
+    const headline = document.getElementById('editorialHeadline');
+
+    if (mode === 'ai') {
+      aiBtn.className = "px-space-md py-1.5 rounded-lg font-label-tag text-label-tag flex items-center gap-1.5 transition-all bg-primary-container text-on-primary-container font-bold shadow-[0_0_12px_rgba(0,242,254,0.3)]";
+      plainBtn.className = "px-space-md py-1.5 rounded-lg font-label-tag text-label-tag flex items-center gap-1.5 transition-all text-on-surface-variant hover:text-on-surface";
+      headline.innerHTML = `South Africa needed <span class="text-primary-container underline decoration-primary-container/40 decoration-4 underline-offset-8">30 runs from 30 balls</span>. 4 wickets fell and India conceded just <span class="text-tertiary underline decoration-error/40 decoration-4 underline-offset-8">22 runs to win</span>.`;
+      triggerToast('custom', 'Mode Switched: AI Explanation', 'Synthesized editorial narrative backed by deterministic score log.');
+    } else {
+      plainBtn.className = "px-space-md py-1.5 rounded-lg font-label-tag text-label-tag flex items-center gap-1.5 transition-all bg-surface-bright text-on-surface font-bold shadow-md";
+      aiBtn.className = "px-space-md py-1.5 rounded-lg font-label-tag text-label-tag flex items-center gap-1.5 transition-all text-on-surface-variant hover:text-on-surface";
+      headline.innerHTML = `Over 15.0 to 20.0: Target Delta +22 runs, 4 wickets fallen across 30 deliveries. South Africa 169/8 (20.0).`;
+      triggerToast('custom', 'Mode Switched: Plain Record', 'AI narrative disabled. Pure statistical score log displayed.');
+    }
+  }
+
+  function selectOver(overNum) {
+    // Reset over highlights
+    [16, 17, 18, 19, 20].forEach(num => {
+      const el = document.getElementById(`over-card-${num}`);
+      if (el) {
+        if (num === overNum) {
+          el.className = "cursor-pointer transition-all duration-200 bg-surface-container-high rounded-xl p-space-md flex flex-col justify-between shadow-[0_0_20px_rgba(0,242,254,0.25)] relative";
+        } else {
+          el.className = "cursor-pointer transition-all duration-200 bg-surface-container rounded-xl p-space-md flex flex-col justify-between hover:bg-surface-container-high relative";
+        }
+      }
+    });
+
+    const panel = document.getElementById('overDetailPanel');
+    if (overNum === 17) {
+      panel.innerHTML = `
+        <div class="flex items-center gap-space-md">
+          <span class="px-space-sm py-1 rounded bg-primary-container text-on-primary-container font-label-tag text-label-tag uppercase font-bold">Over 17 Telemetry</span>
+          <span class="font-body-md text-body-md text-on-surface">Hardik Pandya to Heinrich Klaasen & David Miller</span>
+        </div>
+        <div class="flex items-center gap-space-xs overflow-x-auto pb-1 md:pb-0">
+          <span class="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center font-data-tabular text-body-md font-bold shadow-md cursor-pointer hover:scale-110 transition-transform" title="16.1: WICKET (Klaasen caught behind)">W</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="16.2: 1 Run">1</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="16.3: 1 Run">1</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="16.4: 1 Leg Bye">1b</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="16.5: 1 Run">1</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-lowest text-outline flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="16.6: Dot Ball">0</span>
+        </div>
+      `;
+    } else if (overNum === 18) {
+      panel.innerHTML = `
+        <div class="flex items-center gap-space-md">
+          <span class="px-space-sm py-1 rounded bg-secondary-container text-on-secondary-container font-label-tag text-label-tag uppercase font-bold">Over 18 Telemetry</span>
+          <span class="font-body-md text-body-md text-on-surface">Jasprit Bumrah to David Miller & Marco Jansen</span>
+        </div>
+        <div class="flex items-center gap-space-xs overflow-x-auto pb-1 md:pb-0">
+          <span class="w-8 h-8 rounded-full bg-surface-container-lowest text-outline flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="17.1: Dot Ball">0</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="17.2: 1 Run">1</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-lowest text-outline flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="17.3: Dot Ball">0</span>
+          <span class="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center font-data-tabular text-body-md font-bold shadow-md cursor-pointer hover:scale-110 transition-transform" title="17.4: WICKET (Jansen bowled)">W</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-lowest text-outline flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="17.5: Dot Ball">0</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="17.6: 1 Run">1</span>
+        </div>
+      `;
+    } else if (overNum === 20) {
+      panel.innerHTML = `
+        <div class="flex items-center gap-space-md">
+          <span class="px-space-sm py-1 rounded bg-error text-on-error font-label-tag text-label-tag uppercase font-bold">Over 20 Telemetry</span>
+          <span class="font-body-md text-body-md text-on-surface">Hardik Pandya final over defense (16 runs to win)</span>
+        </div>
+        <div class="flex items-center gap-space-xs overflow-x-auto pb-1 md:pb-0">
+          <span class="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center font-data-tabular text-body-md font-bold shadow-md cursor-pointer hover:scale-110 transition-transform" title="19.1: WICKET (Miller caught Suryakumar)">W</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="19.2: 4 Runs">4</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="19.3: 1 Run">1</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold cursor-pointer hover:scale-110 transition-transform" title="19.4: 1 Bye">1b</span>
+          <span class="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center font-data-tabular text-body-md font-bold shadow-md cursor-pointer hover:scale-110 transition-transform" title="19.5: WICKET (Rabada caught)">W</span>
+          <span class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-data-tabular text-body-md font-bold cursor-pointer hover:scale-110 transition-transform" title="19.6: 1 Run (Final delivery)">1</span>
+        </div>
+      `;
+    } else {
+      panel.innerHTML = `
+        <div class="flex items-center gap-space-md">
+          <span class="px-space-sm py-1 rounded bg-surface-container-highest text-on-surface font-label-tag text-label-tag uppercase font-bold">Over ${overNum} Telemetry</span>
+          <span class="font-body-md text-body-md text-on-surface">Disciplined bowling tightens pressure clamp</span>
+        </div>
+        <div class="flex items-center gap-space-xs overflow-x-auto pb-1 md:pb-0">
+          <span class="w-8 h-8 rounded-full bg-surface-container-lowest text-outline flex items-center justify-center font-data-tabular text-body-md font-semibold">0</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold">1</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-lowest text-outline flex items-center justify-center font-data-tabular text-body-md font-semibold">0</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold">1</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-data-tabular text-body-md font-semibold">2</span>
+          <span class="w-8 h-8 rounded-full bg-surface-container-lowest text-outline flex items-center justify-center font-data-tabular text-body-md font-semibold">0</span>
+        </div>
+      `;
+    }
+  }
+
+  function scrollToEvidence(ballId) {
+    const el = document.getElementById(`ball-${ballId}`);
+    const container = document.getElementById('evidenceDrawerSection');
+    if (container) {
+      container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    if (el) {
+      el.classList.add('bg-primary-container/20');
+      setTimeout(() => {
+        el.classList.remove('bg-primary-container/20');
+      }, 2000);
+    }
+  }
+
+  function filterEvidence(filterType) {
+    const rows = document.querySelectorAll('#evidenceTableBody tr');
+    const buttons = ['all', 'wickets', 'boundaries', 'dots'];
+
+    buttons.forEach(b => {
+      const btn = document.getElementById(`filter-${b}`);
+      if (b === filterType) {
+        btn.className = "px-space-md py-1 rounded-lg bg-primary-container text-on-primary-container font-label-telemetry text-label-telemetry font-bold";
+      } else {
+        btn.className = "px-space-md py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-telemetry text-label-telemetry";
+      }
+    });
+
+    rows.forEach(row => {
+      const type = row.getAttribute('data-type');
+      if (filterType === 'all') {
+        row.style.display = '';
+      } else if (filterType === 'wickets' && type === 'wicket') {
+        row.style.display = '';
+      } else if (filterType === 'dots' && type === 'dot') {
+        row.style.display = '';
+      } else if (filterType === 'boundaries' && type === 'boundary') {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  function handlePrompt(promptText) {
+    const box = document.getElementById('boundedAnswerBox');
+    const query = document.getElementById('boundedAnswerQuery');
+    const text = document.getElementById('boundedAnswerText');
+
+    box.classList.remove('hidden');
+    query.innerText = promptText;
+
+    if (promptText.includes('What changed')) {
+      text.innerText = "Between 15.0 and 20.0, South Africa experienced an absolute scoring collapse. Prior to Over 15, Klaasen was striking at 192.59 SR. India responded by conceding just 22 runs in 30 balls while claiming Heinrich Klaasen, Marco Jansen, David Miller, and Kagiso Rabada.";
+    } else if (promptText.includes('lowest run concession')) {
+      text.innerText = "Over 18 bowled by Jasprit Bumrah yielded only 2 runs and 1 wicket (Marco Jansen bowled for 2 off 3). It generated 4 dot deliveries out of 6 balls.";
+    } else if (promptText.includes('David Miller')) {
+      text.innerText = "On Ball 19.1, Hardik bowled a wide full-toss. Miller lofted it high down the ground toward long-off. Suryakumar Yadav caught the ball inside the boundary rope, flicked it up before carrying over, and jumped back into the field of play to complete the catch.";
+    } else {
+      text.innerText = "Overs 1-15: South Africa scored 151 runs at 10.07 runs per over. Overs 16-20: India restricted them to 18 runs off bat + 4 extras at just 4.40 runs per over, representing a 56.3% deceleration in run production.";
+    }
+  }
+
+  function closeAnswerBox() {
+    document.getElementById('boundedAnswerBox').classList.add('hidden');
+  }
+
+  function triggerToast(type, customTitle, customDesc) {
+    const toast = document.getElementById('toastNotification');
+    const title = document.getElementById('toastTitle');
+    const desc = document.getElementById('toastDesc');
+    const icon = document.getElementById('toastIcon');
+
+    if (type === 'share') {
+      title.innerText = 'Recap Link Copied!';
+      desc.innerText = 'Interval 15.0 → 20.0 copied to clipboard with verification hash.';
+      icon.innerText = 'check_circle';
+      icon.className = 'material-symbols-outlined text-primary-container text-[20px]';
+    } else if (type === 'error') {
+      title.innerText = 'Sync Warning: Offline Cache Active';
+      desc.innerText = 'Showing local verified archive. Real-time broadcast sync disconnected.';
+      icon.innerText = 'error';
+      icon.className = 'material-symbols-outlined text-error text-[20px]';
+    } else if (type === 'custom') {
+      title.innerText = customTitle;
+      desc.innerText = customDesc;
+      icon.innerText = 'info';
+      icon.className = 'material-symbols-outlined text-primary-fixed text-[20px]';
+    }
+
+    toast.classList.remove('translate-y-[-120%]', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+
+    setTimeout(() => {
+      toast.classList.remove('translate-y-0', 'opacity-100');
+      toast.classList.add('translate-y-[-120%]', 'opacity-0');
+    }, 3200);
+  }
+</script></main><footer class="w-full bg-surface-container-lowest mt-space-xl py-space-xl"><div class="max-w-[1440px] mx-auto px-margin-desktop flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><img alt="Logo.png" class="h-6 w-auto object-contain opacity-80" src="https://lh3.googleusercontent.com/aida/AEtjO1UeURBmSPH83w9emzgv1CZX57hPLsx6gN5dSKvuyQqraK2j16fuOfx_RuIoTPLoogSHqArsWvtYgtYOw6k7v8xr7Kp2y9WE4RHmbHeSsrWyr5kJ_F3wl00R5zzNOXN3FLAr0VpwDKK0dRmHBAKc1D6vzlb3fx9tj6QMYDZSoESh_7jnhIh8EioOOjF7virbUoMYAFUUuq48UKKHRivbZSnvsZB99VbREoe9qZayoDOozKrx3Rq6zALYRJVczV-WxqhlChGesZZotg"/><span class="font-label-telemetry text-label-telemetry text-on-surface-variant">FanCue Engine · CricSheet Ground-Truth Replay Telemetry</span></div><div class="flex items-center gap-space-lg font-body-sm text-body-sm text-on-surface-variant"><a class="hover:text-primary transition-colors" data-path="how-verification-works" href="#">Verification Standard</a><a class="hover:text-primary transition-colors" data-path="archive" href="#">Historical Match Logs</a><span class="font-label-tag text-label-tag text-outline">v2.4-PROD</span></div></div></footer></body></html>

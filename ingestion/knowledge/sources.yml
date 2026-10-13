@@ -1,0 +1,84 @@
+# FanCue Contextual Knowledge Sources Registry
+# Format Version: 1.0.0
+# Audit Date: 2026-10-11
+# Isolation Notice: Governed strictly under D:\FanCue\AGENTS.md
+
+version: "1.0.0"
+
+sources:
+  - source_id: "mcc_laws_of_cricket_2026"
+    source_name: "MCC Laws of Cricket"
+    publisher: "Marylebone Cricket Club (MCC)"
+    canonical_url: "https://lawsofcricket.lords.org/"
+    announcement_url: "https://www.lords.org/lords/news-stories/mcc-announces-new-edition-of-laws-from-1-october-2026"
+    source_kind: "official_rulebook"
+    format_or_edition: "2026 Edition"
+    source_revision: "2026-10-01"
+    effective_from: "2026-10-01"
+    effective_to: null
+    license_or_status: "Copyright Marylebone Cricket Club — Consulted as authoritative legal reference"
+    permitted_use: "reference_only"
+    attribution_requirements: "Reference citing Law numbers; original FanCue-authored explanatory text only."
+    date_checked: "2026-10-11"
+    verification_status: "verified"
+    intended_use: "Authoritative ground truth for universal cricket laws (overs, legal deliveries, dead balls, dismissals)."
+    notes: >
+      The MCC 2026 edition took effect on 1 October 2026. Under FanCue governance rules,
+      no raw text or PDF chapters are bulk-copied into the vector store. Explanations
+      are strictly original FanCue prose linking to specific Law numbers.
+
+  - source_id: "icc_mens_odi_playing_conditions_2026"
+    source_name: "ICC Men's One Day International Playing Conditions"
+    publisher: "International Cricket Council (ICC)"
+    canonical_url: "https://www.icc-cricket.com/about/cricket/rules-and-regulations/playing-conditions"
+    source_kind: "competition_regulations"
+    format_or_edition: "October 2026 Edition"
+    source_revision: "2026-10-01"
+    effective_from: "2026-10-01"
+    effective_to: null
+    license_or_status: "Copyright International Cricket Council — Consulted as competition reference"
+    permitted_use: "reference_only"
+    attribution_requirements: "Reference citing Playing Condition clauses; original FanCue-authored explanatory text only."
+    date_checked: "2026-10-11"
+    verification_status: "verified"
+    intended_use: "Authoritative reference for ODI specific rules (Powerplays P1/P2/P3, 10-over bowler limits, Free Hits, DRS)."
+    notes: >
+      ICC Playing Conditions modify the base MCC Laws for international competition.
+      Any note addressing field restrictions or reviews must cite this authority rather
+      than the general Laws of Cricket.
+
+  - source_id: "cricsheet_data_specification"
+    source_name: "Cricsheet JSON Data Specification"
+    publisher: "Cricsheet"
+    canonical_url: "https://cricsheet.org/format/json/"
+    source_kind: "data_specification"
+    format_or_edition: "JSON v1.3.0"
+    source_revision: "1.3.0"
+    effective_from: "2024-01-01"
+    effective_to: null
+    license_or_status: "Open Data Commons Attribution License (ODC-By v1.0)"
+    permitted_use: "open_attribution"
+    attribution_requirements: "Attribution to Cricsheet (https://cricsheet.org/) under ODC-By v1.0."
+    date_checked: "2026-10-11"
+    verification_status: "verified"
+    intended_use: "Reference for delivery event structure, extras categorization, and match schema terminology."
+    notes: >
+      Governs structural definitions for runs, wickets, extras (wides, noballs, byes, legbyes).
+
+  - source_id: "fancue_curated_cricket_knowledge"
+    source_name: "FanCue Curated Cricket Knowledge Corpus"
+    publisher: "FanCue Engineering Team"
+    canonical_url: "https://github.com/fancue/fancue"
+    source_kind: "fancue_original"
+    format_or_edition: "Corpus v1.0.0"
+    source_revision: "1.0.0"
+    effective_from: "2026-10-11"
+    effective_to: null
+    license_or_status: "Creative Commons Attribution 4.0 International (CC-BY-4.0)"
+    permitted_use: "open_attribution"
+    attribution_requirements: "FanCue Engineering Team (CC-BY-4.0)"
+    date_checked: "2026-10-11"
+    verification_status: "verified"
+    intended_use: "Contextual passages indexed into Qdrant for interval explanation and fan orientation."
+    notes: >
+      Original, atomic explanatory notes authored specifically for sports catch-up.

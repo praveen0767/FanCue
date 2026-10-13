@@ -1,0 +1,96 @@
+# =============================================================================
+# FanCue .dockerignore
+# Excludes files from Docker build contexts.
+# Keeping build contexts lean improves image build speed and security.
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# Secrets — never include in an image build context
+# ---------------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+secrets/
+credentials/
+*.pem
+*.key
+
+# ---------------------------------------------------------------------------
+# Git history — not needed in images
+# ---------------------------------------------------------------------------
+.git/
+.gitignore
+.gitattributes
+
+# ---------------------------------------------------------------------------
+# Python virtual environments and caches
+# ---------------------------------------------------------------------------
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ---------------------------------------------------------------------------
+# Node.js dependencies — reinstalled inside the image
+# ---------------------------------------------------------------------------
+node_modules/
+.npm/
+.yarn/cache
+.pnp.*
+
+# ---------------------------------------------------------------------------
+# Build outputs — built fresh inside the image
+# ---------------------------------------------------------------------------
+.next/
+out/
+dist/
+build/
+frontend/.next/
+frontend/out/
+
+# ---------------------------------------------------------------------------
+# Local data volumes — managed outside build contexts
+# ---------------------------------------------------------------------------
+data/downloads/
+data/processed/
+data/raw/recently_added_2_json.zip
+qdrant-data/
+qdrant_storage/
+postgres-data/
+ingestion/cache/
+logs/
+
+# ---------------------------------------------------------------------------
+# Documentation (not required at runtime)
+# ---------------------------------------------------------------------------
+docs/
+*.md
+!README.md
+
+# ---------------------------------------------------------------------------
+# Development tooling
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/
+*.suo
+*.user
+Makefile
+docker-compose.override.yml
+
+# ---------------------------------------------------------------------------
+# OS artefacts
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.log
+tmp/
+temp/

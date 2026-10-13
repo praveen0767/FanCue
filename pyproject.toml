@@ -1,0 +1,31 @@
+[project]
+name = "fancue"
+version = "0.1.0"
+description = "FanCue — AI-powered, evidence-grounded sports match-context platform"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.7.0",
+    "pyyaml>=6.0.0",
+    "pytest-cov>=5.0.0",
+    "fastembed>=0.9.0",
+    "qdrant-client>=1.13.0",
+    "fastapi>=0.143.0",
+    "uvicorn[standard]>=0.54.0",
+    "httpx>=0.27.0",
+    "python-dotenv>=1.2.0",
+    "jsonschema>=4.26.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=5.0.0",
+    "playwright>=1.40.0",
+]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+pythonpath = ["."]
+testpaths = ["tests", "backend/tests"]
+addopts = "-v"

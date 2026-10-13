@@ -1,0 +1,120 @@
+{
+  "$defs": {
+    "PermittedUse": {
+      "description": "Permitted usage tier for dataset.",
+      "enum": [
+        "open_attribution",
+        "non_commercial",
+        "evaluation_only",
+        "commercial"
+      ],
+      "title": "PermittedUse",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Auditable provenance record for an authoritative data source or fixture.",
+  "properties": {
+    "source_id": {
+      "description": "Unique identifier of data source in registry.",
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_name": {
+      "description": "Human-readable provider name (e.g. 'Cricsheet').",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Source Name",
+      "type": "string"
+    },
+    "source_url": {
+      "description": "Canonical URL of dataset provider.",
+      "title": "Source Url",
+      "type": "string"
+    },
+    "retrieved_at": {
+      "description": "Timezone-aware UTC timestamp when dataset was retrieved.",
+      "format": "date-time",
+      "title": "Retrieved At",
+      "type": "string"
+    },
+    "dataset_revision": {
+      "description": "Version, revision number, or git commit hash of dataset.",
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Dataset Revision",
+      "type": "string"
+    },
+    "source_format": {
+      "description": "Source serialization format (e.g. 'json', 'yaml').",
+      "maxLength": 32,
+      "minLength": 1,
+      "title": "Source Format",
+      "type": "string"
+    },
+    "source_format_version": {
+      "description": "Format specification version (e.g. '1.3.0').",
+      "maxLength": 32,
+      "minLength": 1,
+      "title": "Source Format Version",
+      "type": "string"
+    },
+    "file_sha256": {
+      "description": "Cryptographic SHA-256 hash (64 hex characters) of source file.",
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "File Sha256",
+      "type": "string"
+    },
+    "license_name": {
+      "description": "Full license name or SPDX identifier (e.g. 'ODC-By-1.0').",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "License Name",
+      "type": "string"
+    },
+    "license_url": {
+      "description": "Canonical URL to full legal license text.",
+      "title": "License Url",
+      "type": "string"
+    },
+    "attribution_text": {
+      "description": "Mandatory legal attribution notice as required by license.",
+      "maxLength": 512,
+      "minLength": 10,
+      "title": "Attribution Text",
+      "type": "string"
+    },
+    "permitted_use": {
+      "$ref": "#/$defs/PermittedUse",
+      "description": "Authorized usage category."
+    },
+    "modifications": {
+      "default": "None",
+      "description": "Summary of any transformations applied to raw data.",
+      "maxLength": 256,
+      "title": "Modifications",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_id",
+    "source_name",
+    "source_url",
+    "retrieved_at",
+    "dataset_revision",
+    "source_format",
+    "source_format_version",
+    "file_sha256",
+    "license_name",
+    "license_url",
+    "attribution_text",
+    "permitted_use"
+  ],
+  "title": "SourceProvenance",
+  "type": "object",
+  "$id": "https://fancue.org/schemas/v1/provenance.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0"
+}
