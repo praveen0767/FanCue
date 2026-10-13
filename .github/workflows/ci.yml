@@ -27,6 +27,17 @@ jobs:
           pip install -e ".[dev]"
           playwright install --with-deps chromium
 
+      - name: Set up Node.js for browser E2E assets
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build frontend for browser E2E tests
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
       - name: Run test suite with coverage
         run: |
           pytest --cov=backend/app --cov=ingestion --cov-report=term-missing tests backend/tests
