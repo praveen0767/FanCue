@@ -19,15 +19,27 @@ def configure_cors(app: FastAPI, settings: AppSettings) -> None:
     """Add CORS middleware to the FastAPI app using settings-derived origin list.
 
     - Allows origins listed in ALLOWED_ORIGINS (comma-separated env var).
-    - In production, wildcards (*) are explicitly rejected for security.
+    - In development: supports any localhost/127.0.0.1 port via origin regex and permits all headers.
+    - In production: strictly enforces explicit origins, disables wildcards (*), and restricts headers.
     - Does NOT enable credentials (no cookies used).
-    - Allows standard HTTP methods and headers used by the FanCue frontend.
     """
     origins = [o for o in settings.allowed_origins if not (settings.is_production and o == "*")]
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=origins,
-        allow_credentials=False,
-        allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["Content-Type", "Accept", "X-Correlation-Id"],
-    )
+    
+    if not settings.is_production:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=origins,
+            allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+            allow_credentials=False,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+    else:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=origins,
+            allow_credentials=False,
+            allow_methods=["GET", "POST", "OPTIONS"],
+            allow_headers=["Content-Type", "Accept", "X-Correlation-Id", "Authorization"],
+        )
+
