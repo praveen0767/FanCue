@@ -207,6 +207,27 @@ class TestCatchUpEndpoint:
         assert delta["runs_added"] >= 0
         assert delta["wickets_lost"] >= 0
 
+    def test_catchup_returns_over_by_over_ball_story(self):
+        """Every selected over has real ball records and consistent score deltas."""
+        data = client.post("/catchup", json=VALID_CATCHUP_1529229).json()
+        overs = data["over_by_over"]
+        assert overs, "Expected over-by-over story for a non-empty interval"
+        assert [item["over_number"] for item in overs] == sorted(
+            item["over_number"] for item in overs
+        )
+        assert all(item["balls"] for item in overs)
+        assert all(item["score_after_runs"] >= 0 for item in overs)
+        assert sum(item["runs"] for item in overs) == data["state_delta"]["runs_added"]
+        assert sum(item["wickets"] for item in overs) == data["state_delta"]["wickets_lost"]
+        for over in overs:
+            assert over["legal_balls"] <= 6
+            assert len(over["balls"]) <= 20
+            for ball in over["balls"]:
+                assert ball["batter"]
+                assert ball["bowler"]
+                assert ball["total_runs"] >= 0
+                assert ball["display"]
+
     def test_catchup_response_has_explanation(self):
         data = client.post("/catchup", json=VALID_CATCHUP_1529229).json()
         assert "explanation" in data
