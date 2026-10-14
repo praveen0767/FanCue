@@ -174,30 +174,46 @@ export interface CricketCatchUpResponse {
 // API client functions
 // ---------------------------------------------------------------------------
 
-async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+async function apiFetch<T>(
+  path: string,
+  options?: RequestInit,
+  timeoutMs = 30_000,
+): Promise<T> {
   const url = `${API_BASE}${path}`;
-  const resp = await fetch(url, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      ...(options?.headers ?? {}),
-    },
-  });
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
 
-  if (!resp.ok) {
-    let message = `API error ${resp.status}`;
-    try {
-      const data = await resp.json();
-      message =
-        data?.error?.message ?? data?.detail ?? message;
-    } catch {
-      // ignore JSON parse failure
+  try {
+    const resp = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...(options?.headers ?? {}),
+      },
+    });
+
+    if (!resp.ok) {
+      let message = `API error ${resp.status}`;
+      try {
+        const data = await resp.json();
+        message = data?.error?.message ?? data?.detail ?? message;
+      } catch {
+        // Ignore a non-JSON error body; retain the HTTP status.
+      }
+      throw new ApiError(resp.status, message);
     }
-    throw new ApiError(resp.status, message);
-  }
 
-  return resp.json() as Promise<T>;
+    return await resp.json() as T;
+  } catch (error) {
+    if (controller.signal.aborted) {
+      throw new ApiError(0, `Request timed out after ${Math.ceil(timeoutMs / 1000)} seconds.`);
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeout);
+  }
 }
 
 export class ApiError extends Error {
@@ -274,12 +290,13 @@ export interface HealthResponse {
   version: string;
 }
 
-export async function fetchHealth(): Promise<HealthResponse> {
-  return apiFetch<HealthResponse>("/healthz");
+export async function fetchHealth(timeoutMs = 65_000): Promise<HealthResponse> {
+  // Render's free service may need time to wake. The UI retries once on failure.
+  return apiFetch<HealthResponse>("/healthz", undefined, timeoutMs);
 }
 
-export async function fetchMatches(): Promise<MatchListResponse> {
-  return apiFetch<MatchListResponse>("/matches");
+export async function fetchMatches(timeoutMs = 20_000): Promise<MatchListResponse> {
+  return apiFetch<MatchListResponse>("/matches", undefined, timeoutMs);
 }
 
 export async function fetchNearLiveMatches(refresh = false): Promise<NearLiveMatchesResponse> {
@@ -299,9 +316,13 @@ export async function fetchIntervals(matchId: string): Promise<IntervalsResponse
 export async function fetchCatchUp(
   request: CricketCatchUpRequest
 ): Promise<CricketCatchUpResponse> {
-  return apiFetch<CricketCatchUpResponse>("/catchup", {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
+  return apiFetch<CricketCatchUpResponse>(
+    "/catchup",
+    {
+      method: "POST",
+      body: JSON.stringify(request),
+    },
+    45_000,
+  );
 }
 
