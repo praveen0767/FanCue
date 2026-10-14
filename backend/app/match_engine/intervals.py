@@ -65,8 +65,8 @@ def extract_key_facts(
     
     Includes:
     - Dismissal events (wickets)
-    - Boundaries (sixes)
-    - Consequential over summaries (high scoring overs >= 15 runs, maiden overs)
+    - Batter boundaries (fours and sixes)
+    - High-scoring overs, the interval's highest-scoring over(s), and maidens
     """
     facts: List[EvidenceFact] = []
 
@@ -127,52 +127,96 @@ def extract_key_facts(
                     )
                 )
 
-    # 2. Extract Sixes
+    # 2. Extract batter boundaries (four or six off the bat).
     for d in interval_deliveries:
-        if d.runs.batter >= 6:
-            fact_id = generate_fact_id(
-                match_id=match_id,
-                innings_index=innings_index,
-                over_index=d.over,
-                fact_type="boundary",
-                disambiguator=f"six_d{d.delivery_in_over}",
-            )
-            desc = f"SIX: {d.batter} hit a 6 off {d.bowler} in over {d.over + 1}."
-            facts.append(
-                EvidenceFact(
-                    fact_id=fact_id,
-                    fact_type=FactType.BOUNDARY,
-                    match_id=match_id,
-                    source_revision=source_revision,
-                    referenced_event_ids=[d.event_id],
-                    description=desc,
-                    structured_payload={
-                        "batter": d.batter,
-                        "bowler": d.bowler,
-                        "runs": 6,
-                        "over": d.over + 1,
-                    },
-                )
-            )
+        boundary_runs = d.runs.batter
+        if boundary_runs not in (4, 6):
+            continue
 
-    # 3. Over-level summaries (Maidens or big overs >= 15 runs)
+        boundary_label = "SIX" if boundary_runs == 6 else "FOUR"
+        fact_id = generate_fact_id(
+            match_id=match_id,
+            innings_index=innings_index,
+            over_index=d.over,
+            fact_type="boundary",
+            disambiguator=f"{'six' if boundary_runs == 6 else 'four'}_d{d.delivery_in_over}",
+        )
+        desc = (
+            f"{boundary_label}: {d.batter} hit a {boundary_runs} off "
+            f"{d.bowler} in over {d.over + 1}."
+        )
+        facts.append(
+            EvidenceFact(
+                fact_id=fact_id,
+                fact_type=FactType.BOUNDARY,
+                match_id=match_id,
+                source_revision=source_revision,
+                referenced_event_ids=[d.event_id],
+                description=desc,
+                structured_payload={
+                    "batter": d.batter,
+                    "bowler": d.bowler,
+                    "runs": boundary_runs,
+                    "over": d.over + 1,
+                },
+            )
+        )
+
+    # 3. Over-level summaries, including the highest-scoring over even when
+    # it is below the existing 15-run highlight threshold. Earliest over wins
+    # ties only for ordering; all tied highest overs are explicitly labelled.
     over_deliveries = defaultdict(list)
     for d in interval_deliveries:
         over_deliveries[d.over].append(d)
 
-    for over_idx, ov_delivs in sorted(over_deliveries.items()):
-        over_runs = sum(d.runs.total for d in ov_delivs)
-        over_event_ids = [d.event_id for d in ov_delivs]
+    over_runs_by_idx = {
+        over_idx: sum(d.runs.total for d in ov_delivs)
+        for over_idx, ov_delivs in over_deliveries.items()
+    }
+    highest_runs = max(over_runs_by_idx.values()) if over_runs_by_idx else None
+    highest_over_indices = {
+        over_idx
+        for over_idx, runs in over_runs_by_idx.items()
+        if runs == highest_runs
+    }
 
-        if over_runs >= 15:
+    for over_idx, ov_delivs in sorted(over_deliveries.items()):
+        over_runs = over_runs_by_idx[over_idx]
+        over_event_ids = [d.event_id for d in ov_delivs]
+        is_interval_highest = over_idx in highest_over_indices
+
+        # Preserve the normal high-scoring marker and its stable fact ID.
+        # When this over is also the interval maximum, add that fact explicitly
+        # to the description and typed payload.
+        if over_runs >= 15 or is_interval_highest:
+            if over_runs >= 15:
+                disambiguator = f"big_over_{over_runs}runs"
+                desc = f"HIGH-SCORING OVER: Over {over_idx + 1} yielded {over_runs} runs."
+                if is_interval_highest:
+                    if len(highest_over_indices) > 1:
+                        desc += " It tied for the highest-scoring over in this interval."
+                    else:
+                        desc += " It was the highest-scoring over in this interval."
+            else:
+                disambiguator = f"highest_over_{over_runs}runs"
+                if len(highest_over_indices) > 1:
+                    desc = (
+                        f"HIGHEST-SCORING OVER: Over {over_idx + 1} yielded {over_runs} runs, "
+                        "tied for the most in this interval."
+                    )
+                else:
+                    desc = (
+                        f"HIGHEST-SCORING OVER: Over {over_idx + 1} yielded {over_runs} runs, "
+                        "the most in this interval."
+                    )
+
             fact_id = generate_fact_id(
                 match_id=match_id,
                 innings_index=innings_index,
                 over_index=over_idx,
                 fact_type="over_summary",
-                disambiguator=f"big_over_{over_runs}runs",
+                disambiguator=disambiguator,
             )
-            desc = f"HIGH-SCORING OVER: Over {over_idx + 1} yielded {over_runs} runs."
             facts.append(
                 EvidenceFact(
                     fact_id=fact_id,
@@ -184,10 +228,14 @@ def extract_key_facts(
                     structured_payload={
                         "over": over_idx + 1,
                         "runs": over_runs,
+                        "is_interval_highest": is_interval_highest,
                     },
                 )
             )
-        elif over_runs == 0 and sum(1 for d in ov_delivs if d.legal_ball_number > 0) == 6:
+
+        # Maiden facts remain independent of the highest-over fact. This also
+        # keeps the event visible when a zero-run over is part of a tie.
+        if over_runs == 0 and sum(1 for d in ov_delivs if d.legal_ball_number > 0) == 6:
             fact_id = generate_fact_id(
                 match_id=match_id,
                 innings_index=innings_index,
@@ -209,6 +257,7 @@ def extract_key_facts(
                         "over": over_idx + 1,
                         "bowler": bowler,
                         "runs": 0,
+                        "is_interval_highest": is_interval_highest,
                     },
                 )
             )
