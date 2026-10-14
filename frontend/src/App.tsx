@@ -436,6 +436,7 @@ function MatchDiscovery({
   const [search, setSearch] = useState("");
   const [formatFilter, setFormatFilter] = useState("all");
   const [apiStatus, setApiStatus] = useState<string>("Checking…");
+  const [warmupNotice, setWarmupNotice] = useState<string | null>(null);
 
   // Near-live state
   const [nearLiveMatches, setNearLiveMatches] = useState<NearLiveMatchItem[] | null>(null);
@@ -453,21 +454,62 @@ function MatchDiscovery({
   const scorecardDrawerRef = useRef<HTMLElement | null>(null);
   const scorecardRequestIdRef = useRef(0);
 
-  // Health check on mount for real API status
-  useEffect(() => {
-    fetchHealth()
-      .then((h) => setApiStatus(h.status === "ok" ? "Operational" : h.status))
-      .catch(() => setApiStatus("Offline"));
+  // Warm the free-tier backend before asking it for the match catalogue.
+  // The first request may wake a sleeping Render service; retry transient failures once.
+  const loadHistoricalMatches = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setMatches(null);
+    setWarmupNotice(null);
+    setApiStatus("Connecting…");
+
+    const warmupTimer = window.setTimeout(() => {
+      setWarmupNotice(
+        "Waking up the server. Render's free tier may take around 30–60 seconds after inactivity.",
+      );
+    }, 4_000);
+
+    try {
+      let health;
+      try {
+        health = await fetchHealth();
+      } catch {
+        setApiStatus("Retrying…");
+        setWarmupNotice("The server has not responded yet. Retrying the connection once…");
+        health = await fetchHealth(20_000);
+      }
+
+      if (health.status !== "ok") {
+        throw new Error("The backend responded but did not report a healthy status.");
+      }
+      setApiStatus("Operational");
+
+      let data;
+      try {
+        data = await fetchMatches();
+      } catch {
+        setApiStatus("Retrying…");
+        setWarmupNotice("The server woke up, but match data did not load. Retrying once…");
+        data = await fetchMatches(20_000);
+      }
+
+      setMatches(data.matches);
+    } catch {
+      setApiStatus("Offline");
+      setMatches(null);
+      setError(
+        "FanCue could not connect after retrying. The server may still be waking up or temporarily unavailable. Please retry in a moment.",
+      );
+    } finally {
+      window.clearTimeout(warmupTimer);
+      setWarmupNotice(null);
+      setLoading(false);
+    }
   }, []);
 
-  // Load historical matches
   useEffect(() => {
-    setLoading(true);
-    fetchMatches()
-      .then((data) => setMatches(data.matches))
-      .catch((e) => setError(e instanceof Error ? e.message : "Failed to load matches"))
-      .finally(() => setLoading(false));
-  }, []);
+    void loadHistoricalMatches();
+  }, [loadHistoricalMatches]);
 
   // Fetch near-live matches when tab is clicked
   const loadNearLive = useCallback((refresh = false) => {
@@ -840,6 +882,12 @@ function MatchDiscovery({
       {/* SECTION 1: HISTORICAL REPLAYS */}
       {sourceTab === "historical" && (
         <>
+          {loading && warmupNotice && (
+            <div className="backend-warmup-note" role="status" aria-live="polite">
+              <span aria-hidden="true">⏳</span> {warmupNotice}
+            </div>
+          )}
+
           {loading && (
             <ul className="match-grid" aria-label="Loading matches">
               {[1, 2, 3].map((i) => (
@@ -850,7 +898,18 @@ function MatchDiscovery({
             </ul>
           )}
 
-          {error && <ErrorMsg message={error} />}
+          {error && (
+            <div className="historical-load-error">
+              <ErrorMsg message={error} />
+              <button
+                className="icon-btn"
+                type="button"
+                onClick={() => void loadHistoricalMatches()}
+              >
+                Retry connection
+              </button>
+            </div>
+          )}
 
           {!loading && matches && filteredHistorical.length === 0 && (
             <div className="state-empty">
@@ -1574,7 +1633,7 @@ function StoryView({
             className={`mode-badge generation-badge ${isFallback ? "mode-badge--fallback" : "mode-badge--verified"}`}
           >
             {isFallback ? (
-              <>BALL-BY-BALL RECAP</>
+              <>FACT-BASED SUMMARY</>
             ) : (
               <>AI EXPLANATION · VERIFIED</>
             )}
@@ -1740,7 +1799,7 @@ function StoryView({
         <p className="story-summary__text">{explanation.summary}</p>
         {isFallback && (
           <p className="story-summary__fallback-notice">
-            Built from recorded match data, so you can follow the story even when the AI provider is offline.
+            Computed from recorded ball-by-ball data. This response contains no AI-generated prose.
           </p>
         )}
       </section>
