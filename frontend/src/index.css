@@ -2984,3 +2984,31 @@ body::before {
   }
   .over-story-card:hover { transform: none; }
 }
+
+
+/* Calm, explicit feedback while a sleeping free-tier API wakes up. */
+.backend-warmup-note {
+  width: min(100%, 900px);
+  box-sizing: border-box;
+  margin: 12px 0 6px;
+  padding: 13px 15px;
+  border: 1px solid rgba(0, 242, 254, 0.22);
+  border-radius: 12px;
+  background: rgba(0, 242, 254, 0.055);
+  color: var(--on-surface);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.historical-load-error {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.historical-load-error .icon-btn {
+  min-height: 42px;
+  padding-inline: 16px;
+}
+
