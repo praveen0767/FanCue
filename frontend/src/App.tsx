@@ -23,27 +23,30 @@ function friendlyProviderMessage(
 ): string {
   const detail = (message ?? "").toLowerCase();
   if (
+    detail.includes("cricketdata.org rejected") ||
+    detail.includes("cricket_data_api_key") ||
     detail.includes("invalid api key") ||
     detail.includes("invalid_api_key") ||
     detail.includes("authentication failed") ||
     detail.includes("http 401") ||
     detail.includes("unauthorized")
   ) {
-    return "The near-live score feed needs a valid CricketData.org connection. Historical Replay still works—use it for a full catch-up while the live feed is repaired.";
+    return "CricketData.org rejected the key stored in Render. Open Render → fancue-api → Environment, replace CRICKET_DATA_API_KEY with a valid key from your CricketData.org account, save the change, then redeploy. Return here and tap Refresh. Historical Replay remains available.";
   }
   if (detail.includes("not configured") || detail.includes("api key is not configured")) {
-    return "Near-live scores are not connected yet. Historical Replay is ready to use while the live feed is configured.";
+    return "Near-live cricket is not configured yet. Add CRICKET_DATA_API_KEY in Render → fancue-api → Environment using a valid key from your CricketData.org account, then redeploy.";
   }
   if (
     detail.includes("quota") ||
     detail.includes("rate limit") ||
-    detail.includes("daily hit") ||
-    detail.includes("hits left")
+    detail.includes("daily limit") ||
+    detail.includes("hits left") ||
+    detail.includes("allowance")
   ) {
-    return "The live-score provider's request allowance is temporarily used up. Try again after it resets; Historical Replay is still available.";
+    return "CricketData.org's request allowance is exhausted. Try again after it resets; Historical Replay remains available.";
   }
   if (context === "scorecard") {
-    return "This scorecard could not be refreshed from the live provider. Return to Historical Replay for the full ball-by-ball catch-up.";
+    return "This scorecard could not be refreshed from CricketData.org. Return to Historical Replay for the full ball-by-ball catch-up.";
   }
   return "The near-live feed is temporarily unavailable. Historical Replay remains available.";
 }
