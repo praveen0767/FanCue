@@ -1,39 +1,52 @@
-# FanCue Data Attribution & Licensing Notice
+# FanCue — Data Attribution & Licensing Notice
 
-FanCue uses publicly licensed, recorded match data to power its deterministic
-state engine and historical interval reconstructions.
-
----
-
-## 1. Cricket Data Source: Cricsheet
-
-- **Source Name:** Cricsheet
-- **Website:** [https://cricsheet.org/](https://cricsheet.org/)
-- **License:** Open Data Commons Attribution License (ODC-By v1.0)
-- **License Text:** [http://opendatacommons.org/licenses/by/1.0/](http://opendatacommons.org/licenses/by/1.0/)
-
-### Mandatory Attribution Notice
-
-> **Data provided by Cricsheet (https://cricsheet.org/), licensed under the Open Data Commons Attribution License (ODC-By v1.0).**
-
-Under the terms of the ODC-By v1.0 license:
-- You are free to share, copy, distribute, and use the dataset.
-- You are free to produce works from the dataset.
-- You are free to adapt, modify, transform, and build upon the dataset.
-- Any public use or redistribution of the dataset or works produced from it must include attribution and keep intact any notices on the original dataset.
-
-### Pinned Fixture Details
-- **Match ID:** `1529229` (India vs West Indies, ODI, 2026-10-03)
-- **Format:** Cricsheet JSON v1.3.0
-- **File SHA-256:** `8163493c726d43e0865b6041c06bfa85f764d908e337d510108cdcf36e66c12f`
-- **Archive SHA-256:** `282b4543e36aae90bf14ab9e2cbd0f8829dfdd8b3e4a97b711b0336d69b5ba74`
-- **Modifications:** None. Raw JSON data is processed strictly in-memory by the deterministic match engine.
+FanCue uses recorded match data to power deterministic match-state reconstruction and historical interval summaries. Licence statements below apply to the specific formats identified; do not assume one licence applies to every Cricsheet format.
 
 ---
 
-## 2. Football Data Source (Provisional — Phase 08)
+## Cricsheet historical fixtures
 
-- **Source Candidate:** StatsBomb Open Data
-- **Website:** [https://github.com/statsbomb/open-data](https://github.com/statsbomb/open-data)
-- **License:** StatsBomb Open Data Software License / Non-Commercial Use with Attribution.
-- **Status:** Candidate source only. No football data has been ingested or downloaded. Exact licensing terms will be audited prior to Phase 08.
+- **Source:** [Cricsheet](https://cricsheet.org/)
+- **Data format used by the registered historical fixtures:** Cricsheet JSON, format version 1.3.0
+- **Licence recorded for these JSON fixtures:** Open Data Commons Attribution License (ODC-By v1.0)
+- **Licence reference:** [ODC-By v1.0](https://opendatacommons.org/licenses/by/1.0/)
+- **Canonical source licensing guidance:** [https://cricsheet.org/licensing/](https://cricsheet.org/licensing/)
+
+### Attribution
+
+> Data provided by Cricsheet (https://cricsheet.org/), licensed under the Open Data Commons Attribution License (ODC-By v1.0).
+
+Retain the original attribution and notices when using or redistributing datasets or products where required by the applicable licence. Recheck Cricsheet's current licensing guidance and the original archive metadata before redistributing data or making commercial use.
+
+### Registered fixture metadata
+
+The project provenance registry records these expected fixtures and hashes:
+
+| Match ID | Registered format | Teams | Fixture SHA-256 |
+|---|---|---|---|
+| `1529229` | ODI | India vs West Indies | `8163493c726d43e0865b6041c06bfa85f764d908e337d510108cdcf36e66c12f` |
+| `1552779` | T20 | India vs Pakistan | `99b2df4d4ebcaa328834ec101776a201c679b5d89b1a604241c504b0d9bb3e2b` |
+
+The registry also records archive SHA-256 `282b4543e36aae90bf14ab9e2cbd0f8829dfdd8b3e4a97b711b0336d69b5ba74` for the recently-added JSON archive snapshot. These hashes are provenance metadata, not proof that the files exist in a given deployment. Verify the fixtures actually packaged in the build before releasing.
+
+### Fixture handling
+
+The original JSON files are listed in `data/sources.yml` and expected at `data/raw/`. Verify actual fixture availability and hashes during ingestion/build validation. Never fabricate data to make a demo work.
+
+---
+
+## Football data source (provisional)
+
+- **Candidate:** [StatsBomb Open Data](https://github.com/statsbomb/open-data)
+- **Status:** Candidate only; the repository must not imply football data is integrated until actual ingestion and licensing review are completed.
+- **Requirement:** Review the current repository licence and attribution requirements before downloading, redistributing, or using commercially.
+
+---
+
+## Operational policy
+
+- Maintain source URL, retrieval timestamp, dataset revision, format, licence and SHA-256 for each fixture.
+- Review licence terms for the actual file format and use case; terms may vary by format.
+- Software licence and dataset licence are separate.
+- Do not redistribute any dataset where the applicable terms do not permit it.
+- Keep secrets out of fixtures, provenance files, logs and browser responses.

@@ -1,27 +1,19 @@
 # =============================================================================
 # FanCue — Render.com Web Service Declaration
 # =============================================================================
-# Deploy the FanCue FastAPI backend on Render using the existing Dockerfile.
+# Deploy from repository root. backend/Dockerfile copies backend/, ingestion/,
+# contracts/, and data/. The two supported fixtures are tracked in
+# data/raw/1529229.json and data/raw/1552779.json; validate them in the built image.
 #
-# OPERATOR STEPS (one-time):
-#   1. Create a free/paid Render account at https://render.com
-#   2. Connect your GitHub/GitLab repository (or push this repo to a remote).
-#   3. Render auto-detects this render.yaml and pre-fills the service config.
-#   4. In the Render dashboard → Environment → Secret Files or Environment Vars:
-#        OPENAI_API_KEY=sk-...             (required for live AI; omit to use deterministic fallback)
-#        ALLOWED_ORIGINS=https://your-frontend.vercel.app
-#        FANCUE_ENV=production
-#        LOG_LEVEL=INFO
-#        SKIP_LLM_IN_TESTS=false
-#        QDRANT_URL=https://...            (optional — if you have Qdrant Cloud)
-#        QDRANT_API_KEY=...               (optional)
-#   5. Deploy. Render builds the Docker image and starts uvicorn.
+# Render dashboard environment variables:
+#   FANCUE_ENV=production
+#   ALLOWED_ORIGINS=https://fan-cue.vercel.app
+#   LLM_PROVIDER=groq (already specified below)
+#   GROQ_API_KEY=<secret> (required for live Groq generation; omit for fallback)
+#   CRICKET_DATA_API_KEY=<secret> (optional; near-live data only)
+#   QDRANT_URL / QDRANT_API_KEY (optional; retrieval disabled by default below)
 #
-# IMPORTANT:
-#   - Never commit actual secret values here.
-#   - data/raw/ is NOT in .gitignore for Render-hosted repos because Render
-#     builds from the repo. If data/raw/ is git-ignored on your remote,
-#     provide fixtures via a Render Secret File or mount.
+# No credentials belong in this file or any VITE_* variable.
 # =============================================================================
 
 services:
@@ -29,10 +21,9 @@ services:
     name: fancue-api
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
-    # Build context is the repo root so `COPY data/ ./data/` works in Dockerfile
     rootDir: .
-    plan: free          # upgrade to starter/standard for production workloads
-    region: singapore   # choose nearest to your users
+    plan: free
+    region: singapore
     healthCheckPath: /healthz
 
     envVars:
@@ -51,20 +42,17 @@ services:
       - key: GROQ_TIMEOUT_SECONDS
         value: "30"
       - key: FANCUE_RETRIEVAL_ENABLED
-        value: "false"  # Temporary free-instance mitigation; match facts and LLM verification remain active.
-      # PORT is injected automatically by Render — do not set it here.
-      # -----------------------------------------------------------------------
-      # Secret vars — set these in the Render dashboard, NOT here.
-      # -----------------------------------------------------------------------
+        value: "false"
+      # Secret values are set in the Render dashboard.
       - key: GROQ_API_KEY
-        sync: false      # Set your Groq API key in the Render dashboard
+        sync: false
       - key: OPENAI_API_KEY
-        sync: false      # Optional — set if using LLM_PROVIDER=openai
+        sync: false
       - key: ALLOWED_ORIGINS
-        sync: false      # Set to your Vercel frontend URL, e.g. https://fancue.vercel.app
+        sync: false
       - key: QDRANT_URL
-        sync: false      # Optional — leave blank to run without Qdrant Cloud
+        sync: false
       - key: QDRANT_API_KEY
-        sync: false      # Optional
+        sync: false
       - key: CRICKET_DATA_API_KEY
-        sync: false      # Required for authenticated near-live match discovery; obtain from CricketData.org
+        sync: false
