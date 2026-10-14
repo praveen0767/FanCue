@@ -68,7 +68,7 @@ function friendlyStoryWarning(message: string): string {
 /** Remove machine-style event prefixes while preserving the recorded fact itself. */
 function humanizeFactDescription(description: string): string {
   return description
-    .replace(/^(WICKET|SIX|FOUR|BOUNDARY|HIGH-SCORING OVER):\\s*/i, "")
+    .replace(/^(WICKET|SIX|FOUR|BOUNDARY|HIGH-SCORING OVER):\s*/i, "")
     .trim();
 }
 
