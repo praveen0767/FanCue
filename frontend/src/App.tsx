@@ -24,7 +24,6 @@ function friendlyProviderMessage(
   const detail = (message ?? "").toLowerCase();
   if (
     detail.includes("cricketdata.org rejected") ||
-    detail.includes("cricket_data_api_key") ||
     detail.includes("invalid api key") ||
     detail.includes("invalid_api_key") ||
     detail.includes("authentication failed") ||
@@ -401,10 +400,11 @@ function MatchDiscovery({
   const loadNearLive = useCallback((refresh = false) => {
     setNearLiveLoading(true);
     setNearLiveError(null);
+    setNearLiveNotice(null);
     fetchNearLiveMatches(refresh)
       .then((data) => {
         if (data.status === "unconfigured") {
-          setNearLiveNotice(friendlyProviderMessage(data.message || "Near-live scores are not configured yet."));
+          setNearLiveNotice("Near-live cricket requires a valid CricketData.org API key. Add CRICKET_DATA_API_KEY in Render → fancue-api → Environment, save it, then redeploy.");
           setNearLiveMatches([]);
         } else if (data.status === "error" || data.status === "rate_limited") {
           setNearLiveError(friendlyProviderMessage(data.message || "Unable to fetch near-live matches."));
