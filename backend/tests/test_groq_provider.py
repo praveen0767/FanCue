@@ -125,7 +125,7 @@ def test_groq_provider_request_format_and_parsing():
         sent_body = json.loads(call_req.data.decode("utf-8"))
         assert sent_body["model"] == "openai/gpt-oss-20b"
         assert sent_body["response_format"] == {"type": "json_object"}
-        assert sent_body["reasoning_format"] == "hidden"
+        assert sent_body["include_reasoning"] is False
         assert sent_body["messages"][0]["content"] == "System prompt here"
         assert sent_body["messages"][1]["content"] == "User prompt here"
 
