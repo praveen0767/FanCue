@@ -350,5 +350,5 @@ def test_orchestrator_with_groq_failure_engages_deterministic_fallback():
     response = orchestrator.catch_up(request)
     assert response.explanation.generation_mode == GenerationMode.DETERMINISTIC_FALLBACK
     assert response.explanation.fallback_reason == FallbackReason.LLM_ERROR
-    assert response.explanation.summary.startswith("Deterministic recap:")
+    assert response.explanation.summary.startswith("The score moved from")
     assert any("Groq rate limit exceeded" in w for w in response.warnings)
