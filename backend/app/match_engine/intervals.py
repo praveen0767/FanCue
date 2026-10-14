@@ -202,7 +202,7 @@ def extract_key_facts(
                 if len(highest_over_indices) > 1:
                     desc = (
                         f"HIGHEST-SCORING OVER: Over {over_idx + 1} yielded {over_runs} runs, "
-                        "tied for the most in this interval."
+                        "tied for the highest-scoring over in this interval."
                     )
                 else:
                     desc = (
