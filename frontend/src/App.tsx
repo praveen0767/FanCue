@@ -871,7 +871,7 @@ function MatchDiscovery({
                 </div>
                 <button
                   className="icon-btn"
-                  onClick={() => setSelectedNearLive(null)}
+                  onClick={closeNearLiveScorecard}
                   aria-label="Close scorecard"
                 >
                   ✕ Close
