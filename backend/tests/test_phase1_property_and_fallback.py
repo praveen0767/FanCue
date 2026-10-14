@@ -138,12 +138,11 @@ class TestFallbackValidity:
             f"{[(r.reason.value, r.detail) for r in report.rejected_claims]}"
         )
 
-    def test_fallback_labelled_non_ai(self, engines):
+    def test_fallback_mode_is_explicit_and_copy_is_fan_friendly(self, engines):
         payload = build_deterministic_fallback(_packet_by_engine(engines["1529229"], 0, 13, 14))
-        label_check = payload.summary.lower()
-        assert "deterministic recap" in label_check, (
-            "Fallback summary must clearly label itself as non-AI-generated"
-        )
+        assert payload.generation_mode.value == "deterministic_fallback"
+        assert payload.summary.startswith("The score moved from")
+        assert "Non-AI match record" not in payload.summary
 
     def test_singular_plural_wicket_formatting(self, engines):
         """Interval with exactly one wicket lost → prose says '1 wicket', not
@@ -165,7 +164,7 @@ class TestFallbackValidity:
         """Phone-sized fallback copy should read like a recap, not a raw ledger."""
         packet = _packet_by_engine(engines["1529229"], 0, -1, 49)
         payload = build_deterministic_fallback(packet)
-        assert payload.summary.startswith("Deterministic recap:")
+        assert payload.summary.startswith("The score moved from")
         assert "score moved from" in payload.summary
         assert "scoring at" in payload.summary
         assert "Key events:" not in payload.summary
