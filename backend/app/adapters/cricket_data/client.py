@@ -88,171 +88,151 @@ class CricketDataClient:
         offset: int = 0,
         force_refresh: bool = False,
     ) -> CricketDataMatchesResponse:
-        """Fetch current matches, falling back to CricketData's public delayed feed.
+        """Fetch current matches through the authenticated CricketData API.
 
-        CricketData documents anonymous access for most basic APIs with a longer
-        delay. This lets FanCue keep showing scores when a key is absent, invalid,
-        or its authenticated daily quota is exhausted. The public mode is labelled
-        honestly so the UI does not imply the authenticated feed is working.
+        CricketData's basic API examples use an API key. Do not pretend an
+        anonymous request is a supported fallback: reject missing keys early
+        and return an actionable diagnostic when the provider rejects a key.
         """
         now = time.time()
         now_utc = datetime.now(timezone.utc).isoformat()
         cache_key = f"currentMatches_{offset}"
-        authenticated = self.is_configured
-        public_mode = not authenticated
+
+        def cached_response(message: str, status: str = "success") -> Optional[CricketDataMatchesResponse]:
+            entry = self._matches_cache.get(cache_key)
+            if not entry:
+                return None
+            previous: CricketDataMatchesResponse = entry["response"]
+            return CricketDataMatchesResponse(
+                status=status,
+                configured=previous.configured,
+                matches=previous.matches,
+                total=previous.total,
+                cached=True,
+                cached_at=entry["cached_at_iso"],
+                hits_today=previous.hits_today,
+                hits_left=previous.hits_left,
+                message=message,
+            )
+
+        if not self.is_configured:
+            return CricketDataMatchesResponse(
+                status="unconfigured",
+                configured=False,
+                matches=[],
+                total=0,
+                message=(
+                    "Near-live scores require a valid CricketData.org API key. "
+                    "Set CRICKET_DATA_API_KEY in the Render service environment."
+                ),
+            )
 
         if not force_refresh and cache_key in self._matches_cache:
             entry = self._matches_cache[cache_key]
             if now - entry["timestamp"] < self._cache_ttl:
-                cached_resp: CricketDataMatchesResponse = entry["response"]
+                previous: CricketDataMatchesResponse = entry["response"]
                 return CricketDataMatchesResponse(
-                    status=cached_resp.status,
-                    configured=cached_resp.configured,
-                    matches=cached_resp.matches,
-                    total=cached_resp.total,
+                    status=previous.status,
+                    configured=previous.configured,
+                    matches=previous.matches,
+                    total=previous.total,
                     cached=True,
                     cached_at=entry["cached_at_iso"],
-                    hits_today=cached_resp.hits_today,
-                    hits_left=cached_resp.hits_left,
-                    message=cached_resp.message,
+                    hits_today=previous.hits_today,
+                    hits_left=previous.hits_left,
+                    message=previous.message,
                 )
 
-        # If the authenticated quota is exhausted, avoid another paid/quota hit.
-        if authenticated and self._last_hits_left is not None and self._last_hits_left <= 0:
-            public_mode = True
+        # Never make an upstream call when the authenticated daily quota is known exhausted.
+        if self._last_hits_left is not None and self._last_hits_left <= 0 and not force_refresh:
+            cached = cached_response(
+                "CricketData.org's daily API allowance is exhausted. Showing the last cached match list.",
+                status="rate_limited",
+            )
+            if cached is not None:
+                return cached
+            return CricketDataMatchesResponse(
+                status="rate_limited",
+                configured=True,
+                matches=[],
+                total=0,
+                hits_today=self._last_hits_today,
+                hits_left=0,
+                message="CricketData.org's daily API allowance is exhausted. Try again after it resets.",
+            )
 
         url = f"{self._base_url}currentMatches"
-        client = self._get_client()
-
-        def request_payload(anonymous: bool):
-            params: Dict[str, Any] = {"offset": offset}
-            if not anonymous:
-                params["apikey"] = self._api_key
-            response = client.get(url, params=params)
-            if response.status_code != 200:
-                return response, None
-            try:
-                return response, response.json()
-            except ValueError:
-                return response, None
-
-        logger.info(
-            "Requesting CricketData currentMatches (offset=%d, public_mode=%s)",
-            offset,
-            public_mode,
-        )
+        params = {"apikey": self._api_key, "offset": offset}
+        logger.info("Requesting CricketData currentMatches (offset=%d)", offset)
 
         try:
-            resp, payload = request_payload(anonymous=public_mode)
+            client = self._get_client()
+            resp = client.get(url, params=params)
         except httpx.TimeoutException:
-            logger.warning("CricketData API request timed out while fetching currentMatches")
-            if cache_key in self._matches_cache:
-                old = self._matches_cache[cache_key]
-                cached_resp: CricketDataMatchesResponse = old["response"]
-                return CricketDataMatchesResponse(
-                    status="success",
-                    configured=cached_resp.configured,
-                    matches=cached_resp.matches,
-                    total=cached_resp.total,
-                    cached=True,
-                    cached_at=old["cached_at_iso"],
-                    message="The score provider timed out; showing the last cached match list.",
-                )
+            logger.warning("CricketData API timed out while fetching currentMatches")
+            cached = cached_response(
+                "The score provider timed out. Showing the last cached match list."
+            )
+            if cached is not None:
+                return cached
             return CricketDataMatchesResponse(
                 status="error",
-                configured=authenticated and not public_mode,
+                configured=True,
                 matches=[],
                 total=0,
                 message="The cricket score provider timed out. Please retry shortly.",
             )
         except Exception as exc:
             logger.error("CricketData API request error: %s", type(exc).__name__)
-            if cache_key in self._matches_cache:
-                old = self._matches_cache[cache_key]
-                cached_resp: CricketDataMatchesResponse = old["response"]
-                return CricketDataMatchesResponse(
-                    status="success",
-                    configured=cached_resp.configured,
-                    matches=cached_resp.matches,
-                    total=cached_resp.total,
-                    cached=True,
-                    cached_at=old["cached_at_iso"],
-                    message="The score provider is unavailable; showing the last cached match list.",
-                )
+            cached = cached_response(
+                "The score provider is unavailable. Showing the last cached match list."
+            )
+            if cached is not None:
+                return cached
             return CricketDataMatchesResponse(
                 status="error",
-                configured=authenticated and not public_mode,
+                configured=True,
                 matches=[],
                 total=0,
                 message=f"Unable to reach the cricket score provider ({type(exc).__name__}).",
             )
 
-        # Retry without the configured key if the server rejects authentication.
-        if resp.status_code in (401, 403) and not public_mode:
-            public_mode = True
-            try:
-                resp, payload = request_payload(anonymous=True)
-            except Exception as exc:
-                logger.warning("CricketData anonymous fallback failed: %s", type(exc).__name__)
-                payload = None
-        elif resp.status_code != 200:
+        if resp.status_code in (401, 403):
+            return CricketDataMatchesResponse(
+                status="error",
+                configured=False,
+                matches=[],
+                total=0,
+                message=(
+                    "CricketData.org rejected the configured API key. In Render, open "
+                    "the fancue-api service → Environment and replace CRICKET_DATA_API_KEY "
+                    "with a valid key from your CricketData.org account, then redeploy."
+                ),
+            )
+        if resp.status_code != 200:
             logger.warning("CricketData API returned HTTP %d", resp.status_code)
+            cached = cached_response(
+                f"CricketData.org returned HTTP {resp.status_code}. Showing the last cached match list."
+            )
+            if cached is not None:
+                return cached
             return CricketDataMatchesResponse(
                 status="error",
-                configured=authenticated and not public_mode,
+                configured=True,
                 matches=[],
                 total=0,
-                message=f"Cricket Data API returned HTTP {resp.status_code}.",
+                message=f"CricketData.org returned HTTP {resp.status_code}.",
             )
 
-        if payload is None:
+        try:
+            payload = resp.json()
+        except ValueError:
             return CricketDataMatchesResponse(
                 status="error",
-                configured=authenticated and not public_mode,
+                configured=True,
                 matches=[],
                 total=0,
-                message="The cricket score provider returned an unreadable response.",
-            )
-
-        provider_status = payload.get("status")
-        reason = str(payload.get("reason") or "")
-        reason_lower = reason.lower()
-        auth_rejected = any(token in reason_lower for token in ("invalid api key", "invalid_api_key", "unauthorized"))
-        quota_rejected = any(token in reason_lower for token in ("daily limit", "quota exhausted", "rate limit", "hits left"))
-
-        if provider_status != "success" and not public_mode and (auth_rejected or quota_rejected):
-            # Official public access does not need an API key and is delayed by
-            # up to about five minutes. Retry only once and never log the key.
-            public_mode = True
-            try:
-                resp, public_payload = request_payload(anonymous=True)
-            except Exception as exc:
-                logger.warning("CricketData public-feed fallback failed: %s", type(exc).__name__)
-                public_payload = None
-                resp = None
-            if (
-                resp is not None
-                and resp.status_code == 200
-                and isinstance(public_payload, dict)
-                and public_payload.get("status") == "success"
-            ):
-                payload = public_payload
-                provider_status = "success"
-                reason = ""
-            else:
-                logger.warning("CricketData public-feed fallback was not successful")
-
-        if provider_status != "success":
-            safe_reason = reason if reason else "The provider reported a temporary failure."
-            logger.warning("CricketData returned non-success status: %s", safe_reason)
-            return CricketDataMatchesResponse(
-                status="error",
-                configured=authenticated and not public_mode,
-                matches=[],
-                total=0,
-                hits_today=self._last_hits_today,
-                hits_left=self._last_hits_left,
-                message=f"Cricket score feed unavailable: {safe_reason}",
+                message="CricketData.org returned an unreadable response.",
             )
 
         info = payload.get("info") or {}
@@ -262,6 +242,56 @@ class CricketDataClient:
             if "hitsLeft" in info:
                 self._last_hits_left = info.get("hitsLeft")
 
+        provider_status = payload.get("status")
+        if provider_status != "success":
+            reason = str(payload.get("reason") or "The provider reported a temporary failure.")
+            reason_lower = reason.lower()
+            if any(token in reason_lower for token in ("invalid api key", "invalid_api_key", "unauthorized", "invalid key")):
+                return CricketDataMatchesResponse(
+                    status="error",
+                    configured=False,
+                    matches=[],
+                    total=0,
+                    hits_today=self._last_hits_today,
+                    hits_left=self._last_hits_left,
+                    message=(
+                        "CricketData.org rejected the configured API key. In Render, open "
+                        "the fancue-api service → Environment and replace CRICKET_DATA_API_KEY "
+                        "with a valid key from your CricketData.org account, then redeploy."
+                    ),
+                )
+            if any(token in reason_lower for token in ("daily limit", "quota exhausted", "rate limit", "hits left")):
+                cached = cached_response(
+                    "CricketData.org's request allowance is exhausted. Showing the last cached match list.",
+                    status="rate_limited",
+                )
+                if cached is not None:
+                    return cached
+                return CricketDataMatchesResponse(
+                    status="rate_limited",
+                    configured=True,
+                    matches=[],
+                    total=0,
+                    hits_today=self._last_hits_today,
+                    hits_left=self._last_hits_left,
+                    message="CricketData.org's request allowance is exhausted. Try again after it resets.",
+                )
+            logger.warning("CricketData returned non-success status: %s", reason)
+            cached = cached_response(
+                "The score provider is temporarily unavailable. Showing the last cached match list."
+            )
+            if cached is not None:
+                return cached
+            return CricketDataMatchesResponse(
+                status="error",
+                configured=True,
+                matches=[],
+                total=0,
+                hits_today=self._last_hits_today,
+                hits_left=self._last_hits_left,
+                message="CricketData.org could not return match data. Please retry later.",
+            )
+
         raw_data = payload.get("data") or []
         matches: list[CricketDataMatchItem] = []
         if isinstance(raw_data, list):
@@ -270,25 +300,16 @@ class CricketDataClient:
                 if normalized is not None:
                     matches.append(normalized)
 
-        if public_mode:
-            message = (
-                "Using CricketData.org's public score feed. Updates may lag by up to about 5 minutes."
-            )
-        else:
-            message = None
-
         result = CricketDataMatchesResponse(
             status="success",
-            configured=not public_mode,
+            configured=True,
             matches=matches,
             total=len(matches),
             cached=False,
             cached_at=now_utc,
-            hits_today=None if public_mode else self._last_hits_today,
-            hits_left=None if public_mode else self._last_hits_left,
-            message=message,
+            hits_today=self._last_hits_today,
+            hits_left=self._last_hits_left,
         )
-
         self._matches_cache[cache_key] = {
             "response": result,
             "timestamp": now,
