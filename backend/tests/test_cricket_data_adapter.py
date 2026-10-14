@@ -358,21 +358,21 @@ def test_get_near_live_scorecard_endpoint(monkeypatch):
     assert "ball-by-ball delivery ledger" in data["limitation_reason"].lower()
 
 
-def test_get_near_live_matches_without_key_uses_public_feed(monkeypatch):
+def test_get_near_live_matches_without_key_returns_actionable_configuration_error(monkeypatch):
+    def unexpected_request(req: httpx.Request) -> httpx.Response:
+        raise AssertionError("Provider must not be called without an API key")
+
     mock_client = CricketDataClient(
         api_key=None,
-        http_client=httpx.Client(
-            transport=MockTransport(lambda req: httpx.Response(200, json=MOCK_CURRENT_MATCHES_RAW))
-        ),
+        http_client=httpx.Client(transport=MockTransport(unexpected_request)),
     )
     monkeypatch.setattr("backend.app.api.matches.get_cricket_data_client", lambda: mock_client)
     resp = client.get("/matches/near-live")
     assert resp.status_code == 200
     data = resp.json()
-    assert data["status"] == "success"
+    assert data["status"] == "unconfigured"
     assert data["configured"] is False
-    assert len(data["matches"]) == 2
-    assert "public score feed" in data["message"].lower()
+    assert "CRICKET_DATA_API_KEY" in data["message"]
 
 
 def test_source_separation_historical_matches():
