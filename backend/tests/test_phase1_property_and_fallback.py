@@ -141,7 +141,7 @@ class TestFallbackValidity:
     def test_fallback_labelled_non_ai(self, engines):
         payload = build_deterministic_fallback(_packet_by_engine(engines["1529229"], 0, 13, 14))
         label_check = payload.summary.lower()
-        assert "not ai" in label_check or "non-ai" in label_check or "deterministic" in label_check, (
+        assert "deterministic recap" in label_check, (
             "Fallback summary must clearly label itself as non-AI-generated"
         )
 
