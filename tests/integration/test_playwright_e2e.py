@@ -228,11 +228,12 @@ def test_browser_near_live_insights_open_after_selecting_match(run_full_stack):
         page.wait_for_function(
             """() => {
               const panel = document.querySelector('#scorecard-drawer');
-              if (!panel) return false;
+              if (!panel || panel.getAttribute('aria-busy') !== 'false') return false;
+              if (!panel.textContent?.includes('Live match pulse')) return false;
               const rect = panel.getBoundingClientRect();
               return rect.top >= 0 && rect.top < window.innerHeight && rect.bottom > 0;
             }""",
-            timeout=5000,
+            timeout=10000,
         )
 
         drawer = page.locator("#scorecard-drawer")
