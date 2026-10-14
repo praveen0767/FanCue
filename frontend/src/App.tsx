@@ -65,6 +65,13 @@ function friendlyStoryWarning(message: string): string {
   return message;
 }
 
+/** Remove machine-style event prefixes while preserving the recorded fact itself. */
+function humanizeFactDescription(description: string): string {
+  return description
+    .replace(/^(WICKET|SIX|FOUR|BOUNDARY|HIGH-SCORING OVER):\\s*/i, "")
+    .trim();
+}
+
 
 // ---------------------------------------------------------------------------
 // Utility helpers
@@ -1244,7 +1251,7 @@ function StoryView({
             className={`mode-badge generation-badge ${isFallback ? "mode-badge--fallback" : "mode-badge--verified"}`}
           >
             {isFallback ? (
-              <>MATCH-RECORD SUMMARY</>
+              <>BALL-BY-BALL RECAP</>
             ) : (
               <>AI EXPLANATION · VERIFIED</>
             )}
@@ -1271,7 +1278,7 @@ function StoryView({
 
         <div className="headline-section__label">
           <span>📊</span>
-          Ground Truth Match Delta · Verified Score
+          What changed in this stretch · Score verified
         </div>
 
         <h1 className="headline-section__h1">{summaryHeadline}</h1>
@@ -1405,7 +1412,7 @@ function StoryView({
       <section className="story-summary" aria-label="Match story">
         <div className="story-summary__label">
           <span>📝</span>
-          {isFallback ? "MATCH-RECORD SUMMARY" : "AI EXPLANATION · VERIFIED"}
+          {isFallback ? "BALL-BY-BALL RECAP" : "AI EXPLANATION · VERIFIED"}
         </div>
         <p className="story-summary__text">{explanation.summary}</p>
         {isFallback && (
@@ -1597,7 +1604,7 @@ function MomentCards({
                   )}
                 </div>
                 <div className="moment-card__desc" style={{ marginTop: 10 }}>
-                  {f.description}
+                  {humanizeFactDescription(f.description)}
                 </div>
               </div>
               <button
@@ -1681,7 +1688,7 @@ function EvidencePanel({
                 <div className="evidence-fact__type">
                   {fact.fact_type.replace(/_/g, " ")}
                 </div>
-                <div>{fact.description}</div>
+                <div>{humanizeFactDescription(fact.description)}</div>
               </div>
             );
           })}
