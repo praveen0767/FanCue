@@ -82,9 +82,9 @@
           "type": "integer"
         },
         "run_rate": {
-          "default": 0.0,
+          "default": 0,
           "description": "Current runs per over.",
-          "minimum": 0.0,
+          "minimum": 0,
           "title": "Run Rate",
           "type": "number"
         }
@@ -134,9 +134,9 @@
           "type": "integer"
         },
         "interval_run_rate": {
-          "default": 0.0,
+          "default": 0,
           "description": "Run rate across interval.",
-          "minimum": 0.0,
+          "minimum": 0,
           "title": "Interval Run Rate",
           "type": "number"
         }
@@ -649,8 +649,8 @@
         },
         "score": {
           "description": "Vector cosine similarity score. (NOTE: Does NOT represent factual probability).",
-          "maximum": 1.0,
-          "minimum": 0.0,
+          "maximum": 1,
+          "minimum": 0,
           "title": "Score",
           "type": "number"
         }
@@ -836,6 +836,168 @@
       ],
       "title": "VerificationStatus",
       "type": "string"
+    },
+    "CricketBallStory": {
+      "additionalProperties": false,
+      "description": "Fan-readable rendering of one source-recorded delivery.",
+      "properties": {
+        "delivery_number": {
+          "minimum": 1,
+          "title": "Delivery Number",
+          "type": "integer"
+        },
+        "display": {
+          "maxLength": 24,
+          "minLength": 1,
+          "title": "Display",
+          "type": "string"
+        },
+        "event_label": {
+          "maxLength": 24,
+          "minLength": 1,
+          "title": "Event Label",
+          "type": "string"
+        },
+        "batter": {
+          "minLength": 1,
+          "title": "Batter",
+          "type": "string"
+        },
+        "bowler": {
+          "minLength": 1,
+          "title": "Bowler",
+          "type": "string"
+        },
+        "runs_off_bat": {
+          "minimum": 0,
+          "title": "Runs Off Bat",
+          "type": "integer"
+        },
+        "total_runs": {
+          "minimum": 0,
+          "title": "Total Runs",
+          "type": "integer"
+        },
+        "extras": {
+          "minimum": 0,
+          "title": "Extras",
+          "type": "integer"
+        },
+        "is_legal": {
+          "title": "Is Legal",
+          "type": "boolean"
+        },
+        "wicket_detail": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wicket Detail"
+        }
+      },
+      "required": [
+        "delivery_number",
+        "display",
+        "event_label",
+        "batter",
+        "bowler",
+        "runs_off_bat",
+        "total_runs",
+        "extras",
+        "is_legal"
+      ],
+      "title": "CricketBallStory",
+      "type": "object"
+    },
+    "CricketOverStory": {
+      "additionalProperties": false,
+      "description": "Deterministic over recap built from the authoritative delivery ledger.",
+      "properties": {
+        "over_number": {
+          "minimum": 1,
+          "title": "Over Number",
+          "type": "integer"
+        },
+        "runs": {
+          "minimum": 0,
+          "title": "Runs",
+          "type": "integer"
+        },
+        "wickets": {
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Wickets",
+          "type": "integer"
+        },
+        "extras": {
+          "minimum": 0,
+          "title": "Extras",
+          "type": "integer"
+        },
+        "legal_balls": {
+          "maximum": 6,
+          "minimum": 0,
+          "title": "Legal Balls",
+          "type": "integer"
+        },
+        "score_after_runs": {
+          "minimum": 0,
+          "title": "Score After Runs",
+          "type": "integer"
+        },
+        "score_after_wickets": {
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Score After Wickets",
+          "type": "integer"
+        },
+        "run_rate_after": {
+          "minimum": 0,
+          "title": "Run Rate After",
+          "type": "number"
+        },
+        "recap": {
+          "maxLength": 220,
+          "minLength": 1,
+          "title": "Recap",
+          "type": "string"
+        },
+        "highlights": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 12,
+          "title": "Highlights",
+          "type": "array"
+        },
+        "balls": {
+          "items": {
+            "$ref": "#/$defs/CricketBallStory"
+          },
+          "maxItems": 20,
+          "title": "Balls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "over_number",
+        "runs",
+        "wickets",
+        "extras",
+        "legal_balls",
+        "score_after_runs",
+        "score_after_wickets",
+        "run_rate_after",
+        "recap"
+      ],
+      "title": "CricketOverStory",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -890,6 +1052,14 @@
         "type": "string"
       },
       "title": "Warnings",
+      "type": "array"
+    },
+    "over_by_over": {
+      "description": "Source-derived ball-by-ball summaries for every over in the selected interval.",
+      "items": {
+        "$ref": "#/$defs/CricketOverStory"
+      },
+      "title": "Over By Over",
       "type": "array"
     }
   },
