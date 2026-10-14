@@ -1,8 +1,9 @@
 # =============================================================================
 # FanCue — Render.com Web Service Declaration
 # =============================================================================
-# Deploy from repository root so Docker can copy the backend, ingestion code,
-# contracts and explicitly provisioned fixture files.
+# Deploy from repository root. backend/Dockerfile copies backend/, ingestion/,
+# contracts/, and data/. The two supported fixtures are tracked in
+# data/raw/1529229.json and data/raw/1552779.json; validate them in the built image.
 #
 # Render dashboard environment variables:
 #   FANCUE_ENV=production
@@ -13,8 +14,6 @@
 #   QDRANT_URL / QDRANT_API_KEY (optional; retrieval disabled by default below)
 #
 # No credentials belong in this file or any VITE_* variable.
-# Fixture data is intentionally not versioned here. The deployment must provision
-# data/raw/<match_id>.json files through an approved build artifact or mount.
 # =============================================================================
 
 services:
