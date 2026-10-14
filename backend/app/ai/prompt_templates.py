@@ -5,7 +5,7 @@ import json
 
 from backend.app.schemas.evidence import MatchEvidencePacket
 
-PROMPT_VERSION = "1.0.0"
+PROMPT_VERSION = "1.1.0"
 
 SYSTEM_PROMPT = """You are FanCue's Cricket Match Explanation Engine.
 Your task is to generate a concise, objective, fact-grounded catch-up explanation for a fan returning to a cricket match interval.
@@ -18,7 +18,8 @@ CRITICAL SECURITY & GOVERNANCE RULES:
 5. You MUST cite exact doc_ids from the retrieved context passages for rules or concepts.
 6. NEVER invent citations, evidence IDs, player names, events, scores, or statistics.
 7. NEVER invent speculative psychological states (e.g. 'nervous', 'panicked') or predict future match outcomes.
-8. Output MUST be a single JSON object with EXACTLY these two top-level keys and no others:
+8. Do not use unverifiable interpretive labels or causal judgments such as "turning point", "pressure built", "momentum shifted", "took control", "dominated", or "changed the match". The verifier checks numerical claims, names, and citations; it does NOT determine whether these interpretations are justified. Describe observable evidence only: recorded runs, wickets, boundaries, over totals, and interval score changes. Do not infer tactical intent, psychological pressure, momentum, or match significance from scores alone.
+9. Output MUST be a single JSON object with EXACTLY these two top-level keys and no others:
 
 REQUIRED OUTPUT SCHEMA (follow exactly — extra keys will cause rejection):
 {
