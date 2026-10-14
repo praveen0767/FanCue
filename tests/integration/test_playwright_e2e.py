@@ -240,8 +240,19 @@ def test_browser_near_live_insights_open_after_selecting_match(run_full_stack):
         assert drawer.is_visible()
         assert "Live match pulse" in drawer.inner_text()
         assert "45/4" in drawer.inner_text()
-        assert "not the verified ball-by-ball" in drawer.inner_text().lower()
-        assert page.get_by_role("button", name="Explore historical replay →").is_visible()
+        assert "exact ball-by-ball stories require a delivery ledger" in drawer.inner_text().lower()
+        assert page.get_by_role("button", name="Build score catch-up").is_visible()
+
+        # Build an on-screen recap from the selected near-live score; do not
+        # switch the user into the historical match selector.
+        page.click("#build-live-catchup-btn")
+        page.wait_for_selector("#live-score-catchup", timeout=5000)
+        live_recap = page.locator("#live-score-catchup").inner_text()
+        assert "45/4" in live_recap
+        assert "2.67 runs per over" in live_recap
+        assert "first score snapshot" in live_recap.lower()
+        assert page.locator("#source-tab-nearlive").get_attribute("aria-selected") == "true"
+        assert page.get_by_role("button", name="Browse historical ball-by-ball archive").is_visible()
 
         browser.close()
 
