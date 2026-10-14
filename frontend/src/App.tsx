@@ -11,6 +11,7 @@ import {
   type InningsIntervalOption,
   type CricketCatchUpResponse,
   type EvidenceFact,
+  type NearLiveInningsScore,
   type NearLiveMatchItem,
   type NearLiveScorecardResponse,
 } from "./lib/api";
@@ -45,7 +46,7 @@ function friendlyProviderMessage(
     return "CricketData.org's request allowance is exhausted. Try again after it resets; Historical Replay remains available.";
   }
   if (context === "scorecard") {
-    return "This scorecard could not be refreshed from CricketData.org. Return to Historical Replay for the full ball-by-ball catch-up.";
+    return "The detailed scorecard could not be refreshed. FanCue can still build a score-based catch-up from the latest match score shown below.";
   }
   return "The near-live feed is temporarily unavailable. Historical Replay remains available.";
 }
@@ -72,6 +73,71 @@ function humanizeFactDescription(description: string): string {
   return description
     .replace(/^(WICKET|SIX|FOUR|BOUNDARY|HIGH-SCORING OVER):\s*/i, "")
     .trim();
+}
+
+interface NearLiveScoreChange {
+  inning: string;
+  runsAdded: number;
+  wicketsLost: number;
+  legalBallsAdded: number;
+}
+
+interface NearLiveScoreComparison {
+  hasPrevious: boolean;
+  changes: NearLiveScoreChange[];
+}
+
+interface LiveCatchUpCard {
+  matchId: string;
+  generatedAt: string;
+  summary: string;
+  details: string[];
+}
+
+/** Cricket overs use base-six balls: 16.5 means 16 overs and 5 balls, not 16.5 decimal overs. */
+function cricketOversToLegalBalls(overs: number): number {
+  if (!Number.isFinite(overs) || overs <= 0) return 0;
+  const wholeOvers = Math.floor(overs);
+  const ballsInPartialOver = Math.max(
+    0,
+    Math.min(5, Math.round((overs - wholeOvers) * 10)),
+  );
+  return wholeOvers * 6 + ballsInPartialOver;
+}
+
+function compareNearLiveScores(
+  previous: NearLiveInningsScore[] | undefined,
+  current: NearLiveInningsScore[],
+): NearLiveScoreChange[] {
+  if (!previous?.length || !current.length) return [];
+
+  const changes: NearLiveScoreChange[] = [];
+  current.forEach((row, index) => {
+    const key = row.inning.trim().toLowerCase().replace(/\s+/g, " ");
+    const old = key
+      ? previous.find((candidate) =>
+          candidate.inning.trim().toLowerCase().replace(/\s+/g, " ") === key,
+        )
+      : previous[index];
+    if (!old) return;
+
+    const runsAdded = row.r - old.r;
+    const wicketsLost = row.w - old.w;
+    const legalBallsAdded =
+      cricketOversToLegalBalls(row.o) - cricketOversToLegalBalls(old.o);
+
+    // Do not narrate provider corrections or inning resets as match events.
+    if (runsAdded < 0 || wicketsLost < 0 || legalBallsAdded < 0) return;
+    if (runsAdded === 0 && wicketsLost === 0 && legalBallsAdded === 0) return;
+
+    changes.push({
+      inning: row.inning || `Innings ${index + 1}`,
+      runsAdded,
+      wicketsLost,
+      legalBallsAdded,
+    });
+  });
+  return changes;
 }
 
 
@@ -380,6 +446,9 @@ function MatchDiscovery({
   const [scorecardData, setScorecardData] = useState<NearLiveScorecardResponse | null>(null);
   const [scorecardLoading, setScorecardLoading] = useState(false);
   const [scorecardError, setScorecardError] = useState<string | null>(null);
+  const [nearLiveScoreComparisons, setNearLiveScoreComparisons] = useState<Record<string, NearLiveScoreComparison>>({});
+  const [liveCatchUp, setLiveCatchUp] = useState<LiveCatchUpCard | null>(null);
+  const previousNearLiveScoresRef = useRef<Record<string, NearLiveInningsScore[]>>({});
   const scorecardDrawerRef = useRef<HTMLElement | null>(null);
   const scorecardRequestIdRef = useRef(0);
 
@@ -406,6 +475,24 @@ function MatchDiscovery({
     setNearLiveNotice(null);
     fetchNearLiveMatches(refresh)
       .then((data) => {
+        if (data.status === "success") {
+          const comparisons: Record<string, NearLiveScoreComparison> = {};
+          for (const liveMatch of data.matches) {
+            const previous = previousNearLiveScoresRef.current[liveMatch.id];
+            comparisons[liveMatch.id] = {
+              hasPrevious: Boolean(previous?.length),
+              changes: compareNearLiveScores(previous, liveMatch.score),
+            };
+            previousNearLiveScoresRef.current[liveMatch.id] = liveMatch.score;
+          }
+          setNearLiveScoreComparisons(comparisons);
+          setSelectedNearLive((selected) => {
+            if (!selected) return selected;
+            return data.matches.find((candidate) => candidate.id === selected.id) ?? selected;
+          });
+          setLiveCatchUp(null);
+        }
+
         if (data.status === "unconfigured") {
           setNearLiveNotice("Near-live cricket requires a valid CricketData.org API key. Add CRICKET_DATA_API_KEY in Render → fancue-api → Environment, save it, then redeploy.");
           setNearLiveMatches([]);
@@ -442,6 +529,19 @@ function MatchDiscovery({
       .then((resp) => {
         if (requestId !== scorecardRequestIdRef.current) return;
         setScorecardData(resp);
+        if (resp.status === "success" && resp.match) {
+          setSelectedNearLive(resp.match);
+          if (refresh) {
+            setNearLiveScoreComparisons((previous) => ({
+              ...previous,
+              [m.id]: {
+                hasPrevious: Boolean(m.score?.length),
+                changes: compareNearLiveScores(m.score, resp.match?.score ?? []),
+              },
+            }));
+          }
+          setLiveCatchUp(null);
+        }
         if (resp.status !== "success") {
           setScorecardError(
             friendlyProviderMessage(
@@ -470,6 +570,7 @@ function MatchDiscovery({
 
   function handleSelectNearLive(m: NearLiveMatchItem) {
     setSelectedNearLive(m);
+    setLiveCatchUp(null);
     loadNearLiveScorecard(m);
   }
 
@@ -479,6 +580,7 @@ function MatchDiscovery({
     setScorecardData(null);
     setScorecardError(null);
     setScorecardLoading(false);
+    setLiveCatchUp(null);
   }
 
   // The scorecard panel used to render after the entire match list. Scroll it
@@ -530,11 +632,8 @@ function MatchDiscovery({
     ? (matches ? [...new Set(matches.map((m) => m.format))] : [])
     : (nearLiveMatches ? [...new Set(nearLiveMatches.map((m) => m.match_type.toUpperCase()))] : []);
 
-  const activeScorecardMatch = scorecardData?.match ?? selectedNearLive;
-  const activeScoreRows =
-    activeScorecardMatch?.score?.length
-      ? activeScorecardMatch.score
-      : selectedNearLive?.score ?? [];
+  const activeScorecardMatch = selectedNearLive;
+  const activeScoreRows = selectedNearLive?.score ?? [];
   const scorecardDetailFields = Object.entries(scorecardData?.scorecard ?? {})
     .filter(([key, value]) =>
       !/^(id|name|teams|teaminfo|series_id|date|venue|matchtype|score|scorecard)$/i.test(key) &&
@@ -550,6 +649,75 @@ function MatchDiscovery({
     }
     return activeScorecardMatch.status || "The provider has not reported an innings score yet.";
   })();
+
+  function buildLiveScoreCatchUp() {
+    if (!activeScorecardMatch) return;
+    const rows = activeScoreRows;
+    const comparison = nearLiveScoreComparisons[activeScorecardMatch.id];
+    const detailLines = rows.map(
+      (row, index) =>
+        `${row.inning || `Innings ${index + 1}`}: ${row.r}/${row.w} after ${Number(row.o).toFixed(1)} overs`,
+    );
+
+    let summary = activeScorecardMatch.status
+      ? `Match status: ${activeScorecardMatch.status}. `
+      : "";
+
+    if (rows.length > 0) {
+      const latest = rows[rows.length - 1];
+      const balls = cricketOversToLegalBalls(latest.o);
+      const runRate = balls > 0 ? (latest.r * 6 / balls).toFixed(2) : null;
+      const battingSide = latest.inning
+        .replace(/\s+Innings?\s+\d+$/i, "")
+        .trim() || "The batting side";
+      const wicketText = `${Math.max(0, 10 - latest.w)} wickets remain`;
+      summary =
+        `${battingSide} are ${latest.r}/${latest.w} after ${Number(latest.o).toFixed(1)} overs` +
+        (runRate ? ` at ${runRate} runs per over` : "") +
+        `. ${wicketText}. ` +
+        (activeScorecardMatch.match_ended
+          ? "The provider marks this match as completed."
+          : activeScorecardMatch.status
+            ? `Provider status: ${activeScorecardMatch.status}.`
+            : "");
+    } else {
+      summary = activeScorecardMatch.status
+        ? `No innings score has been published yet. Provider status: ${activeScorecardMatch.status}.`
+        : "The provider has not published an innings score for this match yet.";
+    }
+
+    if (comparison?.changes.length) {
+      for (const change of comparison.changes) {
+        const wicketText = change.wicketsLost === 0
+          ? "with no wickets lost"
+          : `losing ${change.wicketsLost} wicket${change.wicketsLost === 1 ? "" : "s"}`;
+        detailLines.unshift(
+          `Since the previous snapshot, ${change.inning} added ${change.runsAdded} runs, ${wicketText}, and advanced by ${change.legalBallsAdded} legal balls.`,
+        );
+      }
+    } else if (comparison?.hasPrevious) {
+      detailLines.unshift(
+        "No score movement was recorded between the last two loaded snapshots. The provider may be returning a cached score.",
+      );
+    } else {
+      detailLines.unshift(
+        "This is the first score snapshot FanCue has observed for this match. Refresh scores later to compare score movement.",
+      );
+    }
+
+    if (activeScorecardMatch.match_ended) {
+      detailLines.push("This recap uses the provider's aggregate scorecard, not a verified ball-by-ball event timeline.");
+    } else {
+      detailLines.push("This is a score-based catch-up from available snapshots; it does not invent individual deliveries.");
+    }
+
+    setLiveCatchUp({
+      matchId: activeScorecardMatch.id,
+      generatedAt: new Date().toISOString(),
+      summary: summary.trim(),
+      details: detailLines,
+    });
+  }
 
   // Stadium images cycle for visual variety
   const STADIUM_IMGS = [
@@ -938,14 +1106,55 @@ function MatchDiscovery({
                   )}
 
                   <div className="scorecard-disclaimer" style={{ marginTop: 20 }}>
-                    <strong>About live catch-up.</strong>{" "}
-                    This feed provides live match and aggregate scorecard data, not the verified ball-by-ball delivery ledger needed to reconstruct missed overs. FanCue won’t invent deliveries or claim a live story it cannot verify. Use the historical archive for full ball-by-ball catch-up stories.
+                    <strong>Build a live score catch-up.</strong>{" "}
+                    FanCue summarizes the latest innings scores, run rate, wickets remaining, and any score movement observed across refreshes. Exact ball-by-ball stories require a delivery ledger; we will not invent deliveries.
                   </div>
+
+                  {liveCatchUp && liveCatchUp.matchId === activeScorecardMatch?.id && (
+                    <section
+                      id="live-score-catchup"
+                      className="story-summary"
+                      aria-label="Live score catch-up"
+                      aria-live="polite"
+                      style={{ marginTop: 18 }}
+                    >
+                      <div className="story-summary__label">
+                        <span>🏏</span> FanCue Score Catch-Up
+                      </div>
+                      <p className="story-summary__text">{liveCatchUp.summary}</p>
+                      <div style={{ display: "grid", gap: 8, marginTop: 12 }}>
+                        {liveCatchUp.details.map((detail, index) => (
+                          <div key={`${liveCatchUp.matchId}-${index}`} className="evidence-fact">
+                            {detail}
+                          </div>
+                        ))}
+                      </div>
+                      <p className="story-summary__fallback-notice" style={{ marginTop: 12 }}>
+                        Generated {new Date(liveCatchUp.generatedAt).toLocaleTimeString()} from CricketData.org score snapshots.
+                      </p>
+                    </section>
+                  )}
 
                   <div className="cta-bar" style={{ marginTop: 24, justifyContent: "flex-start", gap: 10, flexWrap: "wrap" }}>
                     <button
+                      id="build-live-catchup-btn"
                       className="catchup-btn"
                       style={{ maxWidth: 320 }}
+                      onClick={buildLiveScoreCatchUp}
+                      disabled={activeScoreRows.length === 0}
+                    >
+                      🏏 Build score catch-up
+                    </button>
+                    <button
+                      id="refresh-live-scores-btn"
+                      className="icon-btn"
+                      onClick={() => loadNearLive(true)}
+                      disabled={nearLiveLoading}
+                    >
+                      ⟳ Refresh live scores
+                    </button>
+                    <button
+                      className="icon-btn"
                       onClick={() => {
                         closeNearLiveScorecard();
                         setSourceTab("historical");
@@ -954,14 +1163,7 @@ function MatchDiscovery({
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }}
                     >
-                      Explore historical replay →
-                    </button>
-                    <button
-                      className="icon-btn"
-                      disabled={scorecardLoading}
-                      onClick={() => selectedNearLive && loadNearLiveScorecard(selectedNearLive, true)}
-                    >
-                      ⟳ Refresh scorecard
+                      Browse historical ball-by-ball archive
                     </button>
                   </div>
                 </>
