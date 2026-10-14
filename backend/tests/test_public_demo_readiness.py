@@ -26,19 +26,21 @@ def test_healthz_is_process_liveness_only():
 
 def test_readyz_reports_fixture_and_retrieval_mode_without_external_calls(monkeypatch):
     """Readiness should make the no-Qdrant deployment mode explicit."""
-    import backend.app.api.health as health
+    import backend.app.core.config as config
+    import backend.app.core.fixtures as fixture_registry
 
     settings = AppSettings(
         fancue_env="production",
         retrieval_enabled=False,
         skip_llm=True,
     )
-    monkeypatch.setattr(health, "get_settings", lambda: settings, raising=False)
+    # /readyz imports these functions locally inside the route. Patch their
+    # defining modules, not backend.app.api.health (where they are not globals).
+    monkeypatch.setattr(config, "get_settings", lambda: settings)
     monkeypatch.setattr(
-        health,
+        fixture_registry,
         "list_available_match_ids",
         lambda: ["1529229", "1552779"],
-        raising=False,
     )
 
     with TestClient(app) as client:
