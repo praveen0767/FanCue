@@ -2259,54 +2259,153 @@ body::before {
    SOURCE SELECTOR (HISTORICAL VS NEAR-LIVE)
    ============================================================ */
 .source-selector {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--surface-container);
-  padding: 4px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-subtle);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 12px;
+  background: transparent;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
   margin-bottom: 20px;
-  width: fit-content;
+  width: min(100%, 900px);
 }
 
 .source-tab {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 70px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 18px;
-  border-radius: var(--radius-md);
-  border: none;
-  background: transparent;
-  color: var(--on-surface-variant);
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  padding: 14px 16px;
+  border: 1px solid rgba(132, 148, 149, 0.38);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--surface-container) 0%, var(--surface-low) 100%);
+  color: var(--on-surface);
   font-family: var(--font-display);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
   cursor: pointer;
-  transition: all var(--motion-duration-fast) var(--motion-ease-decelerate);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+  transition:
+    background var(--motion-duration-fast) var(--motion-ease-decelerate),
+    border-color var(--motion-duration-fast) var(--motion-ease-decelerate),
+    box-shadow var(--motion-duration-fast) var(--motion-ease-decelerate),
+    transform var(--motion-duration-fast) var(--motion-ease-decelerate);
+  -webkit-tap-highlight-color: transparent;
 }
 
-.source-tab--active {
-  background: var(--surface-highest);
-  color: var(--on-surface);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+.source-tab > span:first-child {
+  flex: 1 1 auto;
+}
+
+.source-tab:hover {
+  transform: translateY(-1px);
+  border-color: rgba(221, 226, 245, 0.65);
+  background: var(--surface-container-high);
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.28);
+}
+
+.source-tab:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.source-tab:focus-visible {
+  outline: 3px solid var(--secondary-fixed);
+  outline-offset: 3px;
+}
+
+/* Selection uses different colours so archive and near-live never look alike. */
+#source-tab-historical {
+  border-left: 3px solid rgba(0, 242, 254, 0.55);
+}
+
+#source-tab-historical.source-tab--active {
+  border-color: var(--primary-container);
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.19), rgba(0, 83, 219, 0.13));
+  color: var(--primary);
+  box-shadow:
+    0 0 0 1px rgba(0, 242, 254, 0.24),
+    0 8px 24px rgba(0, 182, 196, 0.12);
+}
+
+#source-tab-nearlive {
+  border-left: 3px solid rgba(255, 107, 107, 0.55);
+}
+
+#source-tab-nearlive.source-tab--active {
+  border-color: #ff6b6b;
+  background: linear-gradient(135deg, rgba(255, 68, 68, 0.18), rgba(147, 0, 10, 0.18));
+  color: #fff0f0;
+  box-shadow:
+    0 0 0 1px rgba(255, 107, 107, 0.22),
+    0 8px 24px rgba(255, 68, 68, 0.10);
+}
+
+#source-tab-nearlive:not(.source-tab--active) .pulse-dot {
+  box-shadow: 0 0 0 4px rgba(255, 68, 68, 0.08);
 }
 
 .source-tab__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
   font-family: var(--font-data);
-  font-size: 0.65rem;
-  padding: 2px 6px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  line-height: 1.35;
+  padding: 4px 8px;
+  border: 1px solid rgba(0, 242, 254, 0.25);
   border-radius: 9999px;
-  background: rgba(0, 242, 254, 0.15);
-  color: var(--primary-container);
+  background: rgba(0, 242, 254, 0.12);
+  color: var(--primary-fixed);
+  white-space: normal;
+}
+
+#source-tab-historical.source-tab--active .source-tab__badge {
+  background: rgba(0, 242, 254, 0.20);
+  border-color: rgba(0, 242, 254, 0.42);
+  color: #8cfaff;
 }
 
 .source-tab__badge--live {
-  background: rgba(255, 68, 68, 0.2);
-  color: #ff6b6b;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
+  background: rgba(255, 68, 68, 0.13);
+  border-color: rgba(255, 107, 107, 0.34);
+  color: #ff9a9a;
+  white-space: nowrap;
+}
+
+#source-tab-nearlive.source-tab--active .source-tab__badge--live {
+  background: rgba(255, 68, 68, 0.24);
+  border-color: rgba(255, 107, 107, 0.55);
+  color: #ffdada;
+}
+
+@media (max-width: 520px) {
+  .source-selector {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .source-tab {
+    min-height: 64px;
+    padding: 12px 14px;
+    font-size: 0.9rem;
+  }
+
+  .source-tab__badge {
+    font-size: 0.64rem;
+  }
 }
 
 .pulse-dot {
