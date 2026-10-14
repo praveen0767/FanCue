@@ -16,6 +16,63 @@ import {
 } from "./lib/api";
 
 
+/** Keep provider diagnostics useful to operators without exposing raw errors to fans. */
+function friendlyProviderMessage(
+  message: string | null | undefined,
+  context: "near-live" | "scorecard" = "near-live",
+): string {
+  const detail = (message ?? "").toLowerCase();
+  if (
+    detail.includes("invalid api key") ||
+    detail.includes("invalid_api_key") ||
+    detail.includes("authentication failed") ||
+    detail.includes("http 401") ||
+    detail.includes("unauthorized")
+  ) {
+    return "The near-live score feed needs a valid CricketData.org connection. Historical Replay still works—use it for a full catch-up while the live feed is repaired.";
+  }
+  if (detail.includes("not configured") || detail.includes("api key is not configured")) {
+    return "Near-live scores are not connected yet. Historical Replay is ready to use while the live feed is configured.";
+  }
+  if (
+    detail.includes("quota") ||
+    detail.includes("rate limit") ||
+    detail.includes("daily hit") ||
+    detail.includes("hits left")
+  ) {
+    return "The live-score provider's request allowance is temporarily used up. Try again after it resets; Historical Replay is still available.";
+  }
+  if (context === "scorecard") {
+    return "This scorecard could not be refreshed from the live provider. Return to Historical Replay for the full ball-by-ball catch-up.";
+  }
+  return "The near-live feed is temporarily unavailable. Historical Replay remains available.";
+}
+
+/** Translate infrastructure warnings into calm, product-level language. */
+function friendlyStoryWarning(message: string): string {
+  const detail = message.toLowerCase();
+  if (
+    detail.includes("ai explanation unavailable") ||
+    detail.includes("llm call timed out") ||
+    detail.includes("llm generation skipped") ||
+    detail.includes("ai claims failed")
+  ) {
+    return "FanCue's AI storyteller is temporarily unavailable, so this recap is built directly from the verified match record.";
+  }
+  if (detail.includes("ai explanation generated via")) {
+    return "The AI story was checked against the recorded match facts.";
+  }
+  return message;
+}
+
+/** Remove machine-style event prefixes while preserving the recorded fact itself. */
+function humanizeFactDescription(description: string): string {
+  return description
+    .replace(/^(WICKET|SIX|FOUR|BOUNDARY|HIGH-SCORING OVER):\s*/i, "")
+    .trim();
+}
+
+
 // ---------------------------------------------------------------------------
 // Utility helpers
 // ---------------------------------------------------------------------------
@@ -344,10 +401,10 @@ function MatchDiscovery({
     fetchNearLiveMatches(refresh)
       .then((data) => {
         if (data.status === "unconfigured") {
-          setNearLiveNotice(data.message || "Cricket Data API key is not configured in backend environment.");
+          setNearLiveNotice(friendlyProviderMessage(data.message || "Near-live scores are not configured yet."));
           setNearLiveMatches([]);
         } else if (data.status === "error" || data.status === "rate_limited") {
-          setNearLiveError(data.message || "Unable to fetch near-live matches.");
+          setNearLiveError(friendlyProviderMessage(data.message || "Unable to fetch near-live matches."));
           setNearLiveMatches(data.matches || []);
         } else {
           setNearLiveMatches(data.matches);
@@ -356,7 +413,7 @@ function MatchDiscovery({
         setNearLiveHits({ hitsToday: data.hits_today, hitsLeft: data.hits_left });
       })
       .catch((err) => {
-        setNearLiveError(err instanceof Error ? err.message : "Failed to load near-live matches");
+        setNearLiveError(friendlyProviderMessage(err instanceof Error ? err.message : "Failed to load near-live matches"));
       })
       .finally(() => setNearLiveLoading(false));
   }, []);
@@ -645,7 +702,7 @@ function MatchDiscovery({
 
           {nearLiveError && <ErrorMsg message={nearLiveError} />}
 
-          {!nearLiveLoading && nearLiveMatches && filteredNearLive.length === 0 && (
+          {!nearLiveLoading && !nearLiveError && !nearLiveNotice && nearLiveMatches && filteredNearLive.length === 0 && (
             <div className="state-empty">
               {search
                 ? `No near-live matches found for "${search}".`
@@ -750,7 +807,7 @@ function MatchDiscovery({
                     <strong>Live scorecard available.</strong> Evidence-grounded interval catch-up requires ball-by-ball data that is not available from this feed. Switch to Historical Replay for full catch-up.
                     {scorecardData?.message && (
                       <div style={{ marginTop: 6, fontStyle: "italic" }}>
-                        Provider notice: {scorecardData.message}
+                        Provider notice: {friendlyProviderMessage(scorecardData.message, "scorecard")}
                       </div>
                     )}
                   </div>
@@ -1194,7 +1251,7 @@ function StoryView({
             className={`mode-badge generation-badge ${isFallback ? "mode-badge--fallback" : "mode-badge--verified"}`}
           >
             {isFallback ? (
-              <>MATCH-RECORD SUMMARY</>
+              <>BALL-BY-BALL RECAP</>
             ) : (
               <>AI EXPLANATION · VERIFIED</>
             )}
@@ -1221,7 +1278,7 @@ function StoryView({
 
         <div className="headline-section__label">
           <span>📊</span>
-          Ground Truth Match Delta · Verified Score
+          What changed in this stretch · Score verified
         </div>
 
         <h1 className="headline-section__h1">{summaryHeadline}</h1>
@@ -1355,12 +1412,12 @@ function StoryView({
       <section className="story-summary" aria-label="Match story">
         <div className="story-summary__label">
           <span>📝</span>
-          {isFallback ? "MATCH-RECORD SUMMARY" : "AI EXPLANATION · VERIFIED"}
+          {isFallback ? "BALL-BY-BALL RECAP" : "AI EXPLANATION · VERIFIED"}
         </div>
         <p className="story-summary__text">{explanation.summary}</p>
         {isFallback && (
           <p className="story-summary__fallback-notice">
-            AI explanation unavailable. This summary uses verified match facts.
+            FanCue's AI storyteller is temporarily unavailable. Your recap is still grounded in the verified ball-by-ball record.
           </p>
         )}
       </section>
@@ -1390,7 +1447,7 @@ function StoryView({
       {warnings.length > 0 && (
         <div className="warnings" role="note" aria-label="Warnings">
           {warnings.map((w, i) => (
-            <div key={i}>ℹ {w}</div>
+            <div key={i}>ℹ {friendlyStoryWarning(w)}</div>
           ))}
         </div>
       )}
@@ -1547,7 +1604,7 @@ function MomentCards({
                   )}
                 </div>
                 <div className="moment-card__desc" style={{ marginTop: 10 }}>
-                  {f.description}
+                  {humanizeFactDescription(f.description)}
                 </div>
               </div>
               <button
@@ -1631,7 +1688,7 @@ function EvidencePanel({
                 <div className="evidence-fact__type">
                   {fact.fact_type.replace(/_/g, " ")}
                 </div>
-                <div>{fact.description}</div>
+                <div>{humanizeFactDescription(fact.description)}</div>
               </div>
             );
           })}

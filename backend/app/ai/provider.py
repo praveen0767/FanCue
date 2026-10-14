@@ -362,6 +362,10 @@ class GroqLLMProvider(LLMProvider):
             ],
             "response_format": {"type": "json_object"},
         }
+        # Groq's GPT-OSS model-specific docs do not support reasoning_format;
+        # use include_reasoning=false to keep the structured response content clean.
+        if self._model.startswith("openai/gpt-oss-"):
+            body["include_reasoning"] = False
 
         req = urllib.request.Request(
             url,
@@ -414,12 +418,20 @@ class GroqLLMProvider(LLMProvider):
                     f"Groq {quota_or_rate} (HTTP 429). "
                     f"Please wait before retrying or check account rate limits."
                 ) from e
+            elif status == 400:
+                category = safe_error_code or safe_body_type or "invalid_request"
+                raise LLMProviderError(
+                    f"Groq rejected the completion request (HTTP 400, {category}). "
+                    "Check model compatibility and request settings."
+                ) from e
             elif 500 <= status < 600:
                 raise LLMUnavailableError(
                     f"Groq upstream service error (HTTP {status}). Retry later."
                 ) from e
             else:
-                raise LLMProviderError(f"Groq HTTP error: {status}") from e
+                category = safe_error_code or safe_body_type
+                detail = f" ({category})" if category else ""
+                raise LLMProviderError(f"Groq HTTP error: {status}{detail}") from e
         except urllib.error.URLError as e:
             if "timed out" in str(e).lower():
                 raise LLMTimeoutError(f"Groq request timed out: {e}") from e

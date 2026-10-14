@@ -125,6 +125,7 @@ def test_groq_provider_request_format_and_parsing():
         sent_body = json.loads(call_req.data.decode("utf-8"))
         assert sent_body["model"] == "openai/gpt-oss-20b"
         assert sent_body["response_format"] == {"type": "json_object"}
+        assert sent_body["include_reasoning"] is False
         assert sent_body["messages"][0]["content"] == "System prompt here"
         assert sent_body["messages"][1]["content"] == "User prompt here"
 
@@ -153,6 +154,24 @@ def test_groq_provider_http_401():
         with pytest.raises(LLMProviderError) as exc_info:
             provider.generate_explanation("prompt", "system")
         assert "Groq authentication failed (HTTP 401)" in str(exc_info.value)
+
+
+def test_groq_provider_http_400_has_safe_diagnostic():
+    """A bad request gives a safe category without exposing request credentials."""
+    provider = GroqLLMProvider(api_key="gsk-test-secret")
+    err = urllib.error.HTTPError(
+        url="https://api.groq.com/openai/v1/chat/completions",
+        code=400,
+        msg="Bad Request",
+        hdrs={},
+        fp=MagicMock(read=lambda: b'{"error": {"type": "invalid_request_error", "code": "json_mode"}}'),
+    )
+
+    with patch("urllib.request.urlopen", side_effect=err):
+        with pytest.raises(LLMProviderError) as exc_info:
+            provider.generate_explanation("prompt", "system")
+    assert "HTTP 400, json_mode" in str(exc_info.value)
+    assert "gsk-test-secret" not in str(exc_info.value)
 
 
 def test_groq_provider_http_429_quota():
@@ -331,5 +350,5 @@ def test_orchestrator_with_groq_failure_engages_deterministic_fallback():
     response = orchestrator.catch_up(request)
     assert response.explanation.generation_mode == GenerationMode.DETERMINISTIC_FALLBACK
     assert response.explanation.fallback_reason == FallbackReason.LLM_ERROR
-    assert response.explanation.summary.startswith("Non-AI match record")
+    assert response.explanation.summary.startswith("The score moved from")
     assert any("Groq rate limit exceeded" in w for w in response.warnings)

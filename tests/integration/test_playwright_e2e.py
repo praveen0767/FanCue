@@ -142,7 +142,7 @@ def test_browser_catchup_user_journey(run_full_stack):
 
         # 9. Verify fallback / generation mode badge
         badge_text = page.locator(".generation-badge").inner_text().lower()
-        assert "match-record summary" in badge_text or "ai explanation" in badge_text
+        assert "ball-by-ball recap" in badge_text or "ai explanation" in badge_text
 
         # 10. Click evidence toggle and verify facts appear
         page.click("#evidence-toggle")
