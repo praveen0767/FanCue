@@ -67,4 +67,4 @@ services:
       - key: QDRANT_API_KEY
         sync: false      # Optional
       - key: CRICKET_DATA_API_KEY
-        sync: false      # Optional — enables near-live match discovery tab
+        sync: false      # Required for authenticated near-live match discovery; obtain from CricketData.org
