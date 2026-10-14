@@ -235,11 +235,6 @@ class OpenAILLMProvider(LLMProvider):
             ],
             "response_format": {"type": "json_object"},
         }
-        # Groq requires a compatible reasoning format when GPT-OSS is used with
-        # JSON mode. Keeping this model-specific avoids sending an unsupported
-        # parameter to other compatible models.
-        if self._model.startswith("openai/gpt-oss-"):
-            body["reasoning_format"] = "hidden"
 
         req = urllib.request.Request(
             url,
@@ -367,6 +362,11 @@ class GroqLLMProvider(LLMProvider):
             ],
             "response_format": {"type": "json_object"},
         }
+        # Groq requires a compatible reasoning format when GPT-OSS is used with
+        # JSON mode. Keeping this model-specific avoids sending an unsupported
+        # parameter to other compatible models.
+        if self._model.startswith("openai/gpt-oss-"):
+            body["reasoning_format"] = "hidden"
 
         req = urllib.request.Request(
             url,
