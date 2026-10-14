@@ -290,7 +290,8 @@ def test_rate_limit_handling():
     resp = adapter.get_current_matches()
     assert resp.status == "error"
     assert "limit" in (resp.message or "").lower()
-    assert resp.hits_left == 0
+    # Once public fallback is active, don't advertise the authenticated quota counter.
+    assert resp.hits_left is None
 
 
 def test_timeout_handling_graceful():
