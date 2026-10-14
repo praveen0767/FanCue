@@ -115,11 +115,10 @@ def build_deterministic_fallback(
         wicket_clause = "without losing a wicket"
 
     summary = (
-        f"Deterministic recap: The score moved from "
-        f"{state_before.runs}/{state_before.wickets} to "
+        f"The score moved from {state_before.runs}/{state_before.wickets} to "
         f"{state_after.runs}/{state_after.wickets} across "
         f"{pluralize(delta.completed_overs_delta, 'over')}. "
-        f"The batting side added {delta.runs_added} {run_word} {wicket_clause}, "
+        f"The batters added {delta.runs_added} {run_word} {wicket_clause}, "
         f"scoring at {delta.interval_run_rate:.2f} runs per over."
     )
 
