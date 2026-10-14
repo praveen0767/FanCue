@@ -450,7 +450,6 @@ function MatchDiscovery({
   const [nearLiveScoreComparisons, setNearLiveScoreComparisons] = useState<Record<string, NearLiveScoreComparison>>({});
   const [liveCatchUp, setLiveCatchUp] = useState<LiveCatchUpCard | null>(null);
   const previousNearLiveScoresRef = useRef<Record<string, NearLiveInningsScore[]>>({});
-  const scorecardDrawerRef = useRef<HTMLElement | null>(null);
   const scorecardRequestIdRef = useRef(0);
 
   // Health check on mount for real API status
@@ -570,6 +569,10 @@ function MatchDiscovery({
   }
 
   function handleSelectNearLive(m: NearLiveMatchItem) {
+    if (selectedNearLive?.id === m.id) {
+      closeNearLiveScorecard();
+      return;
+    }
     setSelectedNearLive(m);
     setLiveCatchUp(null);
     loadNearLiveScorecard(m);
@@ -584,17 +587,7 @@ function MatchDiscovery({
     setLiveCatchUp(null);
   }
 
-  // The scorecard panel used to render after the entire match list. Scroll it
-  // into view after the request finishes so selecting a card never looks inert.
-  useEffect(() => {
-    if (!selectedNearLive || !scorecardDrawerRef.current) return;
-    // Scroll once immediately to reveal the loading state, then again after the
-    // scorecard request settles so the panel never appears inert below the list.
-    const timer = window.setTimeout(() => {
-      scorecardDrawerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, scorecardLoading ? 10 : 80);
-    return () => window.clearTimeout(timer);
-  }, [selectedNearLive?.id, scorecardLoading]);
+
 
 
   const filteredHistorical = (matches ?? []).filter((m) => {
@@ -782,7 +775,7 @@ function MatchDiscovery({
       <div className="source-selector" role="tablist" aria-label="Match source">
         <button
           id="source-tab-historical"
-          className={`source-tab${sourceTab === "historical" ? " source-tab--active" : ""}`}
+          className={`source-tab${sourceTab === "historical" ? " source-tab--active source-tab--historical-active" : ""}`}
           role="tab"
           aria-selected={sourceTab === "historical"}
           onClick={() => { closeNearLiveScorecard(); setSourceTab("historical"); }}
@@ -792,7 +785,7 @@ function MatchDiscovery({
         </button>
         <button
           id="source-tab-nearlive"
-          className={`source-tab${sourceTab === "nearlive" ? " source-tab--active" : ""}`}
+          className={`source-tab${sourceTab === "nearlive" ? " source-tab--active source-tab--live-active" : ""}`}
           role="tab"
           aria-selected={sourceTab === "nearlive"}
           onClick={() => setSourceTab("nearlive")}
@@ -972,6 +965,7 @@ function MatchDiscovery({
                       style={{ animationDelay: `${idx * 60}ms` }}
                       onClick={() => handleSelectNearLive(m)}
                       aria-label={`View scorecard for: ${m.name}`}
+                      aria-expanded={isSelected}
                     >
                       <div className="match-card__body" style={{ width: "100%" }}>
                         <div className="match-card__eyebrow">
@@ -1018,15 +1012,9 @@ function MatchDiscovery({
                         />
                       </div>
                     </button>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-
           {/* Near-live Scorecard Inspection Drawer */}
-          {selectedNearLive && (
-            <section id="scorecard-drawer" ref={scorecardDrawerRef} className="scorecard-drawer" aria-label="Near-live match insights" aria-busy={scorecardLoading}>
+          {selectedNearLive?.id === m.id && (
+            <section id="scorecard-drawer" className="scorecard-drawer scorecard-drawer--inline" aria-label="Near-live match insights" aria-busy={scorecardLoading}>
               <div className="scorecard-drawer__header">
                 <div>
                   <div className="chip chip--magenta" style={{ marginBottom: 6, display: "inline-flex", alignItems: "center", gap: 4 }}>
@@ -1171,6 +1159,13 @@ function MatchDiscovery({
               )}
             </section>
           )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+
+
         </>
       )}
     </div>
