@@ -106,26 +106,22 @@ def build_deterministic_fallback(
             )
         )
 
-    # Synthesize objective summary paragraph.
-    # The non-AI label is carried by generation_mode=DETERMINISTIC_FALLBACK in
-    # the payload (AGENTS.md §7); the prose summary must be clean readable text.
-    summary_parts = [
-        f"Non-AI match record for {packet.interval_summary}:",
-        (
-            f"Score progressed from {state_before.runs}/{state_before.wickets} "
-            f"to {state_after.runs}/{state_after.wickets} "
-            f"(+{delta.runs_added} runs, -{delta.wickets_lost} "
-            f"{'wicket' if delta.wickets_lost == 1 else 'wickets'}, "
-            f"{delta.completed_overs_delta} "
-            f"{'over' if delta.completed_overs_delta == 1 else 'overs'} bowled)."
-        ),
-    ]
-    if event_sentences:
-        summary_parts.append("Key events: " + " ".join(event_sentences))
+    # Keep the fallback readable on a phone: two concise, factual sentences.
+    # Event-by-event details remain in the evidence and turning-moment cards below.
+    run_word = "run" if delta.runs_added == 1 else "runs"
+    if delta.wickets_lost:
+        wicket_clause = f"and lost {pluralize(delta.wickets_lost, 'wicket')}"
     else:
-        summary_parts.append("Steady play throughout the interval with no wickets fallen.")
+        wicket_clause = "without losing a wicket"
 
-    summary = " ".join(summary_parts)
+    summary = (
+        f"Deterministic recap: The score moved from "
+        f"{state_before.runs}/{state_before.wickets} to "
+        f"{state_after.runs}/{state_after.wickets} across "
+        f"{pluralize(delta.completed_overs_delta, 'over')}. "
+        f"The batting side added {delta.runs_added} {run_word} {wicket_clause}, "
+        f"scoring at {delta.interval_run_rate:.2f} runs per over."
+    )
 
     return ExplanationPayload(
         summary=summary,
