@@ -156,6 +156,24 @@ def test_groq_provider_http_401():
         assert "Groq authentication failed (HTTP 401)" in str(exc_info.value)
 
 
+def test_groq_provider_http_400_has_safe_diagnostic():
+    """A bad request gives a safe category without exposing request credentials."""
+    provider = GroqLLMProvider(api_key="gsk-test-secret")
+    err = urllib.error.HTTPError(
+        url="https://api.groq.com/openai/v1/chat/completions",
+        code=400,
+        msg="Bad Request",
+        hdrs={},
+        fp=MagicMock(read=lambda: b'{"error": {"type": "invalid_request_error", "code": "json_mode"}}'),
+    )
+
+    with patch("urllib.request.urlopen", side_effect=err):
+        with pytest.raises(LLMProviderError) as exc_info:
+            provider.generate_explanation("prompt", "system")
+    assert "HTTP 400, json_mode" in str(exc_info.value)
+    assert "gsk-test-secret" not in str(exc_info.value)
+
+
 def test_groq_provider_http_429_quota():
     """Verify HTTP 429 with insufficient_quota is categorized distinctly."""
     provider = GroqLLMProvider(api_key="gsk-quota-exhausted")
