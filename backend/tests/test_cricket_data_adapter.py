@@ -182,21 +182,29 @@ def test_normalize_match_item_missing_name_fallback_to_teams():
 # ---------------------------------------------------------------------------
 
 
-def test_unconfigured_client():
-    client = CricketDataClient(api_key=None)
+def test_unconfigured_client_uses_public_delayed_feed():
+    mock_client = httpx.Client(
+        transport=MockTransport(lambda request: httpx.Response(200, json=MOCK_CURRENT_MATCHES_RAW))
+    )
+    client = CricketDataClient(api_key=None, http_client=mock_client)
     assert client.is_configured is False
     resp = client.get_current_matches()
-    assert resp.status == "unconfigured"
+    assert resp.status == "success"
     assert resp.configured is False
-    assert resp.total == 0
-    assert "not configured" in (resp.message or "")
+    assert resp.total == 2
+    assert "public score feed" in (resp.message or "").lower()
+    assert "5 minutes" in (resp.message or "").lower()
 
 
-def test_placeholder_key_is_unconfigured():
-    client = CricketDataClient(api_key="REPLACE_WITH_YOUR_KEY")
+def test_placeholder_key_uses_public_delayed_feed():
+    mock_client = httpx.Client(
+        transport=MockTransport(lambda request: httpx.Response(200, json=MOCK_CURRENT_MATCHES_RAW))
+    )
+    client = CricketDataClient(api_key="REPLACE_WITH_YOUR_KEY", http_client=mock_client)
     assert client.is_configured is False
     resp = client.get_current_matches()
-    assert resp.status == "unconfigured"
+    assert resp.status == "success"
+    assert resp.configured is False
 
 
 def test_caching_and_quota_tracking():
@@ -235,6 +243,32 @@ def test_caching_and_quota_tracking():
     assert resp3.status == "success"
     assert resp3.cached is False
     assert call_count == 2
+
+
+def test_invalid_api_key_retries_public_delayed_feed_without_key():
+    seen_params = []
+
+    def mock_handler(request: httpx.Request) -> httpx.Response:
+        seen_params.append(dict(request.url.params))
+        if "apikey" in request.url.params:
+            return httpx.Response(200, json={"status": "failure", "reason": "Invalid API Key"})
+        return httpx.Response(200, json=MOCK_CURRENT_MATCHES_RAW)
+
+    adapter = CricketDataClient(
+        api_key="invalid-test-key",
+        http_client=httpx.Client(transport=MockTransport(mock_handler)),
+    )
+
+    response = adapter.get_current_matches(force_refresh=True)
+
+    assert response.status == "success"
+    assert response.configured is False
+    assert response.total == 2
+    assert "public score feed" in (response.message or "").lower()
+    assert len(seen_params) == 2
+    assert "apikey" in seen_params[0]
+    assert "apikey" not in seen_params[1]
+    assert "invalid-test-key" not in (response.message or "")
 
 
 def test_rate_limit_handling():
@@ -325,14 +359,21 @@ def test_get_near_live_scorecard_endpoint(monkeypatch):
     assert "ball-by-ball delivery ledger" in data["limitation_reason"].lower()
 
 
-def test_get_near_live_matches_unconfigured(monkeypatch):
-    mock_client = CricketDataClient(api_key=None)
+def test_get_near_live_matches_without_key_uses_public_feed(monkeypatch):
+    mock_client = CricketDataClient(
+        api_key=None,
+        http_client=httpx.Client(
+            transport=MockTransport(lambda req: httpx.Response(200, json=MOCK_CURRENT_MATCHES_RAW))
+        ),
+    )
     monkeypatch.setattr("backend.app.api.matches.get_cricket_data_client", lambda: mock_client)
     resp = client.get("/matches/near-live")
     assert resp.status_code == 200
     data = resp.json()
-    assert data["status"] == "unconfigured"
+    assert data["status"] == "success"
     assert data["configured"] is False
+    assert len(data["matches"]) == 2
+    assert "public score feed" in data["message"].lower()
 
 
 def test_source_separation_historical_matches():
