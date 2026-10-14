@@ -161,6 +161,17 @@ class TestFallbackValidity:
                 break
         assert found, "No 1-wicket scenario located in scenario list"
 
+    def test_fallback_summary_is_concise_and_uses_positive_wicket_language(self, engines):
+        """Phone-sized fallback copy should read like a recap, not a raw ledger."""
+        packet = _packet_by_engine(engines["1529229"], 0, -1, 49)
+        payload = build_deterministic_fallback(packet)
+        assert payload.summary.startswith("Deterministic recap:")
+        assert "score moved from" in payload.summary
+        assert "scoring at" in payload.summary
+        assert "Key events:" not in payload.summary
+        assert "-7 wickets" not in payload.summary
+        assert "lost" in payload.summary
+
     def test_singular_plural_over_formatting(self, engines):
         """Delta of exactly one completed over → 'in 1 completed over'."""
         for mid, inn, s, e in self.SCENARIOS:
