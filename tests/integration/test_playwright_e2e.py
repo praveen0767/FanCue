@@ -19,6 +19,7 @@ and real compiled frontend SPA:
 """
 
 from functools import partial
+import json
 import http.server
 import os
 import socketserver
@@ -153,6 +154,95 @@ def test_browser_catchup_user_journey(run_full_stack):
 
         browser.close()
 
+
+
+def test_browser_near_live_insights_open_after_selecting_match(run_full_stack):
+    """Selecting a near-live match scrolls its scorecard panel into view and exposes honest limits."""
+    frontend_url = run_full_stack
+    live_match = {
+        "id": "live-test-match",
+        "name": "Australia Women vs Bangladesh Women, 3rd ODI",
+        "match_type": "odi",
+        "status": "Bangladesh Women batting",
+        "venue": "Allan Border Field, Brisbane",
+        "date": "2026-10-14",
+        "date_time_gmt": None,
+        "teams": ["Australia Women", "Bangladesh Women"],
+        "team_info": [],
+        "score": [{"r": 45, "w": 4, "o": 16.5, "inning": "Bangladesh Women Inning 1"}],
+        "series_id": None,
+        "match_started": True,
+        "match_ended": False,
+        "source": "CricketData.org",
+        "source_url": "https://cricketdata.org/",
+        "freshness": "Near-live · ~30s-5m delay",
+        "license": "Test fixture",
+        "retrieved_at": "2026-10-14T04:00:00+00:00",
+    }
+
+    def mock_near_live(route):
+        clean_url = route.request.url.split("?", 1)[0]
+        if clean_url.endswith("/scorecard"):
+            route.fulfill(
+                status=200,
+                content_type="application/json",
+                body=json.dumps({
+                    "status": "success",
+                    "configured": True,
+                    "match": live_match,
+                    "scorecard": {"run_rate": 2.67, "extras": 3},
+                    "can_reconstruct_interval": False,
+                    "limitation_reason": "Aggregate scorecard only; no delivery ledger.",
+                    "cached": False,
+                    "cached_at": None,
+                    "message": None,
+                }),
+            )
+        else:
+            route.fulfill(
+                status=200,
+                content_type="application/json",
+                body=json.dumps({
+                    "status": "success",
+                    "configured": True,
+                    "matches": [live_match],
+                    "total": 1,
+                    "cached": False,
+                    "cached_at": None,
+                    "hits_today": 1,
+                    "hits_left": 99,
+                    "message": None,
+                }),
+            )
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page(viewport={"width": 390, "height": 844})
+        page.route("**/matches/near-live**", mock_near_live)
+        page.goto(frontend_url, wait_until="networkidle")
+
+        page.click("#source-tab-nearlive")
+        page.wait_for_selector("#nearlive-live-test-match", timeout=10000)
+        page.click("#nearlive-live-test-match")
+        page.wait_for_selector("#scorecard-drawer", timeout=10000)
+        page.wait_for_function(
+            """() => {
+              const panel = document.querySelector('#scorecard-drawer');
+              if (!panel) return false;
+              const rect = panel.getBoundingClientRect();
+              return rect.top >= 0 && rect.top < window.innerHeight && rect.bottom > 0;
+            }""",
+            timeout=5000,
+        )
+
+        drawer = page.locator("#scorecard-drawer")
+        assert drawer.is_visible()
+        assert "Live match pulse" in drawer.inner_text()
+        assert "45/4" in drawer.inner_text()
+        assert "not the verified ball-by-ball" in drawer.inner_text().lower()
+        assert page.get_by_role("button", name="Explore historical replay →").is_visible()
+
+        browser.close()
 
 def test_browser_motion_moment_and_evidence_interaction(run_full_stack):
     """Verify moment card reveal, 'See the ball' evidence highlighting, count-up settle, and share feedback."""

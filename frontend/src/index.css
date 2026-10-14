@@ -2373,6 +2373,7 @@ body::before {
   border-radius: var(--radius-lg);
   padding: 24px;
   margin-top: 24px;
+  scroll-margin-top: 92px;
   animation: fadeSlideIn var(--motion-duration-ui) var(--motion-ease-decelerate) both;
 }
 
