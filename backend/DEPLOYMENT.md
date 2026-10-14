@@ -9,7 +9,7 @@ The API exposes:
 ## Deployment requirements
 
 - Build context must be the repository root because `backend/Dockerfile` copies `backend/`, `ingestion/`, `contracts/`, and `data/`.
-- Required historical JSON fixtures must exist at `data/raw/<match_id>.json` inside the image. The repository intentionally excludes raw data; verify packaging/provisioning explicitly.
+- The supported fixture files `data/raw/1529229.json` and `data/raw/1552779.json` are tracked in Git and should be copied into the image. Validate their presence and hashes in the built image during release verification.
 - Set `FANCUE_ENV=production` and an explicit `ALLOWED_ORIGINS` value containing the exact production Vercel origin.
 - Set the LLM provider and provider key together in the Render environment. Current `render.yaml` selects Groq; adding only an OpenAI key does not override that explicit provider selection.
 - `FANCUE_RETRIEVAL_ENABLED=false` is a supported production mode. It avoids Qdrant/embedding initialization on the critical catch-up path.
