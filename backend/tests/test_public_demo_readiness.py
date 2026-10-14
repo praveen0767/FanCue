@@ -1,7 +1,6 @@
 """Regression tests for public-demo readiness, fixture integrity and production CORS."""
 
 import hashlib
-import os
 from pathlib import Path
 
 import pytest
@@ -27,15 +26,19 @@ def test_healthz_is_process_liveness_only():
 
 def test_readyz_reports_fixture_and_retrieval_mode_without_external_calls(monkeypatch):
     """Readiness should make the no-Qdrant deployment mode explicit."""
+    import backend.app.api.health as health
+
     settings = AppSettings(
         fancue_env="production",
         retrieval_enabled=False,
         skip_llm=True,
     )
-    monkeypatch.setattr("backend.app.api.health.get_settings", lambda: settings)
+    monkeypatch.setattr(health, "get_settings", lambda: settings, raising=False)
     monkeypatch.setattr(
-        "backend.app.api.health.list_available_match_ids",
+        health,
+        "list_available_match_ids",
         lambda: ["1529229", "1552779"],
+        raising=False,
     )
 
     with TestClient(app) as client:
