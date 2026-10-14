@@ -125,6 +125,7 @@ def test_groq_provider_request_format_and_parsing():
         sent_body = json.loads(call_req.data.decode("utf-8"))
         assert sent_body["model"] == "openai/gpt-oss-20b"
         assert sent_body["response_format"] == {"type": "json_object"}
+        assert sent_body["reasoning_format"] == "hidden"
         assert sent_body["messages"][0]["content"] == "System prompt here"
         assert sent_body["messages"][1]["content"] == "User prompt here"
 
@@ -331,5 +332,5 @@ def test_orchestrator_with_groq_failure_engages_deterministic_fallback():
     response = orchestrator.catch_up(request)
     assert response.explanation.generation_mode == GenerationMode.DETERMINISTIC_FALLBACK
     assert response.explanation.fallback_reason == FallbackReason.LLM_ERROR
-    assert response.explanation.summary.startswith("Non-AI match record")
+    assert response.explanation.summary.startswith("Deterministic recap:")
     assert any("Groq rate limit exceeded" in w for w in response.warnings)
