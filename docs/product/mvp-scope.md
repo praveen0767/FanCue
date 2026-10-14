@@ -5,6 +5,8 @@
 **Status:** Normative for Phase 02 through Phase 06  
 **Last updated:** 2026-10-11  
 
+> **Current implementation note (2026-10-14):** This is the original MVP plan; planned capabilities below are not proof they are enabled in production. The checked-in `render.yaml` sets `FANCUE_RETRIEVAL_ENABLED=false`, so production Qdrant retrieval is currently off.
+
 > **Core Constraint:** The five-day assignment prioritizes **one working, verified fan artifact**
 > over a large surface of incomplete features. A narrower, rigorously verified cricket implementation
 > is strictly preferable to two partial or unverified sport implementations.
@@ -31,7 +33,7 @@ The P0 scope represents the complete, end-to-end historical cricket catch-up jou
 | **Interval Selection** | Whole-over interval boundaries within a single innings (e.g., overs 13 through 18). | Clear, unambiguous domain boundary model that avoids fractional over ambiguities. |
 | **Deterministic State Engine** | Start state, end state, and state-difference computation (runs, wickets, overs, legal balls, partnerships, run rates). | Pure deterministic computation; sole truth authority; identical input yields identical output. |
 | **Consequential Event Selection** | Algorithmic ranking and extraction of key interval events (wickets, milestone overs, high-run overs, maidens). | Separates noise from signal deterministically before any LLM prompt assembly. |
-| **Contextual Retrieval (Qdrant)** | Qdrant vector retrieval for cricket rules, match situational context, and tournament history, strictly filtered by `sport: cricket` and `language: en`. | Augments match facts with domain knowledge without letting the vector store mutate score state. |
+| **Optional Contextual Retrieval (Qdrant)** | Qdrant vector retrieval for cricket rules and background context, only when enabled and available; current Render config disables it. | Can enrich explanations but is not a dependency of historical reconstruction, and never mutates score state. |
 | **Evidence Packet Assembly** | Assembly of structured evidence packets containing exact event IDs, source scorecard references, and retrieved document IDs (`doc_id`). | Enables full provenance tracking and verification. |
 | **Bounded AI Explanation** | Structured LLM generation (Pydantic contract) producing concise, factual summaries explaining *how* and *why* the interval changed. | Provides the narrative synthesis fans require while constraining output format. |
 | **Automated Verification** | Post-generation verification comparing LLM assertions against deterministic engine delta and retrieved doc IDs. | Catches hallucinations and fabricated numbers before fan presentation. |
@@ -85,10 +87,10 @@ The following features, architectures, and integrations are **explicitly exclude
 |  - Whole-Over Intervals                - Perspective Lens (Team/Player)|
 |  - Deterministic State Engine & Delta  - State Delta Caching           |
 |  - Consequential Event Selection       - Granular Telemetry Latency    |
-|  - Qdrant Knowledge Retrieval (Cricket)                                |
+|  - Optional Qdrant Knowledge Retrieval (off in current Render config)                                |
 |  - Structured AI Explanation (Pydantic)                                |
 |  - Post-Generation Fact Verification                                   |
-|  - Guaranteed Deterministic Fallback                                   |
+|  - Deterministic Fallback                                   |
 |  - Replay / Source Transparency Badge                                  |
 |  - Web UI with Evidence Drawer                                         |
 |                                                                         |
