@@ -141,9 +141,16 @@ def test_browser_catchup_user_journey(run_full_stack):
         assert "/" in state_boxes[0]
         assert "/" in state_boxes[1]
 
-        # 9. Verify fallback / generation mode badge
+        # 9. Verify generation mode badge and make fallback disclosure explicit.
         badge_text = page.locator(".generation-badge").inner_text().lower()
-        assert "ball-by-ball recap" in badge_text or "ai explanation" in badge_text
+        assert (
+            "fact-based summary" in badge_text
+            or "ball-by-ball recap" in badge_text
+            or "ai explanation" in badge_text
+        )
+        if "fact-based summary" in badge_text:
+            fallback_notice = page.locator(".story-summary__fallback-notice").inner_text().lower()
+            assert "no ai-generated prose" in fallback_notice
 
         # 10. Click evidence toggle and verify facts appear
         page.click("#evidence-toggle")
