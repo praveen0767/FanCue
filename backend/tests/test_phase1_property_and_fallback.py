@@ -146,7 +146,7 @@ class TestFallbackValidity:
 
     def test_singular_plural_wicket_formatting(self, engines):
         """Interval with exactly one wicket lost → prose says '1 wicket', not
-        '1 wickets'. CURRENTLY FAILING: the builder hard-codes 'wickets'."""
+        '1 wickets'."""
         found = False
         for mid, inn, s, e in self.SCENARIOS:
             p = _packet_by_engine(engines[mid], inn, s, e)
@@ -168,8 +168,8 @@ class TestFallbackValidity:
         assert "score moved from" in payload.summary
         assert "scoring at" in payload.summary
         assert "Key events:" not in payload.summary
-        assert "-7 wickets" not in payload.summary
-        assert "lost" in payload.summary
+        assert f"-{packet.state_delta.wickets_lost} wicket" not in payload.summary
+        assert "and lost" in payload.summary or "without losing a wicket" in payload.summary
 
     def test_singular_plural_over_formatting(self, engines):
         """Delta of exactly one completed over → 'in 1 completed over'."""
