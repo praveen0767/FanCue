@@ -379,6 +379,9 @@ function MatchDiscovery({
   const [selectedNearLive, setSelectedNearLive] = useState<NearLiveMatchItem | null>(null);
   const [scorecardData, setScorecardData] = useState<NearLiveScorecardResponse | null>(null);
   const [scorecardLoading, setScorecardLoading] = useState(false);
+  const [scorecardError, setScorecardError] = useState<string | null>(null);
+  const scorecardDrawerRef = useRef<HTMLElement | null>(null);
+  const scorecardRequestIdRef = useRef(0);
 
   // Health check on mount for real API status
   useEffect(() => {
@@ -427,15 +430,67 @@ function MatchDiscovery({
     }
   }, [sourceTab, nearLiveMatches, nearLiveLoading, loadNearLive]);
 
-  // Handle clicking a near-live match for scorecard
+  // Fetch the selected scorecard independently from match-list loading.
+  // The provider may return HTTP 200 with an application-level error status.
+  function loadNearLiveScorecard(m: NearLiveMatchItem, refresh = false) {
+    const requestId = ++scorecardRequestIdRef.current;
+    setScorecardData(null);
+    setScorecardError(null);
+    setScorecardLoading(true);
+
+    fetchNearLiveScorecard(m.id, refresh)
+      .then((resp) => {
+        if (requestId !== scorecardRequestIdRef.current) return;
+        setScorecardData(resp);
+        if (resp.status !== "success") {
+          setScorecardError(
+            friendlyProviderMessage(
+              resp.message || resp.limitation_reason || "Scorecard unavailable",
+              "scorecard",
+            ),
+          );
+        }
+      })
+      .catch((error) => {
+        if (requestId !== scorecardRequestIdRef.current) return;
+        setScorecardData(null);
+        setScorecardError(
+          friendlyProviderMessage(
+            error instanceof Error ? error.message : "Scorecard request failed",
+            "scorecard",
+          ),
+        );
+      })
+      .finally(() => {
+        if (requestId === scorecardRequestIdRef.current) {
+          setScorecardLoading(false);
+        }
+      });
+  }
+
   function handleSelectNearLive(m: NearLiveMatchItem) {
     setSelectedNearLive(m);
-    setScorecardLoading(true);
-    fetchNearLiveScorecard(m.id)
-      .then((resp) => setScorecardData(resp))
-      .catch(() => setScorecardData(null))
-      .finally(() => setScorecardLoading(false));
+    loadNearLiveScorecard(m);
   }
+
+  function closeNearLiveScorecard() {
+    scorecardRequestIdRef.current += 1;
+    setSelectedNearLive(null);
+    setScorecardData(null);
+    setScorecardError(null);
+    setScorecardLoading(false);
+  }
+
+  // The scorecard panel used to render after the entire match list. Scroll it
+  // into view after the request finishes so selecting a card never looks inert.
+  useEffect(() => {
+    if (!selectedNearLive || scorecardLoading || !scorecardDrawerRef.current) return;
+    const timer = window.setTimeout(() => {
+      scorecardDrawerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+    return () => window.clearTimeout(timer);
+  }, [selectedNearLive?.id, scorecardLoading]);
+
 
   const filteredHistorical = (matches ?? []).filter((m) => {
     const q = search.toLowerCase();
@@ -472,6 +527,27 @@ function MatchDiscovery({
   const availableFormats = sourceTab === "historical"
     ? (matches ? [...new Set(matches.map((m) => m.format))] : [])
     : (nearLiveMatches ? [...new Set(nearLiveMatches.map((m) => m.match_type.toUpperCase()))] : []);
+
+  const activeScorecardMatch = scorecardData?.match ?? selectedNearLive;
+  const activeScoreRows =
+    activeScorecardMatch?.score?.length
+      ? activeScorecardMatch.score
+      : selectedNearLive?.score ?? [];
+  const scorecardDetailFields = Object.entries(scorecardData?.scorecard ?? {})
+    .filter(([key, value]) =>
+      !/^(id|name|teams|teaminfo|series_id|date|venue|matchtype|score|scorecard)$/i.test(key) &&
+      (typeof value === "string" || typeof value === "number" || typeof value === "boolean") &&
+      String(value).trim().length > 0
+    )
+    .slice(0, 8);
+  const livePulseText = (() => {
+    if (!activeScorecardMatch) return "Select a match to see its live snapshot.";
+    const latest = activeScoreRows[activeScoreRows.length - 1];
+    if (latest) {
+      return `${latest.inning || "Current innings"}: ${latest.r}/${latest.w} after ${latest.o} overs. ${activeScorecardMatch.status}`;
+    }
+    return activeScorecardMatch.status || "The provider has not reported an innings score yet.";
+  })();
 
   // Stadium images cycle for visual variety
   const STADIUM_IMGS = [
@@ -538,7 +614,7 @@ function MatchDiscovery({
           className={`source-tab${sourceTab === "historical" ? " source-tab--active" : ""}`}
           role="tab"
           aria-selected={sourceTab === "historical"}
-          onClick={() => { setSourceTab("historical"); setSelectedNearLive(null); }}
+          onClick={() => { closeNearLiveScorecard(); setSourceTab("historical"); }}
         >
           <span>Historical Replay</span>
           <span className="source-tab__badge">Full Catch-Up & Evidence</span>
@@ -760,7 +836,7 @@ function MatchDiscovery({
                         )}
 
                         <div className="match-card__cta" aria-hidden>
-                          {isSelected ? "Inspecting ▾" : "Scorecard →"}
+                          {isSelected ? "Insights open ↓" : "View live insights →"}
                         </div>
                       </div>
                       <div className="match-card__stadium-img" aria-hidden>
@@ -779,7 +855,7 @@ function MatchDiscovery({
 
           {/* Near-live Scorecard Inspection Drawer */}
           {selectedNearLive && (
-            <section className="scorecard-drawer" aria-label="Near-live match scorecard">
+            <section id="scorecard-drawer" ref={scorecardDrawerRef} className="scorecard-drawer" aria-label="Near-live match insights" aria-busy={scorecardLoading}>
               <div className="scorecard-drawer__header">
                 <div>
                   <div className="chip chip--magenta" style={{ marginBottom: 6, display: "inline-flex", alignItems: "center", gap: 4 }}>
@@ -806,45 +882,84 @@ function MatchDiscovery({
                 <Spinner />
               ) : (
                 <>
-                  <div className="scorecard-disclaimer">
-                    <strong>Live scorecard available.</strong> Evidence-grounded interval catch-up requires ball-by-ball data that is not available from this feed. Switch to Historical Replay for full catch-up.
-                    {scorecardData?.message && (
-                      <div style={{ marginTop: 6, fontStyle: "italic" }}>
-                        Provider notice: {friendlyProviderMessage(scorecardData.message, "scorecard")}
+                  {scorecardError ? (
+                    <div className="scorecard-disclaimer" role="status">
+                      <strong>Live scorecard detail unavailable.</strong>{" "}
+                      {scorecardError}
+                      <div style={{ marginTop: 6 }}>
+                        The latest match-list score remains visible below when the provider has supplied one.
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    <div className="scorecard-disclaimer" role="status">
+                      <strong>Live match pulse.</strong>{" "}
+                      {livePulseText}
+                      {scorecardData?.cached && (
+                        <div style={{ marginTop: 6 }}>Showing a cached provider snapshot.</div>
+                      )}
+                    </div>
+                  )}
 
-
-                  {selectedNearLive.score && selectedNearLive.score.length > 0 ? (
+                  {activeScoreRows.length > 0 ? (
                     <div style={{ marginTop: 16 }}>
-                      <h3 style={{ fontSize: "0.95rem", marginBottom: 8 }}>Innings Breakdown</h3>
+                      <h3 style={{ fontSize: "0.95rem", marginBottom: 8 }}>Innings breakdown</h3>
                       <div style={{ display: "grid", gap: 8, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
-                        {selectedNearLive.score.map((sc, i) => (
-                          <div key={i} className="telemetry-stat" style={{ textAlign: "left", padding: "12px 16px" }}>
-                            <div style={{ fontSize: "0.8rem", color: "var(--on-surface-variant)" }}>{sc.inning}</div>
+                        {activeScoreRows.map((sc, i) => (
+                          <div key={`${sc.inning}-${i}`} className="telemetry-stat" style={{ textAlign: "left", padding: "12px 16px" }}>
+                            <div style={{ fontSize: "0.8rem", color: "var(--on-surface-variant)" }}>{sc.inning || `Innings ${i + 1}`}</div>
                             <div style={{ fontSize: "1.4rem", fontWeight: 700, color: "var(--primary-container)", fontFamily: "var(--font-data)" }}>
-                              {sc.r} / {sc.w}
+                              {sc.r}/{sc.w}
                             </div>
-                            <div style={{ fontSize: "0.75rem", color: "var(--outline)" }}>{sc.o} Overs</div>
+                            <div style={{ fontSize: "0.75rem", color: "var(--outline)" }}>{sc.o} overs</div>
                           </div>
                         ))}
                       </div>
                     </div>
                   ) : (
-                    <div className="state-empty">No score entries recorded yet for this encounter.</div>
+                    <div className="state-empty">The provider has not published an innings score for this match yet.</div>
                   )}
 
-                  <div className="cta-bar" style={{ marginTop: 24, justifyContent: "flex-start" }}>
+                  {scorecardDetailFields.length > 0 && (
+                    <section style={{ marginTop: 18 }} aria-label="Additional scorecard details">
+                      <h3 style={{ fontSize: "0.95rem", marginBottom: 8 }}>More scorecard details</h3>
+                      <div style={{ display: "grid", gap: 8, gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
+                        {scorecardDetailFields.map(([key, value]) => (
+                          <div key={key} className="telemetry-stat" style={{ textAlign: "left", padding: "10px 14px" }}>
+                            <div style={{ fontSize: "0.76rem", color: "var(--on-surface-variant)" }}>
+                              {key.replace(/_/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2")}
+                            </div>
+                            <div style={{ marginTop: 4, overflowWrap: "anywhere" }}>{String(value)}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+
+                  <div className="scorecard-disclaimer" style={{ marginTop: 20 }}>
+                    <strong>About live catch-up.</strong>{" "}
+                    This feed provides live match and aggregate scorecard data, not the verified ball-by-ball delivery ledger needed to reconstruct missed overs. FanCue won’t invent deliveries or claim a live story it cannot verify. Use the historical archive for full ball-by-ball catch-up stories.
+                  </div>
+
+                  <div className="cta-bar" style={{ marginTop: 24, justifyContent: "flex-start", gap: 10, flexWrap: "wrap" }}>
                     <button
                       className="catchup-btn"
                       style={{ maxWidth: 320 }}
                       onClick={() => {
-                        setSelectedNearLive(null);
+                        closeNearLiveScorecard();
                         setSourceTab("historical");
+                        setSearch("");
+                        setFormatFilter("all");
+                        window.scrollTo({ top: 0, behavior: "smooth" });
                       }}
                     >
-                      Explore Historical Catch-Up →
+                      Explore historical replay →
+                    </button>
+                    <button
+                      className="icon-btn"
+                      disabled={scorecardLoading}
+                      onClick={() => selectedNearLive && loadNearLiveScorecard(selectedNearLive, true)}
+                    >
+                      ⟳ Refresh scorecard
                     </button>
                   </div>
                 </>
