@@ -1,13 +1,15 @@
-"""Regression tests for the public-demo readiness contract."""
+"""Regression tests for public-demo readiness and deployment CORS contract."""
 
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from backend.app.api.cors import configure_cors
 from backend.app.core.config import AppSettings, get_settings
 from backend.app.main import app
 
 
 def test_healthz_is_process_liveness_only():
-    """The liveness endpoint must stay cheap and avoid dependency claims."""
+    """The liveness endpoint is cheap and does not claim dependency readiness."""
     with TestClient(app) as client:
         response = client.get("/healthz")
 
@@ -17,19 +19,16 @@ def test_healthz_is_process_liveness_only():
     assert payload["service"] == "fancue-api"
 
 
-def test_readyz_reports_fixtures_and_disabled_retrieval_without_external_calls(monkeypatch):
+def test_readyz_reports_fixture_and_retrieval_mode_without_external_calls(monkeypatch):
     """Readiness should make the no-Qdrant deployment mode explicit."""
     from backend.app.core import fixtures
 
     monkeypatch.setattr(fixtures, "list_available_match_ids", lambda: ["match-a", "match-b"])
-    monkeypatch.setenv("FANCUE_ENV", "production")
-    monkeypatch.setenv("FANCUE_RETRIEVAL_ENABLED", "false")
     settings = AppSettings(
         fancue_env="production",
         retrieval_enabled=False,
         skip_llm=True,
     )
-
     app.dependency_overrides[get_settings] = lambda: settings
     try:
         with TestClient(app) as client:
@@ -45,12 +44,8 @@ def test_readyz_reports_fixtures_and_disabled_retrieval_without_external_calls(m
     assert payload["status"] == "ready"
 
 
-def test_production_cors_allows_only_configured_frontend_origin(monkeypatch):
-    """Check exact origin matching and ensure arbitrary web origins are not allowed."""
-    from backend.app.api.cors import configure_cors
-    from fastapi import FastAPI
-    from fastapi.testclient import TestClient
-
+def test_production_cors_allows_configured_origin_only():
+    """Exact Vercel origin gets preflight headers; an arbitrary origin does not."""
     settings = AppSettings(
         fancue_env="production",
         allowed_origins=["https://fan-cue.vercel.app"],
@@ -82,4 +77,5 @@ def test_production_cors_allows_only_configured_frontend_origin(monkeypatch):
 
     assert accepted.status_code == 200
     assert accepted.headers.get("access-control-allow-origin") == "https://fan-cue.vercel.app"
+    assert "POST" in accepted.headers.get("access-control-allow-methods", "")
     assert rejected.headers.get("access-control-allow-origin") is None
