@@ -484,10 +484,12 @@ function MatchDiscovery({
   // The scorecard panel used to render after the entire match list. Scroll it
   // into view after the request finishes so selecting a card never looks inert.
   useEffect(() => {
-    if (!selectedNearLive || scorecardLoading || !scorecardDrawerRef.current) return;
+    if (!selectedNearLive || !scorecardDrawerRef.current) return;
+    // Scroll once immediately to reveal the loading state, then again after the
+    // scorecard request settles so the panel never appears inert below the list.
     const timer = window.setTimeout(() => {
       scorecardDrawerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 80);
+    }, scorecardLoading ? 10 : 80);
     return () => window.clearTimeout(timer);
   }, [selectedNearLive?.id, scorecardLoading]);
 
