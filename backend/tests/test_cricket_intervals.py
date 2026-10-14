@@ -118,3 +118,53 @@ def test_extract_key_facts_over_summaries():
     descriptions = [s.description for s in summaries]
     assert any("MAIDEN" in d for d in descriptions)
     assert any("HIGH-SCORING" in d for d in descriptions)
+
+def test_extract_key_facts_includes_fours_and_highest_over_below_threshold():
+    """Fours and the true interval maximum are visible even below 15 runs."""
+    first_over = [
+        make_delivery(over=0, ball=1, batter_runs=4),
+        make_delivery(over=0, ball=2, batter_runs=1),
+    ]
+    second_over = [
+        make_delivery(over=1, ball=ball, batter_runs=2)
+        for ball in range(1, 7)
+    ]
+
+    facts = extract_key_facts("match_key_moments", 0, "rev1", first_over + second_over)
+
+    boundaries = [fact for fact in facts if fact.fact_type == FactType.BOUNDARY]
+    assert len(boundaries) == 1
+    assert boundaries[0].description.startswith("FOUR:")
+    assert boundaries[0].structured_payload["runs"] == 4
+    assert boundaries[0].referenced_event_ids == ["ev_ov0_b1"]
+
+    highest = [
+        fact for fact in facts
+        if fact.fact_type == FactType.OVER_SUMMARY
+        and fact.structured_payload.get("is_interval_highest") is True
+    ]
+    assert len(highest) == 1
+    assert highest[0].structured_payload["over"] == 2
+    assert highest[0].structured_payload["runs"] == 12
+    assert "HIGHEST-SCORING OVER" in highest[0].description
+    assert highest[0].referenced_event_ids == [f"ev_ov1_b{ball}" for ball in range(1, 7)]
+
+
+def test_extract_key_facts_marks_all_tied_highest_overs():
+    """Equal top-scoring overs are all marked; no arbitrary unique winner is implied."""
+    deliveries = [
+        make_delivery(over=over, ball=ball, batter_runs=2)
+        for over in (2, 3)
+        for ball in range(1, 7)
+    ]
+
+    facts = extract_key_facts("match_tied_key_moments", 0, "rev1", deliveries)
+    highest = [
+        fact for fact in facts
+        if fact.fact_type == FactType.OVER_SUMMARY
+        and fact.structured_payload.get("is_interval_highest") is True
+    ]
+
+    assert [fact.structured_payload["over"] for fact in highest] == [3, 4]
+    assert all("tied for the highest-scoring over" in fact.description for fact in highest)
+
