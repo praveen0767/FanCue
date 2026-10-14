@@ -1110,7 +1110,7 @@ function MatchDiscovery({
                     FanCue summarizes the latest innings scores, run rate, wickets remaining, and any score movement observed across refreshes. Exact ball-by-ball stories require a delivery ledger; we will not invent deliveries.
                   </div>
 
-                  {liveCatchUp?.matchId === activeScorecardMatch?.id && (
+                  {liveCatchUp && liveCatchUp.matchId === activeScorecardMatch?.id && (
                     <section
                       id="live-score-catchup"
                       className="story-summary"
