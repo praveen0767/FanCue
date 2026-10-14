@@ -362,11 +362,10 @@ class GroqLLMProvider(LLMProvider):
             ],
             "response_format": {"type": "json_object"},
         }
-        # Groq requires a compatible reasoning format when GPT-OSS is used with
-        # JSON mode. Keeping this model-specific avoids sending an unsupported
-        # parameter to other compatible models.
+        # Groq's GPT-OSS model-specific docs do not support reasoning_format;
+        # use include_reasoning=false to keep the structured response content clean.
         if self._model.startswith("openai/gpt-oss-"):
-            body["reasoning_format"] = "hidden"
+            body["include_reasoning"] = False
 
         req = urllib.request.Request(
             url,
