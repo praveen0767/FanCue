@@ -112,8 +112,8 @@ class CricketDataClient:
                     total=cached_resp.total,
                     cached=True,
                     cached_at=entry["cached_at_iso"],
-                    hits_today=self._last_hits_today,
-                    hits_left=self._last_hits_left,
+                    hits_today=cached_resp.hits_today,
+                    hits_left=cached_resp.hits_left,
                     message=cached_resp.message,
                 )
 
@@ -284,8 +284,8 @@ class CricketDataClient:
             total=len(matches),
             cached=False,
             cached_at=now_utc,
-            hits_today=self._last_hits_today,
-            hits_left=self._last_hits_left,
+            hits_today=None if public_mode else self._last_hits_today,
+            hits_left=None if public_mode else self._last_hits_left,
             message=message,
         )
 
