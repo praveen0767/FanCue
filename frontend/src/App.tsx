@@ -666,8 +666,8 @@ function MatchDiscovery({
             <div className="near-live-notice__text">
               <span>📡</span>
               <span>
-                <strong>CricketData.org Near-Live Feed:</strong> Data is subject to a ~30s–5m delay.
-                Cached locally to respect the 100 daily hits quota.
+                <strong>CricketData.org Near-Live Feed:</strong> Updates may lag by up to ~5 minutes.
+                FanCue caches responses to reduce unnecessary provider requests.
                 {nearLiveHits.hitsLeft !== undefined && nearLiveHits.hitsLeft !== null && (
                   <> · Remaining Hits Today: <strong>{nearLiveHits.hitsLeft}</strong></>
                 )}
