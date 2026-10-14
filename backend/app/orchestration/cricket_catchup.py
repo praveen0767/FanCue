@@ -13,6 +13,7 @@ from backend.app.ai.provider import (
     LLMUnavailableError,
 )
 from backend.app.explanations.deterministic_fallback import build_deterministic_fallback
+from backend.app.explanations.over_by_over import build_over_by_over
 from backend.app.match_engine.cricket import CricketMatchEngine
 from backend.app.orchestration.evidence_builder import EvidencePacketBuilder
 from backend.app.schemas.common import MatchMode
@@ -147,6 +148,7 @@ class CricketCatchUpOrchestrator:
             state_before=state_before,
             state_after=state_after,
             state_delta=delta,
+            over_by_over=build_over_by_over(self.engine, request),
             evidence_packet=packet,
             explanation=explanation_payload,
             language=request.language,

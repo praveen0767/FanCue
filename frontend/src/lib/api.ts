@@ -128,12 +128,40 @@ export interface ExplanationPayload {
   model?: string;
 }
 
+export interface CricketBallStory {
+  delivery_number: number;
+  display: string;
+  event_label: string;
+  batter: string;
+  bowler: string;
+  runs_off_bat: number;
+  total_runs: number;
+  extras: number;
+  is_legal: boolean;
+  wicket_detail?: string | null;
+}
+
+export interface CricketOverStory {
+  over_number: number;
+  runs: number;
+  wickets: number;
+  extras: number;
+  legal_balls: number;
+  score_after_runs: number;
+  score_after_wickets: number;
+  run_rate_after: number;
+  recap: string;
+  highlights: string[];
+  balls: CricketBallStory[];
+}
+
 export interface CricketCatchUpResponse {
   match: MatchDescriptor;
   interval: { innings: number; start_after_over: number; end_after_over: number };
   state_before: CricketScoreSnapshot;
   state_after: CricketScoreSnapshot;
   state_delta: CricketStateDelta;
+  over_by_over: CricketOverStory[];
   evidence_packet: MatchEvidencePacket;
   explanation: ExplanationPayload;
   language: string;

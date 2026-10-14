@@ -84,6 +84,41 @@ class ExplanationPayload(BaseModel):
     )
 
 
+class CricketBallStory(BaseModel):
+    """Fan-readable rendering of one source-recorded delivery."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    delivery_number: int = Field(..., ge=1)
+    display: str = Field(..., min_length=1, max_length=24)
+    event_label: str = Field(..., min_length=1, max_length=24)
+    batter: str = Field(..., min_length=1)
+    bowler: str = Field(..., min_length=1)
+    runs_off_bat: int = Field(..., ge=0)
+    total_runs: int = Field(..., ge=0)
+    extras: int = Field(..., ge=0)
+    is_legal: bool
+    wicket_detail: Optional[str] = Field(default=None, max_length=160)
+
+
+class CricketOverStory(BaseModel):
+    """Deterministic over recap built from the authoritative delivery ledger."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    over_number: int = Field(..., ge=1)
+    runs: int = Field(..., ge=0)
+    wickets: int = Field(..., ge=0, le=10)
+    extras: int = Field(..., ge=0)
+    legal_balls: int = Field(..., ge=0, le=6)
+    score_after_runs: int = Field(..., ge=0)
+    score_after_wickets: int = Field(..., ge=0, le=10)
+    run_rate_after: float = Field(..., ge=0.0)
+    recap: str = Field(..., min_length=1, max_length=220)
+    highlights: List[str] = Field(default_factory=list, max_length=12)
+    balls: List[CricketBallStory] = Field(default_factory=list, max_length=20)
+
+
 class CricketCatchUpResponse(BaseModel):
     """Complete fan-facing API response for cricket catch-up."""
     model_config = ConfigDict(extra="forbid", frozen=True)
@@ -93,6 +128,10 @@ class CricketCatchUpResponse(BaseModel):
     state_before: CricketScoreSnapshot = Field(..., description="State at start boundary.")
     state_after: CricketScoreSnapshot = Field(..., description="State at end boundary.")
     state_delta: CricketStateDelta = Field(..., description="Calculated state difference.")
+    over_by_over: List[CricketOverStory] = Field(
+        default_factory=list,
+        description="Source-derived ball-by-ball summaries for every over in the selected interval.",
+    )
     evidence_packet: MatchEvidencePacket = Field(..., description="Inspectable evidence packet.")
     explanation: ExplanationPayload = Field(..., description="Structured verified explanation.")
     language: LanguageCode = Field(..., description="Output language.")

@@ -10,6 +10,7 @@ import {
   type MatchDescriptor,
   type InningsIntervalOption,
   type CricketCatchUpResponse,
+  type CricketOverStory,
   type EvidenceFact,
   type NearLiveInningsScore,
   type NearLiveMatchItem,
@@ -1730,19 +1731,21 @@ function StoryView({
         </div>
       </section>
 
-      {/* Story summary */}
-      <section className="story-summary" aria-label="Match story">
+      {/* Quick match narrative */}
+      <section className="story-summary story-summary--fan" aria-label="Match story">
         <div className="story-summary__label">
           <span>📝</span>
-          {isFallback ? "BALL-BY-BALL RECAP" : "AI EXPLANATION · VERIFIED"}
+          {isFallback ? "THE QUICK RECAP" : "THE VERIFIED MATCH STORY"}
         </div>
         <p className="story-summary__text">{explanation.summary}</p>
         {isFallback && (
           <p className="story-summary__fallback-notice">
-            FanCue's AI storyteller is temporarily unavailable. Your recap is still grounded in the verified ball-by-ball record.
+            Built from recorded match data, so you can follow the story even when the AI provider is offline.
           </p>
         )}
       </section>
+
+      <OverByOverTimeline overs={response.over_by_over ?? []} />
 
       {/* Runs-per-over phase barometer (Section D) */}
       <OverBarometer
@@ -1789,6 +1792,189 @@ function StoryView({
     </div>
   );
 }
+
+// ---------------------------------------------------------------------------
+// SCREEN 3A — Over-by-over match story
+// ---------------------------------------------------------------------------
+
+function OverByOverTimeline({ overs }: { overs: CricketOverStory[] }) {
+  const [expandedOver, setExpandedOver] = useState<number | null>(
+    () => overs[0]?.over_number ?? null,
+  );
+
+  useEffect(() => {
+    setExpandedOver(overs[0]?.over_number ?? null);
+  }, [overs]);
+
+  if (overs.length === 0) {
+    return (
+      <section className="over-story" aria-label="Over-by-over catch-up">
+        <div className="over-story__empty">
+          <span aria-hidden>🏏</span>
+          <div>
+            <strong>No over timeline available for this interval</strong>
+            <p>Choose a recorded historical phase to inspect its deliveries.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const totalRuns = overs.reduce((sum, over) => sum + over.runs, 0);
+  const totalWickets = overs.reduce((sum, over) => sum + over.wickets, 0);
+  const totalBoundaries = overs.reduce(
+    (sum, over) => sum + over.balls.filter((ball) => ball.event_label === "FOUR" || ball.event_label === "SIX").length,
+    0,
+  );
+  const notableOvers = overs.filter(
+    (over) => over.wickets > 0 || over.runs >= 15 || over.highlights.some((h) => h.startsWith("SIX") || h.startsWith("FOUR")),
+  );
+
+  return (
+    <section className="over-story" aria-label="Over-by-over catch-up">
+      <div className="over-story__intro">
+        <div className="over-story__eyebrow"><span className="over-story__live-mark" /> THE MATCH, OVER BY OVER</div>
+        <h2>Every over has a story.</h2>
+        <p>Tap any over to see the deliveries, who faced them, the bowler, and exactly how the score changed.</p>
+        <div className="over-story__totals" aria-label="Interval totals">
+          <div className="over-story__total">
+            <span>Overs</span>
+            <strong>{overs.length}</strong>
+          </div>
+          <div className="over-story__total over-story__total--runs">
+            <span>Runs added</span>
+            <strong>+{totalRuns}</strong>
+          </div>
+          <div className="over-story__total over-story__total--wickets">
+            <span>Wickets</span>
+            <strong>{totalWickets}</strong>
+          </div>
+          <div className="over-story__total">
+            <span>4s &amp; 6s</span>
+            <strong>{totalBoundaries}</strong>
+          </div>
+        </div>
+      </div>
+
+      {notableOvers.length > 0 && (
+        <div className="over-story__turning-strip">
+          <span className="over-story__turning-icon" aria-hidden>✦</span>
+          <div>
+            <strong>Turning points in this stretch</strong>
+            <p>{notableOvers.map((over) => "Over " + over.over_number).join(" · ")}</p>
+          </div>
+        </div>
+      )}
+
+      <div className="over-story__timeline">
+        {overs.map((over, index) => {
+          const expanded = expandedOver === over.over_number;
+          const mood = over.wickets > 0
+            ? "over-story-card--wicket"
+            : over.runs >= 15
+            ? "over-story-card--explosive"
+            : "";
+          return (
+            <article
+              className={"over-story-card " + mood + (expanded ? " over-story-card--expanded" : "")}
+              key={over.over_number}
+              style={{ animationDelay: Math.min(index * 35, 350) + "ms" }}
+            >
+              <button
+                className="over-story-card__trigger"
+                type="button"
+                aria-expanded={expanded}
+                aria-controls={"over-detail-" + over.over_number}
+                onClick={() => setExpandedOver(expanded ? null : over.over_number)}
+              >
+                <span className="over-story-card__number">
+                  <small>OVER</small>
+                  <strong>{String(over.over_number).padStart(2, "0")}</strong>
+                </span>
+                <span className="over-story-card__main">
+                  <span className="over-story-card__headline">
+                    <strong>{over.runs} <small>{over.runs === 1 ? "RUN" : "RUNS"}</small></strong>
+                    {over.wickets > 0 && <span className="over-story-card__wicket-badge">✕ {over.wickets} {over.wickets === 1 ? "WICKET" : "WICKETS"}</span>}
+                    {over.runs >= 15 && <span className="over-story-card__big-badge">BIG OVER</span>}
+                  </span>
+                  <span className="over-story-card__recap">{over.recap}</span>
+                  <span className="over-story-card__scoreline">
+                    <span>Score after over {over.over_number}</span>
+                    <strong>{over.score_after_runs}/{over.score_after_wickets}</strong>
+                    <span>RR {over.run_rate_after.toFixed(2)}</span>
+                  </span>
+                </span>
+                <span className="over-story-card__chevron" aria-hidden>{expanded ? "−" : "+"}</span>
+              </button>
+
+              {expanded && (
+                <div className="over-story-card__detail" id={"over-detail-" + over.over_number}>
+                  <div className="over-story-card__stats">
+                    <span><strong>{over.legal_balls}</strong> legal balls</span>
+                    <span><strong>{over.extras}</strong> extras</span>
+                    <span><strong>{over.wickets}</strong> wickets</span>
+                  </div>
+
+                  <div className="over-story-card__ball-heading">
+                    <span>DELIVERY BY DELIVERY</span>
+                    <span>{over.balls.length} deliveries recorded</span>
+                  </div>
+                  <div className="over-story-card__ball-track" aria-label={"Scoring sequence for over " + over.over_number}>
+                    {over.balls.map((ball, ballIndex) => {
+                      const kind = ball.event_label.toLowerCase().replace(/\s+/g, "-");
+                      return (
+                        <span
+                          key={over.over_number + "-" + ball.delivery_number + "-" + ballIndex}
+                          className={"over-ball-chip over-ball-chip--" + kind}
+                          title={"Delivery " + ball.delivery_number + ": " + ball.batter + " vs " + ball.bowler + "; " + ball.total_runs + " total run(s)" + (ball.wicket_detail ? "; " + ball.wicket_detail : "")}
+                          style={{ animationDelay: Math.min(ballIndex * 35, 210) + "ms" }}
+                        >
+                          {ball.display}
+                        </span>
+                      );
+                    })}
+                  </div>
+
+                  <div className="over-story-card__ball-list">
+                    {over.balls.map((ball, ballIndex) => (
+                      <div
+                        className={"over-ball-detail" + (ball.event_label === "WICKET" ? " over-ball-detail--wicket" : "")}
+                        key={over.over_number + "-detail-" + ball.delivery_number + "-" + ballIndex}
+                      >
+                        <span className="over-ball-detail__number">{ball.delivery_number}</span>
+                        <span className={"over-ball-detail__result over-ball-detail__result--" + ball.event_label.toLowerCase().replace(/\s+/g, "-")}>
+                          {ball.display}
+                        </span>
+                        <span className="over-ball-detail__players">
+                          <strong>{ball.batter}</strong>
+                          <small>vs {ball.bowler}{ball.wicket_detail ? " · " + ball.wicket_detail : ""}</small>
+                        </span>
+                        <span className="over-ball-detail__runs">+{ball.total_runs}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {over.highlights.length > 0 && (
+                    <div className="over-story-card__highlights">
+                      {over.highlights.map((highlight, highlightIndex) => (
+                        <span key={highlightIndex} className="over-story-card__highlight">✦ {highlight}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </article>
+          );
+        })}
+      </div>
+
+      <p className="over-story__disclaimer">
+        Scores and events come from the historical ball-by-ball record. Run rate reflects the recorded innings score at each over boundary.
+      </p>
+    </section>
+  );
+}
+
 
 // ---------------------------------------------------------------------------
 // SECTION D — Runs-per-over Phase Barometer
