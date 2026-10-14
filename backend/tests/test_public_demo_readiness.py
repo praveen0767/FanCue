@@ -29,12 +29,11 @@ def test_readyz_reports_fixture_and_retrieval_mode_without_external_calls(monkey
         retrieval_enabled=False,
         skip_llm=True,
     )
-    app.dependency_overrides[get_settings] = lambda: settings
-    try:
-        with TestClient(app) as client:
-            response = client.get("/readyz")
-    finally:
-        app.dependency_overrides.pop(get_settings, None)
+    monkeypatch.setattr("backend.app.api.health.get_settings", lambda: settings)
+    monkeypatch.setattr("backend.app.api.health.list_available_match_ids", lambda: ["match-a", "match-b"])
+
+    with TestClient(app) as client:
+        response = client.get("/readyz")
 
     assert response.status_code == 200
     payload = response.json()
