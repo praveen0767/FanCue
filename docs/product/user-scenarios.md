@@ -1,5 +1,7 @@
 # FanCue — Fan User Scenarios (V1)
 
+> **Current deployment scope (2026-10-15):** These scenarios describe the experience when contextual retrieval is available. Qdrant retrieval is optional and disabled in the current Render blueprint; the deployed historical catch-up must remain useful from deterministic facts and event evidence alone.
+
 **Version:** 1.0
 **Phase:** 01 — Product Specification
 **Last updated:** 2026-10-11
@@ -87,7 +89,7 @@ are now out, who is batting.
 
 **Step 3 — Retrieval:**
 - Retrieval query built from event types (e.g., wicket type, batter dismissed).
-- Qdrant returns relevant contextual knowledge (sport=cricket, language=English).
+- If retrieval is enabled, Qdrant may return relevant contextual knowledge (sport=cricket, language=English); otherwise this step is skipped.
 - All retrieved items carry mandatory provenance.
 
 **Step 4 — Explanation:**
@@ -298,7 +300,7 @@ output with Qdrant's contextual knowledge.
 - The match state at dismissal (partnership broken, required run rate).
 - The wicket type (caught, LBW, bowled, etc.).
 
-Qdrant returns relevant contextual knowledge — e.g., the significance of
+When configured, Qdrant can return relevant contextual knowledge — for example, cricket rules context for
 an opening partnership being broken at this stage, or pressure on the
 team at that run rate.
 
