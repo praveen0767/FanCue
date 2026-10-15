@@ -1,5 +1,7 @@
 # backend/
 
+> **Current Render blueprint:** `LLM_PROVIDER=groq`, `GROQ_MODEL=openai/gpt-oss-20b`, and `FANCUE_RETRIEVAL_ENABLED=false`. Qdrant remains an optional subsystem and is not active in the checked-in production configuration.
+
 FanCue Python backend — FastAPI modular monolith.
 
 ## Responsibility
