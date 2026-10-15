@@ -1,5 +1,7 @@
 # FanCue Evaluation: Retrieval Quality & Isolation Report
 
+> **Production boundary:** These results are from the documented development collection (`fancue_cricket_knowledge_dev_v1`). The current Render configuration disables retrieval, so this report is not evidence that Qdrant is active in production or on the deployed catch-up path.
+
 > **Document ID:** EVAL-004  
 > **Evaluation Date:** 2026-10-11  
 > **Status:** Accepted (Gate Passed)  
