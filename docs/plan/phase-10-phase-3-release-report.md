@@ -1,5 +1,7 @@
 # Phase 3 Release Report — OpenAI Activation, Deployment & Dream11 Submission
 
+> **Historical snapshot notice (2026-10-15):** this report records an earlier OpenAI activation attempt and deployment state. It is not the current Render configuration. The current blueprint selects Groq model `openai/gpt-oss-20b`, sets `FANCUE_RETRIEVAL_ENABLED=false`, and pins `ALLOWED_ORIGINS` to `https://fan-cue.vercel.app`. Public Vercel-to-Render end-to-end acceptance remains a separate manual check.
+
 **Date:** 2026-10-13  
 **Branch:** main (no commits yet — all changes are staged untracked files)  
 **Engineer:** AI coding agent (Antigravity / Claude Sonnet)
