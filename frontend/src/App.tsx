@@ -1468,15 +1468,26 @@ function StoryView({
     }
   }
 
-  // Filter turning moments (wickets, boundaries, high scoring overs)
-  const momentFacts = response.evidence_packet.key_facts
-    .filter(
-      (f) =>
-        f.fact_type === "wicket" ||
-        f.fact_type === "boundary" ||
-        f.fact_type === "over_summary",
-    )
-    .slice(0, 8);
+  // Build a fan-facing key-moments list from deterministic engine facts.
+  // Reserve a slot for the interval's actual highest-scoring over so it cannot
+  // be pushed out by the first eight wicket/boundary facts.
+  const momentCandidates = response.evidence_packet.key_facts.filter(
+    (f) =>
+      f.fact_type === "wicket" ||
+      f.fact_type === "boundary" ||
+      f.fact_type === "over_summary",
+  );
+  const highestScoringOver = momentCandidates.find(
+    (f) =>
+      f.fact_type === "over_summary" &&
+      f.structured_payload?.is_interval_highest === true,
+  );
+  const supportingMoments = momentCandidates
+    .filter((f) => f.fact_id !== highestScoringOver?.fact_id)
+    .slice(0, highestScoringOver ? 7 : 8);
+  const momentFacts = highestScoringOver
+    ? [...supportingMoments, highestScoringOver]
+    : supportingMoments;
 
   // Filter over summary facts for runs-per-over barometer
   const overSummaryFacts = response.evidence_packet.key_facts.filter(
@@ -1753,7 +1764,7 @@ function StoryView({
         keyFacts={response.evidence_packet.key_facts}
       />
 
-      {/* Crucial Turning Moments (Section E) */}
+      {/* Key Moments in This Window (Section E) */}
       <MomentCards
         facts={momentFacts}
         selectedFactId={selectedFactId}
@@ -2057,7 +2068,7 @@ function OverBarometer({
 }
 
 // ---------------------------------------------------------------------------
-// SECTION E — Turning Moment Cards (Story Reveal)
+// SECTION E — Key Moment Cards (Story Reveal)
 // ---------------------------------------------------------------------------
 
 function MomentCards({
@@ -2072,17 +2083,17 @@ function MomentCards({
   if (facts.length === 0) return null;
 
   return (
-    <section className="moment-section" aria-label="Crucial match-turning moments">
+    <section className="moment-section" aria-label="Key moments in selected interval">
       <div className="moment-section__header">
         <div className="moment-section__title">
           <span>⚡</span>
-          <span>Crucial Match-Turning Moments</span>
+          <span>Key Moments in This Window</span>
         </div>
         <div className="moment-section__sub">
           {facts.length} verified events from match record
         </div>
       </div>
-      <div className="moment-grid" role="listbox" aria-label="Turning moment cards">
+      <div className="moment-grid" role="listbox" aria-label="Key moment cards">
         {facts.map((f, i) => {
           const isSelected = selectedFactId === f.fact_id;
           const badgeClass =
