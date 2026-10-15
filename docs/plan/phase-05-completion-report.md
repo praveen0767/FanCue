@@ -1,5 +1,7 @@
 ## Phase 05 Completion Report
 
+> **Current deployment note (2026-10-15):** This report records historical implementation and test-path status, not current provider activation. The Render blueprint currently selects Groq `openai/gpt-oss-20b` and disables Qdrant retrieval. The live public Vercel-to-Render journey remains a separate manual acceptance gate.
+
 **Status: COMPLETE**
 
 ---
