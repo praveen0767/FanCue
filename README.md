@@ -313,18 +313,18 @@ For a public release review, a healthy `/healthz` response is not sufficient: fo
 
 ### CI baseline
 
-The merged hardening revision was validated by the repository’s GitHub Actions workflow:
+The latest recorded workflow for this documentation/CORS-test branch completed successfully:
 
 | Check | Recorded result |
 |---|---:|
-| Backend test suite | **433 passed, 1 skipped** |
+| Backend test suite | **436 passed, 1 skipped** |
 | Reported backend/ingestion statement coverage | **90%** |
 | Frontend typecheck and production build | **Passed** |
 
-- CI run: [FanCue CI — hardening commit](https://github.com/praveen0767/FanCue/actions/runs/38539786400)
-- Tested merge commit: `41768516e458b9e2ebd892252cb2304629a53c0f`
+- CI run: [FanCue CI — documentation and origin checks](https://github.com/praveen0767/FanCue/actions/runs/38696315006)
+- Tested branch commit: `baf0072ec45070973946f39bc963ad42357efa0f`
 
-These figures describe that recorded run, not a promise that every later commit or hosted deployment is healthy. Rerun the workflow after code changes.
+These counts and coverage describe that recorded run only. They do not establish live Vercel-to-Render acceptance or the result of a future commit. Rerun the workflow after code changes.
 
 ### Curated retrieval evaluation
 
