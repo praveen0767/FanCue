@@ -19,11 +19,12 @@ These are measured results from named runs. The adversarial subset is an intenti
 
 The orchestrator now fails closed when the verifier rejects any claim, even if another score claim passes. This prevents unverified draft summary text from bypassing claim-level filtering. The result only covers these three constructed cases and does not imply a general 100% rejection rate.
 
+<!-- LIVE_EVALUATION_NOT_RUN_START -->
 ## Live catch-up evaluation — not yet run
 
 The repository authoring environment could not resolve the public Render hostname (DNS/network unavailable). **No live latency, fallback-rate, or verifier-rejection numbers are claimed here.**
 
-Run this from a machine with internet access to send 20 catch-up requests to both supported fixtures. The script will append the measured result to this file:
+Run this from a machine with internet access to send 20 catch-up requests to both supported fixtures. The script will replace this pending section with the measured run:
 
     python scripts/evaluate_catchups.py --api-base-url https://fancue-api-o4r1.onrender.com --requests 20 --output docs/eval_results.md
 
@@ -34,3 +35,4 @@ For first-click, CORS, and both-fixture validation, run:
     python scripts/smoke_test.py --api-base-url https://fancue-api-o4r1.onrender.com --frontend-origin https://fan-cue.vercel.app
 
 That smoke script prints HTTP status, generation_mode, verification_status, fallback_reason, and the observed duration for each catch-up. It is not represented as passed until you run it against the live deployment.
+<!-- LIVE_EVALUATION_NOT_RUN_END -->
