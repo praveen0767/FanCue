@@ -1,5 +1,7 @@
 ## Phase 05 Completion Report
 
+> **Current deployment note (2026-10-15):** This report documents code and test-path completion, not current provider activation. Render currently selects Groq `openai/gpt-oss-20b` and disables Qdrant retrieval. Historical OpenAI provider notes below are not the current deployed provider configuration.
+
 **Status: COMPLETE**
 
 ---
