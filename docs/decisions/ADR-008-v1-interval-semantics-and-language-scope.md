@@ -1,5 +1,7 @@
 # ADR-008 — V1 Interval Semantics, Language Scope, and Historical Replay Baseline
 
+> **Current deployment note (2026-10-15):** Retrieval boundaries in this ADR describe an optional subsystem. The current Render blueprint disables Qdrant; deterministic match facts and source evidence remain the active catch-up foundation.
+
 **Status:** Accepted  
 **Date:** 2026-10-11  
 **Phase:** 01 — Product Specification  
@@ -38,7 +40,7 @@ Phase 00 established foundational architectural principles (ADR-001 through ADR-
 4. **Separation of Event Evidence and Semantic Knowledge:**  
    - Event facts (runs, wickets, deliveries) are stored and processed exclusively by the deterministic match engine.
    - Qdrant stores only immutable background knowledge (cricket laws, glossary, tournament history, tactics).
-   - The LLM prompt receives an assembled Evidence Packet that strictly separates deterministic delta facts from retrieved knowledge chunks.
+   - When contextual retrieval is enabled, the LLM prompt receives an assembled Evidence Packet that strictly separates deterministic delta facts from optional retrieved knowledge chunks.
 
 5. **Strict Metric Hierarchy:**  
    - Factual Correctness (0 hallucinated score facts) > Evidence Traceability > Deterministic Fallback Availability > Response Latency (< 5s for fallback, < 30s for AI) > Narrative Fluency.
