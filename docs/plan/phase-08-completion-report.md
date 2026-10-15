@@ -1,5 +1,7 @@
 # Phase 08 Completion Report — Full-Stack Integration & Cricket Catch-Up Product
 
+> **Historical phase report (2026-10-15):** This report's test totals and local integration results belong to that phase's revision. The current Render blueprint uses Groq `openai/gpt-oss-20b` and disables Qdrant retrieval; local or mocked retrieval tests do not prove production retrieval is enabled.
+
 **Status: COMPLETE**  
 **Date: 2026-10-12**  
 **Repository root:** `D:\FanCue`
