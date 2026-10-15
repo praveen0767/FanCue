@@ -12,6 +12,18 @@ This is the release gate for a public review. Passing unit tests or a healthy pr
 - Retrieval is optional. If disabled or unreachable, historical replay should still use authoritative fixture facts and label deterministic output accurately.
 - Confirm fixtures are included in the deployed Docker image. An ignored local `data/raw/` directory is not proof of deployed fixture availability.
 
+## Automated deployed-API smoke test
+
+Run this from the repository root in an internet-connected Python 3.12+ environment:
+
+```bash
+python scripts/smoke_test.py --base-url https://fancue-api-o4r1.onrender.com --frontend-origin https://fan-cue.vercel.app --timeout 90
+```
+
+The script calls `/healthz`, checks an exact-origin CORS preflight, lists fixtures, asks the API for a valid interval for each registered fixture (`1529229` and `1552779`), then makes one real `POST /catchup` per fixture. It prints each returned `explanation.generation_mode`, `explanation.verification_status`, `fallback_reason`, interval, score delta, response status, and observed elapsed time. Catch-up POSTs are not retried to avoid duplicate provider calls.
+
+The script has **not been run by this change against the live service**. Its output is the evidence to record; do not copy example or expected values into a report. A passing script checks the API contract and returned status fields, not whether the browser UI renders correctly or the narrative matches every ball. Complete the manual browser gate below as well.
+
 ## Release gate
 
 ### 1. Liveness and readiness
