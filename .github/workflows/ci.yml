@@ -38,6 +38,9 @@ jobs:
           npm ci
           npm run build
 
+      - name: Run adversarial verifier evaluation
+        run: python scripts/evaluate_verifier_adversarial.py --report /tmp/fancue-adversarial-eval.md
+
       - name: Run test suite with coverage
         run: |
           pytest --cov=backend/app --cov=ingestion --cov-report=term-missing tests backend/tests
