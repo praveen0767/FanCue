@@ -1,5 +1,7 @@
 # FanCue — Phase 04 Completion Report
 
+> **Historical evaluation note (2026-10-15):** This report records the development/CI retrieval subsystem and its curated benchmark at the time. The current Render blueprint sets `FANCUE_RETRIEVAL_ENABLED=false`; these historical results do not mean Qdrant retrieval is enabled on the public catch-up path.
+
 **Phase:** 04 — Qdrant Knowledge Ingestion, Curated Cricket Knowledge Base, Embedding Pipeline, and Retrieval Evaluation  
 **Date:** 2026-10-11  
 **Author:** Principal AI Systems Engineer / Retrieval Engineer / Platform Reliability Engineer  
