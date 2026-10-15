@@ -1,5 +1,7 @@
 # Phase 09 Completion Report — Production Deployment, Remote Integration & Release Verification
 
+> **Current status clarification (2026-10-15):** This is a historical release report. Its local end-to-end browser verification does not prove that the public Vercel-to-Render journey succeeds. Current Render settings use Groq `openai/gpt-oss-20b` and disable Qdrant retrieval. Public acceptance still requires the runbook's manual browser check.
+
 **Status: PARTIALLY COMPLETE (Deployment-Prepared / Remote-Blocked)**  
 **Date: 2026-10-12**  
 **Repository root:** `D:\FanCue`
