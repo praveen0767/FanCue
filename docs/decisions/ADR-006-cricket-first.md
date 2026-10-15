@@ -1,5 +1,7 @@
 # ADR-006 — Cricket-First Implementation with a Separate Football Adapter
 
+> **Current deployment note (2026-10-15):** The shared orchestration architecture may include contextual retrieval, but Qdrant is optional and disabled in the current Render blueprint. This decision record describes component boundaries, not a claim that production retrieval is active.
+
 **Status:** Accepted
 **Date:** 2026-10-11
 **Phase:** 00
