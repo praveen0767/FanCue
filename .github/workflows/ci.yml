@@ -38,6 +38,9 @@ jobs:
           npm ci
           npm run build
 
+      - name: Validate operational Python scripts
+        run: python -m compileall -q scripts
+
       - name: Run test suite with coverage
         run: |
           pytest --cov=backend/app --cov=ingestion --cov-report=term-missing tests backend/tests
