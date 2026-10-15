@@ -287,7 +287,7 @@ def run_live_evaluation(
             intervals_by_fixture[fixture_id] = choose_interval(intervals)
     except Exception as exc:
         result["error"] = f"Setup failed before benchmarking: {type(exc).__name__}: {exc}"
-        result["failed_attempts"] = request_count
+        result["skipped_before_requests"] = request_count
         return result
 
     for index in range(request_count):
