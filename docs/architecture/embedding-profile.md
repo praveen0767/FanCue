@@ -1,5 +1,7 @@
 # FanCue Architecture: Embedding Profile Specification
 
+> **Deployment scope:** This profile supports the optional Qdrant contextual-retrieval subsystem. Current Render configuration disables retrieval, so this embedding stack is not part of the deployed catch-up critical path.
+
 > **Document ID:** ARCH-009  
 > **Status:** Implemented & Pinned (Phase 04)  
 > **Author:** Principal AI Systems Engineer  
