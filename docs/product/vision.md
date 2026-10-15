@@ -68,7 +68,7 @@ The first release establishes one complete, verified workflow:
 1. A fan selects a **historical cricket match** (not live initially).
 2. The fan specifies an **interval** (whole-over range).
 3. FanCue **reconstructs** the interval from authoritative data.
-4. FanCue **retrieves** relevant contextual knowledge from Qdrant.
+4. FanCue may retrieve contextual knowledge from Qdrant when enabled. The current Render production configuration disables retrieval, so the deployed catch-up path must work without it.
 5. FanCue **generates** a structured explanation verified against match facts.
 6. The fan receives the explanation through a **functional web UI** with an evidence drawer.
 7. If the AI explanation fails, the fan receives a **deterministic fallback**.

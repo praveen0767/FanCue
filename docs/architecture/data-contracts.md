@@ -1,5 +1,7 @@
 # FanCue — Data Contracts Architecture
 
+> **Deployment boundary:** The contracts support optional retrieved passages, but the current Render production configuration disables Qdrant retrieval (`FANCUE_RETRIEVAL_ENABLED=false`). A production response must remain valid with an empty retrieved-passage list; deterministic match facts and their provenance are still required.
+
 **Version:** 1.0.0  
 **Phase:** 02 — Canonical Contracts & Governance  
 **Status:** Normative for Phase 03 through Phase 06  

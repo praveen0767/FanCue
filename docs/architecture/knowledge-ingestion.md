@@ -1,5 +1,7 @@
 # FanCue Architecture: Knowledge Ingestion & Retrieval Pipeline
 
+> **Production scope:** This document describes the optional knowledge-ingestion/retrieval subsystem. The current Render configuration sets `FANCUE_RETRIEVAL_ENABLED=false`, so this subsystem is not on the deployed catch-up critical path. The documented retrieval evaluation is a development/CI result, not proof of production retrieval being active.
+
 > **Document ID:** ARCH-008  
 > **Status:** Implemented (Phase 04)  
 > **Author:** Principal AI Systems Engineer / Retrieval Engineer  
@@ -8,7 +10,7 @@
 
 ## 1. System Context & Responsibilities
 
-The Knowledge Ingestion and Retrieval Pipeline is responsible for providing **factual domain grounding** to the downstream AI explanation orchestrator (Phase 05).
+When enabled, the Knowledge Ingestion and Retrieval Pipeline can provide **contextual domain grounding** to the AI explanation orchestrator. It is optional; the deterministic match engine and evidence packet remain authoritative, and current production configuration disables retrieval.
 
 ### Core Invariants
 

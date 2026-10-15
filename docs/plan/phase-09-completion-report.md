@@ -1,5 +1,7 @@
 # Phase 09 Completion Report — Production Deployment, Remote Integration & Release Verification
 
+> **Current status clarification (2026-10-15):** This is a historical report. Its local E2E verification refers to the local app, not the public Vercel-to-Render journey. Current public catch-up acceptance remains unverified. The current Render blueprint uses Groq `openai/gpt-oss-20b` and disables Qdrant retrieval.
+
 **Status: PARTIALLY COMPLETE (Deployment-Prepared / Remote-Blocked)**  
 **Date: 2026-10-12**  
 **Repository root:** `D:\FanCue`

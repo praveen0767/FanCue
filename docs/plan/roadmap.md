@@ -1,5 +1,21 @@
 # FanCue — Phase Roadmap
 
+## Current hosted-release status (2026-10-15)
+
+- The Render blueprint selects Groq with model **openai/gpt-oss-20b**.
+- **FANCUE_RETRIEVAL_ENABLED=false** in the current Render blueprint. The Qdrant pipeline is optional, and its development/CI evaluation is not evidence that production retrieval is enabled.
+- The public Vercel-to-Render end-to-end catch-up smoke test is **not yet recorded as passed**. Keep this gate open until an operator runs the public smoke script and completes the browser checks in [docs/PUBLIC_DEMO_ACCEPTANCE.md](../PUBLIC_DEMO_ACCEPTANCE.md).
+
+### Public release gate
+
+- [ ] Public historical catch-up succeeds in a private browser session for both supported fixtures.
+- [ ] The response shows explanation.generation_mode and explanation.verification_status; score delta and source-event evidence are checked against the UI.
+- [ ] CORS preflight succeeds for the exact origin https://fan-cue.vercel.app.
+- [ ] Cold and warm request times are recorded from an actual run; do not estimate them from the hosting plan.
+
+---
+
+
 All phases are sequential. A later phase must not begin before its predecessor
 passes its exit gate. "Planned" means the work is defined but not started.
 "Not started" is the honest status for all phases beyond 00 at initialization.

@@ -5,6 +5,8 @@
 **Status:** Normative for Phase 02 through Phase 06  
 **Last updated:** 2026-10-11  
 
+> **Current deployment boundary:** Qdrant retrieval is optional and disabled by the current Render configuration. The P0 catch-up path relies on fixture-backed deterministic facts plus bounded generation/verification/fallback; retrieval is not claimed as active in production.
+
 > **Core Constraint:** The five-day assignment prioritizes **one working, verified fan artifact**
 > over a large surface of incomplete features. A narrower, rigorously verified cricket implementation
 > is strictly preferable to two partial or unverified sport implementations.
@@ -31,7 +33,7 @@ The P0 scope represents the complete, end-to-end historical cricket catch-up jou
 | **Interval Selection** | Whole-over interval boundaries within a single innings (e.g., overs 13 through 18). | Clear, unambiguous domain boundary model that avoids fractional over ambiguities. |
 | **Deterministic State Engine** | Start state, end state, and state-difference computation (runs, wickets, overs, legal balls, partnerships, run rates). | Pure deterministic computation; sole truth authority; identical input yields identical output. |
 | **Consequential Event Selection** | Algorithmic ranking and extraction of key interval events (wickets, milestone overs, high-run overs, maidens). | Separates noise from signal deterministically before any LLM prompt assembly. |
-| **Contextual Retrieval (Qdrant)** | Qdrant vector retrieval for cricket rules, match situational context, and tournament history, strictly filtered by `sport: cricket` and `language: en`. | Augments match facts with domain knowledge without letting the vector store mutate score state. |
+| **Optional Contextual Retrieval (Qdrant)** | Optional Qdrant vector retrieval for cricket rules and background context when explicitly enabled, with `sport: cricket` and `language: en` filters. The current Render production configuration sets `FANCUE_RETRIEVAL_ENABLED=false`. | Can augment an explanation in configured environments; historical catch-up must remain functional without it, and it never changes authoritative match facts. |
 | **Evidence Packet Assembly** | Assembly of structured evidence packets containing exact event IDs, source scorecard references, and retrieved document IDs (`doc_id`). | Enables full provenance tracking and verification. |
 | **Bounded AI Explanation** | Structured LLM generation (Pydantic contract) producing concise, factual summaries explaining *how* and *why* the interval changed. | Provides the narrative synthesis fans require while constraining output format. |
 | **Automated Verification** | Post-generation verification comparing LLM assertions against deterministic engine delta and retrieved doc IDs. | Catches hallucinations and fabricated numbers before fan presentation. |

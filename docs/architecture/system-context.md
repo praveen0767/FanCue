@@ -6,14 +6,16 @@
 
 ## Logical Boundaries
 
+**Deployment note:** This is the logical architecture when optional retrieval is configured. The current Render blueprint sets `FANCUE_RETRIEVAL_ENABLED=false`; the deployed historical catch-up path does not depend on Qdrant.
+
 | Component | Responsibility | Implementation status |
 |---|---|---|
 | Fan interface | Next.js web UI — interval selector, explanation display, fallback display | Phase 06 |
 | Request API | FastAPI — validates and routes fan requests | Phase 03 |
 | Sport adapter | Cricket or football adapter — normalises events, applies sport-specific logic | Phase 03 (cricket), Phase 08 (football) |
 | Deterministic match engine | Reconstructs match state from events; sole authoritative source of match facts | Phase 03 |
-| Evidence/context planner | Assembles a typed evidence packet from engine output + retrieval results | Phase 05 |
-| Qdrant knowledge retrieval | Semantic search over ingested contextual knowledge documents | Phase 04 |
+| Evidence/context planner | Assembles a typed evidence packet from engine facts plus optional retrieval results | Implemented; retrieval conditional |
+| Qdrant knowledge retrieval | Optional semantic search over contextual knowledge; disabled in the current Render production configuration | Optional subsystem |
 | Language model provider | Generates bounded explanation from evidence packet | Phase 05 |
 | Verification | Checks LLM output against authoritative facts; triggers fallback on failure | Phase 05 |
 | Deterministic fallback | Returns structured summary from engine+evidence when LLM unavailable or fails | Phase 05 |
@@ -75,11 +77,11 @@ flowchart TD
 3. Sport adapter selects correct event parser (cricket or football)
 4. Match engine reconstructs state at interval_start and interval_end
 5. Match engine calculates state difference (what changed)
-6. Evidence planner assembles retrieval query from state difference events
-7. Qdrant returns top-K contextual chunks with provenance metadata
-8. Evidence planner builds typed evidence packet:
+6. Evidence planner builds the typed evidence packet from deterministic state delta, key events, and source provenance.
+7. If retrieval is explicitly enabled and available, retrieve top-K contextual chunks with provenance metadata; otherwise continue with no retrieved chunks.
+8. The evidence packet separates:
      - authoritative_state_diff (from engine)
-     - retrieved_chunks (from Qdrant, with doc_id + source)
+     - optional retrieved_chunks (from Qdrant, with doc_id + source)
 9. LLM receives evidence packet + prompt template; produces structured explanation
 10. Verification checks:
      - All score claims match authoritative_state_diff
