@@ -97,7 +97,7 @@ def main() -> int:
     )
     args = parser.parse_args()
     base_url = args.base_url.rstrip("/")
-    frontend_origin = args.frontend_origin.rstrip("/")
+    frontend_origin = args.frontend_origin
     failures = 0
 
     print("FanCue deployed API smoke test")
