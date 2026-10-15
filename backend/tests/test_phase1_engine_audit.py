@@ -151,20 +151,26 @@ class TestByesAndLegByesAreLegal:
         assert snap.overs_completed == 1
 
 
-class TestNonBoundaryFour:
-    """The fact extractor must only treat batter_runs ≥ 6 as a six fact."""
+class TestBoundaryFacts:
+    """Fours and sixes are distinct boundary events, each with source evidence."""
 
     def test_six_fact_created_for_six_runs(self):
         deliveries = _norm(_inn([[_d(batter_runs=6)]]))
         facts = extract_key_facts("m", 0, "rev1", deliveries)
-        assert any(f.fact_type == FactType.BOUNDARY for f in facts)
+        boundaries = [f for f in facts if f.fact_type == FactType.BOUNDARY]
+        assert len(boundaries) == 1
+        assert boundaries[0].structured_payload["runs"] == 6
+        assert boundaries[0].description.startswith("SIX:")
+        assert boundaries[0].referenced_event_ids == [deliveries[0].event_id]
 
-    def test_four_does_not_create_six_fact(self):
+    def test_four_fact_created_for_four_runs(self):
         deliveries = _norm(_inn([[_d(batter_runs=4)]]))
         facts = extract_key_facts("m", 0, "rev1", deliveries)
-        assert [f for f in facts if f.fact_type == FactType.BOUNDARY] == [], (
-            "Fours must not be extracted as six/boundary facts"
-        )
+        boundaries = [f for f in facts if f.fact_type == FactType.BOUNDARY]
+        assert len(boundaries) == 1
+        assert boundaries[0].structured_payload["runs"] == 4
+        assert boundaries[0].description.startswith("FOUR:")
+        assert boundaries[0].referenced_event_ids == [deliveries[0].event_id]
 
 
 # ─── Retired dismissals ───────────────────────────────────────────────────────
