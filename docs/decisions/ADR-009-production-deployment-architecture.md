@@ -39,8 +39,8 @@ We establish the following three-tier deployment topology:
            │    └──────────────────────┐
            ▼ (HTTPS)                   ▼ (HTTPS)
 ┌──────────────────────┐    ┌──────────────────────┐
-│  Remote Qdrant Cloud │    │  LLM Provider API    │
-│  Collection:         │    │  (OpenAI / Anthropic)│
+│ Optional Qdrant      │    │ Groq LLM Provider    │
+│ Disabled in Render  │    │  gpt-oss-20b         │
 │  fancue_cricket_     │    │  Strictly backend    │
 │  knowledge_v1        │    │  auth; 30s timeout   │
 └──────────────────────┘    └──────────────────────┘
@@ -62,7 +62,7 @@ We establish the following three-tier deployment topology:
 2. **Secret Isolation:**
    Provider keys (including `GROQ_API_KEY`) are stored strictly in server-side environment variables and are never forwarded to the frontend or included in build bundles.
 3. **No Silent Storage Fallback in Production:**
-   When `FANCUE_ENV=production`, `QdrantStore` must reject silent fallbacks to local directory or in-memory storage. Connection failure must raise `QdrantStoreError` and engage the graceful fallback path.
+   When retrieval is deliberately enabled in production, `QdrantStore` must reject silent fallbacks to local directory or in-memory storage. Connection failure must raise `QdrantStoreError`; the catch-up path must continue without retrieval where configured to do so.
 4. **Sanitized Public Responses:**
    API error responses use the structured `ErrorResponse` model with request correlation IDs. Tracebacks, SQL queries, prompt templates, and credentials are never returned to clients.
 5. **CORS Hardening:**
