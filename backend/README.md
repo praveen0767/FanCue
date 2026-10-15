@@ -1,5 +1,7 @@
 # backend/
 
+> **Current Render mode:** `LLM_PROVIDER=groq`, `GROQ_MODEL=openai/gpt-oss-20b`, and `FANCUE_RETRIEVAL_ENABLED=false`. Qdrant is optional; do not describe it as active in the deployed catch-up path unless the Render setting is deliberately changed and revalidated.
+
 FanCue Python backend — FastAPI modular monolith.
 
 ## Responsibility
