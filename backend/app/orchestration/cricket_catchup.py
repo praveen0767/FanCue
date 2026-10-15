@@ -83,7 +83,11 @@ class CricketCatchUpOrchestrator:
                 # 4. Deterministic Claim Verification
                 verification_report = self.verifier.verify(draft, packet)
 
-                if verification_report.is_verified:
+                # The verifier may retain some grounded claims while rejecting others.
+                # The draft summary itself is not independently fact-checked, so accepting
+                # a partially rejected draft could leak rejected claims through summary prose.
+                # Fail closed: use the deterministic fact-based summary if any claim is rejected.
+                if verification_report.is_verified and not verification_report.rejected_claims:
                     explanation_payload = ExplanationPayload(
                         summary=draft.summary,
                         claims=verification_report.verified_claims,
