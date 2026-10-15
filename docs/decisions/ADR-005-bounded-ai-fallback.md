@@ -18,8 +18,9 @@ experience must not depend entirely on LLM availability or correctness.
 
 ## Decision
 
-The LLM is bounded by an evidence packet (authoritative engine output +
-retrieved Qdrant chunks). After generation, a **verification step** checks
+The LLM is bounded by an evidence packet (authoritative engine output plus
+optional Qdrant context when retrieval is configured and enabled). The current
+Render production configuration disables retrieval. After generation, a **verification step** checks
 the LLM output against authoritative facts. If verification fails or the LLM
 is unavailable, the system returns a **deterministic fallback** — a structured
 summary built from the engine output and evidence packet without LLM prose.
