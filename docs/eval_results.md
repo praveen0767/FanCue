@@ -18,7 +18,7 @@ The public API exposes the final fallback reason, not a raw count of every verif
 
 **Recorded CI run date (UTC):** 2026-10-15  
 **Exact test command:** `pytest --cov=backend/app --cov=ingestion --cov-report=term-missing tests backend/tests`  
-**Workflow run:** [PR #19 evaluation-harness CI](https://github.com/praveen0767/FanCue/actions/runs/38697069816)
+**Workflow run:** [PR #19 evaluation-harness CI](https://github.com/praveen0767/FanCue/actions/runs/38697554944)
 
 Observed warning emitted by the real fixture-backed verifier test:
 
