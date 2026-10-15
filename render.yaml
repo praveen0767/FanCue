@@ -49,7 +49,7 @@ services:
       - key: OPENAI_API_KEY
         sync: false
       - key: ALLOWED_ORIGINS
-        sync: false
+        value: https://fan-cue.vercel.app
       - key: QDRANT_URL
         sync: false
       - key: QDRANT_API_KEY
