@@ -158,7 +158,7 @@ def test_extract_key_facts_marks_all_tied_highest_overs():
         for ball in range(1, 7)
     ]
 
-    facts = extract_key_facts("match_tied_key_moments", 0, "rev1", deliveries)
+    facts = extract_key_facts("m_tie", 0, "rev1", deliveries)
     highest = [
         fact for fact in facts
         if fact.fact_type == FactType.OVER_SUMMARY
