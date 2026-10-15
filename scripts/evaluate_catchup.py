@@ -92,7 +92,6 @@ def make_local_adversarial_report() -> dict[str, Any]:
     from backend.app.ai.models import AICandidateClaim, AIExplanationDraft
     from backend.app.match_engine.cricket import CricketMatchEngine
     from backend.app.orchestration.evidence_builder import EvidencePacketBuilder
-    from backend.app.schemas.common import LanguageCode
     from backend.app.schemas.cricket import CricketCatchUpRequest, CricketInterval
     from backend.app.schemas.explanation import ClaimType
     from backend.app.schemas.provenance import PermittedUse, SourceProvenance
@@ -131,7 +130,6 @@ def make_local_adversarial_report() -> dict[str, Any]:
             start_after_over=14,
             end_after_over=21,
         ),
-        language=LanguageCode.EN,
     )
     packet = EvidencePacketBuilder(engine=engine, retrieval_service=None).build_packet(request)
     delta = packet.state_delta
@@ -330,9 +328,14 @@ def run_live_evaluation(
                 mode = explanation.get("generation_mode")
                 verification = explanation.get("verification_status")
                 fallback_reason = explanation.get("fallback_reason")
+                contract_ok = (
+                    mode in ("llm_verified", "deterministic_fallback")
+                    and verification in ("verified", "failed_verification", "unverified_fallback")
+                    and fallback_reason in ("none", "timeout", "llm_error", "fact_mismatch", "unsupported_claims", "disabled")
+                )
                 attempt.update(
                     {
-                        "outcome": "success",
+                        "outcome": "success" if contract_ok else "invalid_response_contract",
                         "generation_mode": mode,
                         "verification_status": verification,
                         "fallback_reason": fallback_reason,
@@ -340,13 +343,16 @@ def run_live_evaluation(
                         "wickets_lost": (response.get("state_delta") or {}).get("wickets_lost"),
                     }
                 )
-                if mode == "deterministic_fallback":
-                    result["fallback_count"] += 1
-                # The API exposes fallback_reason, not a raw verifier rejection count.
-                # Treat these reasons as a documented proxy, not an exact per-draft rate.
-                if fallback_reason in ("fact_mismatch", "unsupported_claims"):
-                    result["verifier_rejection_proxy_count"] += 1
-                result["successful_catchups"] += 1
+                if not contract_ok:
+                    result["failed_attempts"] += 1
+                else:
+                    if mode == "deterministic_fallback":
+                        result["fallback_count"] += 1
+                    # The API exposes fallback_reason, not a raw verifier rejection count.
+                    # Treat these reasons as a documented proxy, not an exact per-draft rate.
+                    if fallback_reason in ("fact_mismatch", "unsupported_claims"):
+                        result["verifier_rejection_proxy_count"] += 1
+                    result["successful_catchups"] += 1
         except Exception as exc:
             attempt["elapsed_seconds"] = time.perf_counter() - started
             attempt["outcome"] = "transport_or_parse_error"
@@ -497,6 +503,11 @@ def main() -> int:
     )
     parser.add_argument("--timeout", type=float, default=90.0, help="Per-request timeout in seconds.")
     parser.add_argument(
+        "--skip-live",
+        action="store_true",
+        help="Skip network calls; run only the local fixture-backed adversarial verifier set (useful in CI).",
+    )
+    parser.add_argument(
         "--output",
         default="docs/eval_results.md",
         help="Markdown report path (default: docs/eval_results.md).",
@@ -511,7 +522,23 @@ def main() -> int:
     command = shlex.join([sys.executable, *sys.argv])
     base_url = args.base_url.rstrip("/")
     print(f"Live evaluation: base_url={base_url} requested_catchups={args.requests}")
-    live = run_live_evaluation(base_url, args.requests, args.timeout)
+    if args.skip_live:
+        live = {
+            "base_url": base_url,
+            "requested_catchups": args.requests,
+            "attempts": [],
+            "completed_http_responses": 0,
+            "successful_catchups": 0,
+            "failed_attempts": 0,
+            "fallback_count": 0,
+            "verifier_rejection_proxy_count": 0,
+            "latencies_seconds": [],
+            "error": "Live API checks were explicitly skipped with --skip-live.",
+            "skipped": True,
+        }
+        print("LIVE API CHECKS: NOT RUN (--skip-live)")
+    else:
+        live = run_live_evaluation(base_url, args.requests, args.timeout)
     if live.get("error"):
         print(f"LIVE API SETUP INCOMPLETE: {live['error']}")
     else:
@@ -557,7 +584,9 @@ def main() -> int:
     output_path.write_text(report, encoding="utf-8")
     print(f"Report written to: {output_path}")
 
-    return 0 if not live.get("error") and live["successful_catchups"] > 0 and not adversarial_error else 1
+    if args.skip_live:
+        return 0 if adversarial is not None and not adversarial_error else 1
+    return 0 if not live.get("error") and live["successful_catchups"] == args.requests and live["failed_attempts"] == 0 and not adversarial_error else 1
 
 
 if __name__ == "__main__":
