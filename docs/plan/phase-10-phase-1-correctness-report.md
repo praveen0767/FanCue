@@ -1,5 +1,7 @@
 # Phase 10 / Phase 1 — Cricket Correctness, Evidence Integrity & Deterministic Story Engine
 
+> **Historical correctness report (2026-10-15):** Test counts and Qdrant coverage below belong to this report's specific revision/environment. Current Render configuration selects Groq `openai/gpt-oss-20b` and disables Qdrant retrieval; these historical measurements are not production retrieval metrics.
+
 **Status: COMPLETE — 262 passed, 0 failed**
 **Date: 2026-10-13**
 **Repository root:** `D:\FanCue`
