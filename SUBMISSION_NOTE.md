@@ -1,17 +1,11 @@
-# FanCue Submission Note
+# FanCue — Dream11 FDE Internship Submission
 
-FanCue is an AI-powered, evidence-grounded cricket match catch-up platform built with FastAPI and React/Vite.
+Fans often return to a cricket match mid-innings and see a score without the context of how it changed. FanCue lets a fan select a missed interval from a supported historical match and returns the score change, notable recorded events, and evidence behind them.
 
-### Architecture & Deterministic Design
-Match state reconstruction is strictly deterministic. A Python sport engine processes authoritative Cricsheet ball-by-ball delivery ledgers (CC-BY 4.0), computing exact scores, over boundaries, extras, and wickets. The deterministic engine is the sole truth authority; AI never mutates match state.
+A deterministic engine computes match facts from Cricsheet delivery records. A Groq-hosted **openai/gpt-oss-20b** model drafts the explanation; a rules-based verifier checks supported numeric, player-name, and citation claims. If generation is unavailable or a draft is rejected, FanCue returns a deterministic, fact-based summary.
 
-### AI Boundaries & Verification
-For historical intervals, FanCue retrieves contextual cricket knowledge via Qdrant and generates natural-language catch-ups with OpenAI GPT-4o-mini. Generated text passes an automated claim verifier auditing numeric claims, player names, and citations against inspectable evidence packets. If verification fails or the LLM is unreachable, FanCue serves an immediate, auditable deterministic fallback summary.
+**Scope:** FanCue replays historical fixtures. Near-live discovery and scorecards are separate aggregate data; they do not provide live ball-by-ball catch-up. A real live delivery-by-delivery experience would require a licensed feed.
 
-### Verified Functionality
-- Full Historical Replay journey: fixture selection, interval definition, state delta calculation, and verified evidence-backed catch-up.
-- Near-live match discovery via cached CricketData.org adapter displaying aggregate scorecards.
+**AI tools:** Groq-hosted **openai/gpt-oss-20b** for narrative generation; Google Antigravity for AI-assisted development; Google Stitch for UI design. Qdrant retrieval is optional but disabled by the current Render blueprint, so it is not claimed as part of the deployed catch-up path.
 
-### Known Limitations
-- Near-live matches do not support interval storytelling because external scorecards lack delivery-level ball-by-ball ledgers; honest notices inform the user.
-- Production hosting configuration files (`render.yaml`, `vercel.json`) are validated, but public hosting credentials require provider environment configuration.
+**Validation status:** Automated CI passed on the recorded revision. The public Vercel-to-Render catch-up journey still requires a manual browser smoke test; public end-to-end acceptance is not claimed.

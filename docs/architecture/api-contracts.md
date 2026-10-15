@@ -6,19 +6,13 @@
 **Base URL:** `/v1`  
 **Protocol:** HTTP/1.1 or HTTP/2 over TLS (JSON request/response)  
 
-> **Implementation Notice:** This document specifies the binding HTTP contract for the future
-> FastAPI service. In accordance with Phase 02 boundaries, **no endpoint handlers are implemented
-> in this phase.**
+> **Status warning (2026-10-14):** This file is a historical Phase 02 design preview, not the live API contract. The current API uses `GET /matches`, `GET /matches/{match_id}/intervals`, `POST /catchup`, `GET /healthz`, and `GET /readyz`; near-live routes are separate. Use the root README and `backend/app/api/` as the current route reference. Timings and response examples below are illustrative design material, not measured runtime results. Qdrant retrieval is optional and disabled by the checked-in Render configuration.
 
 ---
 
 ## 1. Overview & Execution Model
 
-The FanCue API is initially **synchronous request-response**:
-- Reconstructing match states and calculating deltas from in-memory match graphs takes <10ms.
-- Qdrant similarity searches execute in <50ms.
-- LLM generation completes in 2–5 seconds with an aggressive 5-second timeout, falling back immediately to the deterministic recap if delayed.
-- As detailed in [ADR-007](file:///D:/FanCue/docs/decisions/ADR-007-conditional-infrastructure.md), background workers and queues (Redis/Celery) are unnecessary and avoided for V1 historical replay catch-ups.
+The implemented catch-up API is **synchronous request-response**. The latency values in this older design spec are not runtime measurements and must not be used as performance claims. Historical state reconstruction depends on the deterministic engine; contextual retrieval is optional and is bypassed by the current Render configuration. The configured LLM has a provider timeout, after which the orchestrator uses the deterministic fallback. Background queues are not on the current catch-up path.
 
 ---
 
@@ -83,7 +77,7 @@ Retrieves detailed metadata, supported innings, and dataset provenance for a spe
 ---
 
 ### 2.3 `POST /v1/catchups`
-The primary fan journey endpoint. Validates interval boundaries, computes deterministic state differences, retrieves Qdrant context, generates structured explanation, verifies facts, and returns either a verified response or guaranteed deterministic fallback.
+The primary fan journey endpoint in this design preview. It validates interval boundaries, computes deterministic state differences, optionally retrieves contextual knowledge when enabled, generates a structured explanation, verifies claims, and returns a verified explanation or deterministic fallback.
 
 - **Execution Mode:** Synchronous
 - **Request Headers:**
@@ -181,7 +175,7 @@ Liveness and readiness probe for orchestration and load balancer readiness.
   {
     "status": "ready",
     "dataset_index": "loaded",
-    "qdrant_status": "connected",
+    "qdrant_status": "bypassed when retrieval is disabled; otherwise depends on configured service",
     "llm_status": "ready"
   }
   ```

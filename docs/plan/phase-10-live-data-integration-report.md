@@ -1,5 +1,7 @@
 # FanCue Phase 10 — Near-Live Cricket Data API Integration & UI Correction Report
 
+> **Historical report (2026-10-15):** Its OpenAI test status records the provider setup at that time. The current Render blueprint selects Groq `openai/gpt-oss-20b` and disables Qdrant retrieval. Neither this report nor CI establishes that the current live provider credentials or public catch-up journey have been verified.
+
 **Workspace:** `D:\FanCue`  
 **Date:** 2026-10-13  
 **Status:** Implemented, Verified with Mocks/Fixtures, Ready for Live Request Authorization  

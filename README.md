@@ -37,7 +37,7 @@ A fan selects a supported historical cricket match and an interval. FanCue recon
 - ✅ Structured catch-up response with generation and verification status.
 - ✅ Configurable Groq/OpenAI-compatible generation path.
 - ✅ Claim verification and deterministic fallback when generation is unavailable or rejected.
-- ✅ Optional Qdrant retrieval for contextual knowledge—never for authoritative match scores.
+- ✅ Optional Qdrant retrieval for contextual knowledge—never for authoritative match scores. **It is disabled in the current Render configuration** (`FANCUE_RETRIEVAL_ENABLED=false`); production catch-up does not claim to use retrieval.
 - ✅ Separate near-live match discovery and aggregate scorecard endpoints through CricketData.org.
 - ✅ Regression tests, integration tests, and a GitHub Actions CI workflow.
 
@@ -303,7 +303,7 @@ The application does not invent a match to fill a missing fixture. The fixture r
 | `GET` | `/matches/near-live` | Discover near-live matches through CricketData.org. |
 | `GET` | `/matches/near-live/{match_id}/scorecard` | Fetch a provider scorecard; this is not delivery-level replay. |
 
-The catch-up response includes `state_before`, `state_after`, `state_delta`, an evidence packet, and an `explanation` object. Check `explanation.generation_mode`, `explanation.verification_status` and `explanation.fallback_reason` when interpreting a response.
+The current Render configuration uses Groq (`LLM_PROVIDER=groq`, `GROQ_MODEL=openai/gpt-oss-20b`) and sets `FANCUE_RETRIEVAL_ENABLED=false`. Qdrant retrieval remains optional and is used only in environments where it is explicitly enabled and tested. The catch-up response includes `state_before`, `state_after`, `state_delta`, an evidence packet, and an `explanation` object. Check `explanation.generation_mode`, `explanation.verification_status` and `explanation.fallback_reason` when interpreting a response.
 
 For a public release review, a healthy `/healthz` response is not sufficient: follow [`docs/PUBLIC_DEMO_ACCEPTANCE.md`](docs/PUBLIC_DEMO_ACCEPTANCE.md) to check CORS, the actual browser journey, evidence references and cold/warm request latency.
 
@@ -313,18 +313,18 @@ For a public release review, a healthy `/healthz` response is not sufficient: fo
 
 ### CI baseline
 
-The merged hardening revision was validated by the repository’s GitHub Actions workflow:
+The latest recorded workflow for this documentation/CORS-test branch completed successfully:
 
 | Check | Recorded result |
 |---|---:|
-| Backend test suite | **433 passed, 1 skipped** |
+| Backend test suite | **436 passed, 1 skipped** |
 | Reported backend/ingestion statement coverage | **90%** |
 | Frontend typecheck and production build | **Passed** |
 
-- CI run: [FanCue CI — hardening commit](https://github.com/praveen0767/FanCue/actions/runs/38539786400)
-- Tested merge commit: `41768516e458b9e2ebd892252cb2304629a53c0f`
+- CI run: [FanCue CI — documentation and origin checks](https://github.com/praveen0767/FanCue/actions/runs/38696315006)
+- Tested branch commit: `baf0072ec45070973946f39bc963ad42357efa0f`
 
-These figures describe that recorded run, not a promise that every later commit or hosted deployment is healthy. Rerun the workflow after code changes.
+These counts and coverage describe that recorded run only. They do not establish live Vercel-to-Render acceptance or the result of a future commit. Rerun the workflow after code changes.
 
 ### Curated retrieval evaluation
 

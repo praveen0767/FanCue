@@ -1,5 +1,7 @@
 # FanCue — Phase 01 Completion Report
 
+> **Specification snapshot (2026-10-15):** This report records planned acceptance criteria, not proof that all optional systems are enabled in production. Qdrant-related criteria apply only when retrieval is enabled; current Render configuration disables it.
+
 **Phase:** 01 — Product Logic, Fan Psychology, Formal Interval Semantics, and Testable Acceptance Criteria  
 **Date:** 2026-10-11  
 **Author:** Principal Product Engineer / Systems Architect  

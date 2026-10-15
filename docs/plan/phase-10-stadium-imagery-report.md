@@ -1,5 +1,7 @@
 # FanCue — Stadium Imagery & Premium Match Discovery Report
 
+> **Historical test snapshot (2026-10-15):** Test totals below reflect the revision and scope at the time of this report. For current test counts, use the linked/latest GitHub Actions workflow; do not treat these older counts as the current repository total. Public deployment acceptance is tracked separately in `docs/PUBLIC_DEMO_ACCEPTANCE.md`.
+
 **Date:** 2026-10-13  
 **Status:** Complete & Verified  
 **Workspace:** `D:\FanCue`  

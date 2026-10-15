@@ -1,5 +1,7 @@
 # FanCue — Product Acceptance Criteria (V1)
 
+> **Current deployment note (2026-10-15):** AC-06 and RET criteria apply when contextual retrieval is enabled. The checked-in Render blueprint sets `FANCUE_RETRIEVAL_ENABLED=false`; those criteria do not mean production retrieval is active.
+
 **Version:** 1.0
 **Phase:** 01 — Product Specification
 **Last updated:** 2026-10-11
@@ -196,14 +198,14 @@ perspective variants.
 
 ### AC-06 — Context retrieval carries provenance and satisfies sport/language filters
 
-**Requirement:** Every contextual knowledge item returned by Qdrant carries
+**Requirement (when retrieval is enabled):** Every contextual knowledge item returned by Qdrant carries
 mandatory provenance metadata (`doc_id`, `source_name`, `source_url`,
 `license`), and retrieval queries correctly apply sport and language filters.
 
 **Preconditions:** A cricket knowledge corpus is ingested with mandatory
 metadata fields. A valid interval has been processed.
 
-**Action:** The retrieval layer queries Qdrant with sport=cricket and a language
+**Action (when enabled):** The retrieval layer queries Qdrant with sport=cricket and a language
 filter. A football query is also submitted to verify filter isolation.
 
 **Expected result:**

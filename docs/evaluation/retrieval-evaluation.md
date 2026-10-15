@@ -1,5 +1,7 @@
 # FanCue Evaluation: Retrieval Quality & Isolation Report
 
+> **Production boundary (2026-10-15):** The results below describe the documented development collection and curated evaluation set. The current Render blueprint sets `FANCUE_RETRIEVAL_ENABLED=false`; these results do not mean Qdrant retrieval is active on the public catch-up path or establish deployed retrieval latency.
+
 > **Document ID:** EVAL-004  
 > **Evaluation Date:** 2026-10-11  
 > **Status:** Accepted (Gate Passed)  

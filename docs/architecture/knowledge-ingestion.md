@@ -1,5 +1,7 @@
 # FanCue Architecture: Knowledge Ingestion & Retrieval Pipeline
 
+> **Current production scope (2026-10-15):** This document describes an optional knowledge-ingestion/retrieval subsystem. The checked-in Render blueprint sets `FANCUE_RETRIEVAL_ENABLED=false`; its development retrieval benchmark does not mean Qdrant is active in the deployed catch-up path.
+
 > **Document ID:** ARCH-008  
 > **Status:** Implemented (Phase 04)  
 > **Author:** Principal AI Systems Engineer / Retrieval Engineer  

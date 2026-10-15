@@ -1,6 +1,6 @@
 # FanCue — System Context
 
-*Phase 00 architecture document. Describes proposed boundaries, not implemented services.*
+*Architecture baseline. Status reflects current code/configuration as of 2026-10-14; planned components are not implied to be enabled in production.*
 
 ---
 
@@ -8,15 +8,15 @@
 
 | Component | Responsibility | Implementation status |
 |---|---|---|
-| Fan interface | Next.js web UI — interval selector, explanation display, fallback display | Phase 06 |
-| Request API | FastAPI — validates and routes fan requests | Phase 03 |
-| Sport adapter | Cricket or football adapter — normalises events, applies sport-specific logic | Phase 03 (cricket), Phase 08 (football) |
-| Deterministic match engine | Reconstructs match state from events; sole authoritative source of match facts | Phase 03 |
-| Evidence/context planner | Assembles a typed evidence packet from engine output + retrieval results | Phase 05 |
-| Qdrant knowledge retrieval | Semantic search over ingested contextual knowledge documents | Phase 04 |
-| Language model provider | Generates bounded explanation from evidence packet | Phase 05 |
-| Verification | Checks LLM output against authoritative facts; triggers fallback on failure | Phase 05 |
-| Deterministic fallback | Returns structured summary from engine+evidence when LLM unavailable or fails | Phase 05 |
+| Fan interface | React + TypeScript + Vite UI — interval selector, explanation display, fallback display | Implemented |
+| Request API | FastAPI — validates and routes fan requests | Implemented |
+| Sport adapter | Cricket normalization is on the request path; football is not claimed as a complete product path | Cricket implemented; football deferred |
+| Deterministic match engine | Reconstructs match state from events; sole authoritative source of match facts | Implemented for supported cricket fixtures |
+| Evidence/context planner | Assembles typed evidence from engine output plus optional retrieval results | Implemented; retrieval optional |
+| Qdrant knowledge retrieval | Optional semantic search over contextual knowledge; not the match-fact source | Implemented for development/evaluation; disabled in current Render config |
+| Language model provider | Configured Groq/OpenAI-compatible provider drafts explanation from evidence | Provider code present; actual live credentials/runtime not verified here |
+| Verification | Checks LLM output against authoritative facts; triggers fallback on failure | Implemented |
+| Deterministic fallback | Returns structured summary from engine facts when LLM is unavailable or fails verification | Implemented |
 | PostgreSQL | Durable store for match metadata, dataset revisions, evaluation records | Phase 07 |
 
 ---
@@ -25,8 +25,7 @@
 
 - The **match engine** is the sole author of match facts (scores, events, state).
   No other component may write or mutate match state.
-- **Qdrant** stores contextual knowledge only (rules, history, player context).
-  It never stores authoritative match scores or live event data.
+- **Qdrant**, when enabled, stores contextual knowledge only (rules, history, player context). It never stores authoritative match scores or live event data. The checked-in `render.yaml` sets `FANCUE_RETRIEVAL_ENABLED=false`, so production retrieval is currently bypassed.
 - The **LLM** produces explanatory prose bounded by the evidence packet.
   It cannot access the match engine directly.
 - The **verification layer** has read-only access to both the engine output and
@@ -39,12 +38,12 @@
 ```mermaid
 flowchart TD
     Fan(["Fan\n(Browser)"])
-    UI["Fan Interface\nNext.js"]
+    UI["Fan Interface\nReact + Vite"]
     API["Request API\nFastAPI"]
     Adapter["Sport Adapter\nCricket | Football"]
     Engine["Deterministic\nMatch Engine\n(authoritative facts)"]
     Planner["Evidence/Context\nPlanner"]
-    Qdrant[("Qdrant\nKnowledge Store")]
+    Qdrant[("Optional Qdrant\n(off in Render config)")]
     LLM["Language Model\nProvider"]
     Verify["Verification\n+ Fallback"]
     PG[("PostgreSQL\nApp Store\n(Phase 07)")]
@@ -54,8 +53,8 @@ flowchart TD
     API -->|"Normalised request"| Adapter
     Adapter -->|"Sport events"| Engine
     Engine -->|"Authoritative match state\n+ state difference"| Planner
-    Planner -->|"Retrieval query\n(sport + language filters)"| Qdrant
-    Qdrant -->|"Ranked evidence chunks\n(with provenance)"| Planner
+    Planner -.->|"Optional query when enabled"| Qdrant
+    Qdrant -.->|"Optional ranked context"| Planner
     Planner -->|"Evidence packet\n(facts + sources)"| LLM
     LLM -->|"Structured explanation"| Verify
     Engine -->|"Authoritative facts\n(read-only)"| Verify
@@ -76,10 +75,8 @@ flowchart TD
 4. Match engine reconstructs state at interval_start and interval_end
 5. Match engine calculates state difference (what changed)
 6. Evidence planner assembles retrieval query from state difference events
-7. Qdrant returns top-K contextual chunks with provenance metadata
-8. Evidence planner builds typed evidence packet:
-     - authoritative_state_diff (from engine)
-     - retrieved_chunks (from Qdrant, with doc_id + source)
+7. If retrieval is enabled and reachable, Qdrant returns top-K contextual chunks with provenance; otherwise this step is skipped.
+8. Evidence planner builds a typed packet containing authoritative state facts and provenance; optional retrieved chunks are included only when retrieval is enabled and succeeds.
 9. LLM receives evidence packet + prompt template; produces structured explanation
 10. Verification checks:
      - All score claims match authoritative_state_diff

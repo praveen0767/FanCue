@@ -1,5 +1,7 @@
 # FanCue — Phase 03 Completion Report
 
+> **Historical phase report (2026-10-15):** References to starting Qdrant and testing the ingestion path describe development milestones. The current Render blueprint disables retrieval and uses Groq `openai/gpt-oss-20b`; this report is not a production-readiness claim.
+
 **Phase:** 03 — Deterministic Cricket Engine, Cricsheet Adapter, Interval Reconstruction, Scorecard Reconciliation, and Golden Tests  
 **Date:** 2026-10-11  
 **Author:** Principal Sports Domain Engineer / Platform Reliability Engineer  

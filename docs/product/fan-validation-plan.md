@@ -1,5 +1,7 @@
 # FanCue — Fan Validation Plan (V1)
 
+> **Current deployment scope (2026-10-15):** Qdrant retrieval is an optional experiment and is disabled in the current Render configuration. Fan validation of the deployed catch-up should assess deterministic score changes, recorded events, evidence and explanation status without assuming retrieved context is active.
+
 **Version:** 1.0
 **Phase:** 01 — Product Specification
 **Last updated:** 2026-10-11

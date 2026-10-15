@@ -12,9 +12,9 @@
 FanCue enforces explicit, typed contracts across all boundaries. Contracts are defined
 **before** any domain logic, API endpoints, retrieval pipelines, or user interfaces are built.
 
-Key governing principles (from [AGENTS.md](file:///D:/FanCue/AGENTS.md)):
+Key governing principles (historical design baseline; optional components may be disabled in a deployment):
 1. **Single Source of Truth:** Pydantic v2 models in `backend/app/schemas/` define canonical Python types; JSON Schemas in `contracts/` are generated directly from them without manual synchronization drift.
-2. **Deterministic Truth Separation:** The match engine is the sole truth authority for match state, scores, and deltas. Neither LLM prose nor Qdrant vector similarity scores may mutate authoritative numbers.
+2. **Deterministic Truth Separation:** The match engine is the sole truth authority for match state, scores, and deltas. Neither LLM prose nor optional Qdrant vector similarity scores may mutate authoritative numbers. The current Render configuration disables retrieval.
 3. **Sport Boundary Isolation:** Cricket and football contracts are completely separated. They share no scoring formulas, interval representations, or event types.
 4. **Inspectable Evidence:** Every fact in an explanation must link back to an atomic `EvidenceFact` with verified source event IDs and dataset provenance.
 5. **No `any` or Untyped Dictionaries:** Core state, intervals, deltas, and evidence packets use strict types and forbid unknown fields (`extra="forbid"`).
@@ -78,7 +78,7 @@ Following [interval-model.md](file:///D:/FanCue/docs/product/interval-model.md) 
 
 ### 3.2 Evidence Packet Assembly
 The `MatchEvidencePacket` is the immutable bridge between the deterministic match engine and the AI orchestrator:
-- Assembled strictly from engine calculations and Qdrant retrieval.
+- Assembled strictly from engine calculations; Qdrant context is optional and omitted when retrieval is disabled or unavailable.
 - Carries full `SourceProvenance` (source ID, license, archive SHA-256, fixture SHA-256).
 - Every atomic fact possesses a unique, reproducible `fact_id` and cites source event IDs.
 
@@ -86,7 +86,7 @@ The `MatchEvidencePacket` is the immutable bridge between the deterministic matc
 The `CricketCatchUpResponse` contains an `ExplanationPayload`:
 - Contains granular `StructuredClaim` items.
 - Factual claims must cite one or more `cited_fact_ids` belonging to the accompanying evidence packet.
-- Background context claims cite `cited_knowledge_ids` from Qdrant.
+- Background context claims may cite `cited_knowledge_ids` from Qdrant when retrieved passages are present; otherwise the response is grounded in deterministic match facts alone.
 - If verification fails or LLM is disabled, `generation_mode` is set to `deterministic_fallback` and `verification_status` reflects the outcome with an explicit `fallback_reason`.
 
 ---

@@ -1,5 +1,7 @@
 # FanCue — Phase Roadmap
 
+> **Status clarification (2026-10-14):** This is the original engineering phase/checklist history, not a live deployment dashboard. Unchecked items are not to be silently marked complete because the repository CI passes. In particular, public Vercel-to-Render end-to-end acceptance is not confirmed until the manual journey in [PUBLIC_DEMO_ACCEPTANCE.md](../PUBLIC_DEMO_ACCEPTANCE.md) is completed. The checked-in Render config uses Groq (`openai/gpt-oss-20b`) and disables Qdrant retrieval.
+
 All phases are sequential. A later phase must not begin before its predecessor
 passes its exit gate. "Planned" means the work is defined but not started.
 "Not started" is the honest status for all phases beyond 00 at initialization.

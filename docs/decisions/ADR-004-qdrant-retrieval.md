@@ -20,11 +20,9 @@ retrieval, not for storing authoritative match state (scores, events).
 
 ## Decision
 
-Qdrant is the **semantic knowledge retrieval component**. It stores ingested
-contextual knowledge documents and serves similarity-search queries filtered
-by sport and language. It is explicitly **not** the authoritative store for
-dynamic match scores, event sequences, or any data that the deterministic
-engine produces.
+Qdrant is an **optional semantic knowledge retrieval component**. When enabled, it stores ingested contextual knowledge documents and serves similarity-search queries filtered by sport and language. It is explicitly **not** the authoritative store for dynamic match scores, event sequences, or any data that the deterministic engine produces.
+
+**Current runtime status (2026-10-14):** the checked-in `render.yaml` sets `FANCUE_RETRIEVAL_ENABLED=false`. Qdrant has been used for development and a curated retrieval evaluation, but retrieval is not on the current Render production request path. Do not describe it as enabled in production without changing and verifying the deployment configuration.
 
 ---
 
@@ -53,8 +51,7 @@ engine produces.
   so that explanation outputs can be traced to their evidence sources.
 - Retrieval quality must be evaluated with known-relevant question sets
   before Phase 05 begins.
-- Qdrant runs locally via Docker during development; a managed Qdrant Cloud
-  instance is the planned production deployment (to be confirmed in Phase 07).
+- Qdrant can run locally for development/evaluation. A managed production deployment is not part of the current Render configuration; enable it only after configuring credentials, enabling the flag, and passing live acceptance checks.
 
 ---
 

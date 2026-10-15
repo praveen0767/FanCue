@@ -63,12 +63,14 @@ apps (show current state, not a personalized interval explanation).
 
 ## First-Release Scope
 
-The first release establishes one complete, verified workflow:
+**Implementation note (2026-10-14):** This section records the original product plan, not a claim that every dependency is enabled in production. The current Render configuration disables Qdrant retrieval; any retrieval step below is optional and must be skipped when disabled or unavailable.
+
+The intended first release establishes one complete workflow:
 
 1. A fan selects a **historical cricket match** (not live initially).
 2. The fan specifies an **interval** (whole-over range).
 3. FanCue **reconstructs** the interval from authoritative data.
-4. FanCue **retrieves** relevant contextual knowledge from Qdrant.
+4. FanCue may retrieve relevant contextual knowledge from Qdrant when retrieval is enabled and available; this step is optional and off in the current Render configuration.
 5. FanCue **generates** a structured explanation verified against match facts.
 6. The fan receives the explanation through a **functional web UI** with an evidence drawer.
 7. If the AI explanation fails, the fan receives a **deterministic fallback**.
