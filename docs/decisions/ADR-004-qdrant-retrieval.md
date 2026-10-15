@@ -20,6 +20,8 @@ retrieval, not for storing authoritative match state (scores, events).
 
 ## Decision
 
+**Current deployment note:** Qdrant remains an optional contextual-retrieval design component. The current Render blueprint sets `FANCUE_RETRIEVAL_ENABLED=false`; production catch-up must run without it. The retrieval evaluation below describes the configured development/CI collection, not production activation.
+
 Qdrant is the **semantic knowledge retrieval component**. It stores ingested
 contextual knowledge documents and serves similarity-search queries filtered
 by sport and language. It is explicitly **not** the authoritative store for
