@@ -79,3 +79,19 @@ Test innings start, complete and partial over boundaries, wides/no-balls, retire
 ## Submission policy
 
 Do not claim public end-to-end validation, live provider operation, active retrieval, or exact test totals unless the latest run against the relevant revision supports the claim.
+
+## Automated smoke test and live evaluation
+
+From the repository root, run the smoke test against the public service:
+
+    python scripts/smoke_test.py --api-base-url https://fancue-api-o4r1.onrender.com --frontend-origin https://fan-cue.vercel.app
+
+It checks /healthz, the match catalogue, the exact CORS preflight origin, and one real POST /catchup for each registered fixture (1529229 and 1552779). It prints each response's generation_mode, verification_status, fallback_reason, and observed request duration. A deterministic fallback is a valid degraded response; inspect the UI label rather than treating fallback as a successful AI generation.
+
+To run the live operational sample (20 catch-ups by default) and append measured results to docs/eval_results.md:
+
+    python scripts/evaluate_catchups.py --api-base-url https://fancue-api-o4r1.onrender.com --requests 20 --output docs/eval_results.md
+
+The evaluator alternates across both fixtures and selects only intervals advertised by the deployed API. It reports p50/p95 client-observed latency, request failures, deterministic fallback rate, and verifier rejection rate among responses that show a draft reached verification. It uses a one-second delay by default and caps a run at 50 requests to leave margin under the API's in-process per-minute rate limit.
+
+Both scripts use Python's standard library only. They make real public API calls; run them from a machine with internet access. Do not report latency or fallback rates until the command has completed, and commit the generated docs/eval_results.md after reviewing the actual output.
