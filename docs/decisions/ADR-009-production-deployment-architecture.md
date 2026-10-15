@@ -9,7 +9,7 @@
 
 ## Context
 
-FanCue has achieved local full-stack integration (Phase 08) with a verified deterministic cricket match engine, knowledge retrieval, canonical evidence packet assembly, claim verification, deterministic fallback, FastAPI backend, and React/Vite frontend.
+FanCue has a local full-stack workflow with a deterministic cricket match engine, canonical evidence packet assembly, claim verification, deterministic fallback, FastAPI backend, and React/Vite frontend. Qdrant retrieval exists as an optional subsystem; the current Render blueprint disables it. This ADR records the intended deployment boundaries and is superseded where its provider settings differ from the current Render blueprint.
 
 To support public or remote deployment without compromising match state authority, secret isolation, or determinism, a production deployment topology must be defined.
 
@@ -51,16 +51,16 @@ We establish the following three-tier deployment topology:
 | Component | Hosting Paradigm | Runtime Configuration | Access Policy |
 |---|---|---|---|
 | **Frontend** | Static SPA on CDN edge (Vercel, Cloudflare, S3+CloudFront, or Dockerized Nginx) | `VITE_API_BASE_URL` | Public HTTPS; Zero backend API keys or secrets in bundle. |
-| **Backend API** | Stateless containerized Python 3.12 (`backend.app.main:app`) on Linux | `FANCUE_ENV=production`, `ALLOWED_ORIGINS`, `QDRANT_URL`, `QDRANT_API_KEY`, `OPENAI_API_KEY` | Public HTTPS behind TLS termination; restricted CORS allowlist; rate limiting. |
-| **Vector DB** | Managed Qdrant Cloud instance | Collection: `fancue_cricket_knowledge_v1` (384-dim Cosine, BAAI/bge-small-en-v1.5) | Private authenticated HTTPS; backend access only. No browser access. |
-| **LLM Provider** | External API (OpenAI / Anthropic) | Model: `gpt-4o-mini` or equivalent; timeout: 30s | Private HTTPS; backend access only. |
+| **Backend API** | Stateless containerized Python 3.12 (`backend.app.main:app`) on Linux | `FANCUE_ENV=production`, `ALLOWED_ORIGINS=https://fan-cue.vercel.app`, `LLM_PROVIDER=groq`, `GROQ_API_KEY` | Public HTTPS behind TLS termination; exact-origin CORS allowlist; rate limiting. |
+| **Vector DB** | Optional Qdrant contextual retrieval | Current Render setting: `FANCUE_RETRIEVAL_ENABLED=false`; enable only deliberately and revalidate before claiming production retrieval. | Not on the current production catch-up path. |
+| **LLM Provider** | Groq API (current blueprint) | Model: `openai/gpt-oss-20b` (`GROQ_MODEL`) | Provider key remains server-side; live response behaviour still needs public smoke validation. |
 
 ### 2. Security Boundaries & Assumptions
 
 1. **Deterministic Authority:**
    The deterministic match engine remains the sole truth authority for match scores. Neither the LLM nor the vector database can alter score state.
 2. **Secret Isolation:**
-   `QDRANT_API_KEY` and `OPENAI_API_KEY` are stored strictly in server-side environment variables and are never forwarded to the frontend or included in build bundles.
+   Provider keys (including `GROQ_API_KEY`) are stored strictly in server-side environment variables and are never forwarded to the frontend or included in build bundles.
 3. **No Silent Storage Fallback in Production:**
    When `FANCUE_ENV=production`, `QdrantStore` must reject silent fallbacks to local directory or in-memory storage. Connection failure must raise `QdrantStoreError` and engage the graceful fallback path.
 4. **Sanitized Public Responses:**
@@ -85,7 +85,7 @@ Development test runs and CI checks must never mutate or clear the production kn
 ### Positive
 - Completely decoupled static frontend and stateless backend allows independent deployment, caching, and horizontal scaling.
 - No heavy infrastructure (Redis, message queues, relational databases) required for Phase 09, honoring AGENTS.md §12.
-- Deterministic fallback guarantees 100% service availability even during Qdrant or LLM outages.
+- Deterministic fallback provides a non-LLM response path when generation fails; it does not guarantee total service availability.
 
 ### Negative / Limitations
 - Single-instance in-memory rate limiting applies per container instance; distributed multi-instance deployment will require an edge gateway or Redis if uniform cross-instance rate limiting is demanded later.
