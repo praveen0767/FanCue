@@ -1,4 +1,6 @@
 # FanCue — Motion & Fan-Delight Upgrade Report
+
+> **Historical validation note (2026-10-15):** Any browser journey documented here refers to the environment/revision used by that report. It does not prove the live Vercel-to-Render cold-start journey succeeds. Use `docs/PUBLIC_DEMO_ACCEPTANCE.md` for current public acceptance.
 **Document ID:** `docs/plan/phase-10-animation-report.md`  
 **Phase:** Phase 10 / Phase 2 Motion & Fan-Delight Upgrade  
 **Workspace:** `D:\FanCue`  
