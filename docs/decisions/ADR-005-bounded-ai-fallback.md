@@ -1,5 +1,7 @@
 # ADR-005 — Bounded AI with Evidence Validation and Deterministic Fallback
 
+> **Current production scope (2026-10-15):** The evidence packet always includes deterministic match facts; retrieved Qdrant context is optional. The current Render blueprint disables retrieval, so the deployed path must run without retrieved passages.
+
 **Status:** Accepted
 **Date:** 2026-10-11
 **Phase:** 00
