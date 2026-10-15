@@ -1,5 +1,7 @@
 # FanCue — API Contract Specification (OpenAPI Preview)
 
+> **Scope note:** This is a design-contract preview, not the active OpenAPI document. Current deployed routes are unversioned (`/catchup`, `/matches`, etc.). The Render blueprint uses Groq (`openai/gpt-oss-20b`) and disables Qdrant retrieval. Retrieval steps below are conditional and are not a claim about the production path.
+
 **Version:** 1.0.0  
 **Phase:** 02 — Canonical Contracts & Governance  
 **Status:** Design Preview (No endpoints implemented in Phase 02)  
@@ -15,9 +17,9 @@
 ## 1. Overview & Execution Model
 
 The FanCue API is initially **synchronous request-response**:
-- Reconstructing match states and calculating deltas from in-memory match graphs takes <10ms.
-- Qdrant similarity searches execute in <50ms.
-- LLM generation completes in 2–5 seconds with an aggressive 5-second timeout, falling back immediately to the deterministic recap if delayed.
+- Match-state reconstruction and delta calculation are deterministic; latency has not been measured in this design document.
+- Qdrant similarity search is optional and only runs when retrieval is configured and enabled.
+- LLM latency depends on provider, model, network, and quota; do not interpret the design as a measured service-level target.
 - As detailed in [ADR-007](file:///D:/FanCue/docs/decisions/ADR-007-conditional-infrastructure.md), background workers and queues (Redis/Celery) are unnecessary and avoided for V1 historical replay catch-ups.
 
 ---
@@ -83,7 +85,7 @@ Retrieves detailed metadata, supported innings, and dataset provenance for a spe
 ---
 
 ### 2.3 `POST /v1/catchups`
-The primary fan journey endpoint. Validates interval boundaries, computes deterministic state differences, retrieves Qdrant context, generates structured explanation, verifies facts, and returns either a verified response or guaranteed deterministic fallback.
+The primary fan journey endpoint. Validates interval boundaries, computes deterministic state differences, optionally retrieves Qdrant context when enabled, generates a structured explanation, verifies claims, and returns a verified response or a deterministic fallback when generation is unavailable or rejected.
 
 - **Execution Mode:** Synchronous
 - **Request Headers:**
